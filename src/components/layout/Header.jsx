@@ -1,11 +1,19 @@
 import React from 'react';
+import styled from 'styled-components';
 
 const Header = () => {
     return (
-        <div>
+        <StHeaderWrap>
             헤더입니다
-        </div>
+        </StHeaderWrap>
     );
 };
 
 export default Header;
+
+const StHeaderWrap = styled.div`
+    position:sticky;
+    top : 0;  
+    background-color : red;
+    z-index : 1;
+`

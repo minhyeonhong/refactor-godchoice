@@ -1,11 +1,16 @@
 import React from 'react';
+import styled from 'styled-components';
 
 const Footer = () => {
     return (
-        <div>
+        <StFooterWrap>
             푸터입니다.
-        </div>
+        </StFooterWrap>
     );
 };
 
 export default Footer;
+
+const StFooterWrap = styled.div`
+    
+`
