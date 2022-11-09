@@ -7,6 +7,8 @@ import Search from '../components/home/Search'
 import Carousel from 'react-bootstrap/Carousel';
 import styled from 'styled-components';
 
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 
 const Home = () => {
     const [index, setIndex] = useState(0);
@@ -16,7 +18,8 @@ const Home = () => {
     };
     return (
         <Layout>
-            {/* 슬라이드 시작 */}
+
+            {/* 슬라이드 */}
             <StCarouselWrap>
                 <Carousel activeIndex={index} onSelect={handleSelect}>
                     <Carousel.Item>
@@ -58,9 +61,28 @@ const Home = () => {
                     </Carousel.Item>
                 </Carousel>
             </StCarouselWrap>
-            {/* 슬라이드 끝 */}
+
+            {/* 검색 */}
             <Search />
-            <List />
+
+            {/* 리스트 */}
+            <Tabs
+                defaultActiveKey="home"
+                id="justify-tab-example"
+                className="mb-3"
+                justify
+            >
+                <Tab eventKey="home" title="행사글">
+                    <List />
+                </Tab>
+                <Tab eventKey="profile" title="모집글">
+                    a
+                </Tab>
+                <Tab eventKey="longer-tab" title="질문글">
+                    s
+                </Tab>
+            </Tabs>
+
         </Layout>
     );
 };
