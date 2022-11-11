@@ -1,4 +1,3 @@
-import { useDispatch } from "react-redux";
 import styled from "styled-components";
 // import Button from "components/elements/Button";
 import { GOOGLE_AUTH_URL, KAKAO_AUTH_URL, NAVER_AUTH_URL } from "../../api/login";
@@ -10,13 +9,12 @@ import { __kakaoLogin } from "../../redux/modules/memberSlice";
 
 const Login = () => {
   // const { LogoKakao, LogoGoogle, LogoNaver } = icons;
-  const dispatch = useDispatch();
 
   return (
     <StLogin>
       <StLoginMessage>
         <StLoginTitle>
-          안녕하세요. <br /> 
+          안녕하세요. <br />
         </StLoginTitle>
         <StLoginContent>LOGIN</StLoginContent>
       </StLoginMessage>
@@ -27,10 +25,10 @@ const Login = () => {
           <LogoKakao />
           카카오 계정으로 로그인
         </button>
-        <button onClick={() => dispatch(__kakaoLogin('Jf8SsxW29OiPMjbzrGRqdHHwwzMVFlevJlfYELD4bte1-Do8SDVuLC3p2mA8ueevR7suKAo9cuoAAAGEZat_oQ'))}> 카카오 코드버튼</button>
+
         <div id="naverIdLogin">
-                <Naver></Naver>
-            </div>
+          <Naver></Naver>
+        </div>
         {/* <button
           onClick={() => (window.location.href = NAVER_AUTH_URL)}
         >

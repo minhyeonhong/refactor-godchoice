@@ -24,7 +24,7 @@ const Router = () => {
                 <Route path="/login" element={<LoginPage />} />
 
                 {/* 카카오 로그인 --- Redirect_URI 경로로 넣기*/}
-                <Route path="/oauth/callback/kakao" element={<Kakao />} />
+                <Route path="/member/signup/kakao" element={<Kakao />} />
                 {/* 디테일 페이지 */}
                 <Route path="/detail" element={<Detail />} />
             </Routes>
