@@ -73,7 +73,7 @@ const Home = () => {
                 justify
             >
                 <Tab eventKey="home" title="행사글">
-                    <List />
+                    {/* <List /> */}
                 </Tab>
                 <Tab eventKey="profile" title="모집글">
                     a
