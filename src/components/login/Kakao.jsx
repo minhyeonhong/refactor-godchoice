@@ -13,23 +13,30 @@ import { useDispatch } from 'react-redux';
 
 const Kakao = () => {
 
-  // 인가코드
+	// 인가코드
 	let code = new URL(window.location.href).searchParams.get('code');
 	// const cookies = new Cookies();
 	// const navigate = useNavigate();
-  	const dispatch = useDispatch();
+	const dispatch = useDispatch();
 
 
-  useEffect(async () => {
-    await dispatch(__kakaoLogin(code));
-  }, [code]);
+	useEffect(() => {
+		if (code) {
+			dispatch(__kakaoLogin(code));
+		}
+	}, [code])
 
-  return (
-	<H3>로그인 중입니다.</H3>
-  )
+	// useEffect(async () => {
+	// 	console.log("code", code)
+	// 	await dispatch(__kakaoLogin(code));
+	// }, [code]);
+
+	return (
+		<H3>로그인 중입니다.</H3>
+	)
 
 
-  
+
 
 	// useEffect(() => {
 	// 	if (!!code) {
