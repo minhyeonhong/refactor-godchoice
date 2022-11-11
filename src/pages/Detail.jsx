@@ -9,7 +9,9 @@ import Recruitment from '../components/detail/Recruitment';
 const Detail = () => {
     return (
         <Layout>
-            <Questions />
+            {/* <Questions /> */}
+            {/* <Event /> */}
+            <Recruitment />
         </Layout>
     );
 };

@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Form from 'react-bootstrap/Form';
 import { FiSearch } from 'react-icons/fi'
-import { useState } from 'react';
 
 const Search = () => {
 

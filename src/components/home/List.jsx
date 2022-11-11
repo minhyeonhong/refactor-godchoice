@@ -48,31 +48,9 @@ const List = () => {
                         <div>title:{val.title}</div>
                         <div>content:{val.content}</div>
                     </StCardItem>
-                    // <React.Fragment key={val.id}>
-                    //     {/* {posts.length - 1 === i ? (
-                    //         <StCardItem ref={ref} backC='red'>
-                    //             <div>title:{val.title}</div>
-                    //             <div>content:{val.content}</div>
-                    //         </StCardItem>
-                    //     ) : ( */}
-                    //         <StCardItem backC='orange'>
-                    //             <div>title:{val.title}</div>
-                    //             <div>content:{val.content}</div>
-                    //         </StCardItem>
-                    //     {/* )} */}
-
-                    // </React.Fragment>
                 )
             })}
             <div ref={ref} ></div>
-
-
-            {/*
-                <input type='text' name='title' value={insertCon.title || ""} onChange={insertConHandle} />
-                <input type='text' name='content' value={insertCon.content || ""} onChange={insertConHandle} />
-                <button onClick={insertContent}>글작성</button>
-            */}
-
         </div>
     );
 };

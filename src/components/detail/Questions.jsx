@@ -1,12 +1,20 @@
 import React from 'react';
-import styled from 'styled-components';
 import Comment from '../common/Comment';
 import KakaoMap from '../common/KakaoMap';
 
+import {
+    StWrap,
+    StTitleBox,
+    StImgBox,
+    StContentBox,
+    StEventLinkBox,
+    StEventPlaceBox,
+    StButtonBox
+} from '../styles/Detail.styled'
 
 const Questions = () => {
     return (
-        <StQuestionsWrap>
+        <StWrap>
             <StTitleBox>제목</StTitleBox>
 
             <StImgBox>
@@ -35,73 +43,8 @@ const Questions = () => {
             </StButtonBox>
             <Comment />
 
-        </StQuestionsWrap>
+        </StWrap>
     );
 };
 
 export default Questions;
-
-const StTitleBox = styled.div`
-    height : 34px;
-    background-color : pink;
-`
-
-const StQuestionsWrap = styled.div`
-    width : 95%;
-    display:flex;
-    flex-direction : column;
-    margin : 0 auto;
-    gap : 5px;
-`
-
-const StImgBox = styled.div`
-    margin : 0 auto;
-    .main-img {
-        width : 330px;
-        height : 300px;
-    }
-    .sub-img-wrap {
-        display:flex;
-        flex-direction : row;
-        gap : 5px;
-    }
-    .sub-img {
-        width: 56px;
-        height: 56px;
-    }
-    
-`
-
-const StContentBox = styled.div`
-    height : 70px;
-    background-color : pink;
-`
-
-const StEventLinkBox = styled.div`
-    height : 70px;
-    background-color : pink;
-`
-
-const StEventPlaceBox = styled.div`
-    height : 70px;
-    background-color : pink;
-    .address-box{
-        display:flex;
-        flex-direction :row;
-        justify-content :space-between;
-    }
-    .tag {
-        background-color : white;
-        border : none;
-        border-radius : 50px;
-    }
-    .address{
-
-    }
-`
-
-const StButtonBox = styled.div`
-    display:flex;
-    flex-direction :row;
-    justify-content :end;
-`
