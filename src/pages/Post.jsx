@@ -6,18 +6,26 @@ import Form from 'react-bootstrap/Form';
 import SearchAddress from './SearchAddress';
 import PopupDom from './PopupDom';
 import { useDispatch, useSelector } from 'react-redux';
-import { __addPost,  __getPost } from '../redux/modules/PostSlice';
-import {__addPost2,__getPost2 } from "../redux/modules/PostSlice2"
+import { __addPost} from '../redux/modules/postSlice';
+import {__addPost2} from "../redux/modules/PostSlice2"
 import imageCompression from 'browser-image-compression';
-import MapApi from './MapApi';
 
+import KakaoMap from '../components/common/KakaoMap'
+import { useNavigate } from 'react-router-dom';
+//남녀 성비 버튼
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import ToggleButton from 'react-bootstrap/ToggleButton';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Carousel from 'react-bootstrap/Carousel';
 
 const Post = () => {
     const dispatch = useDispatch();
-    const posts = useSelector((state)=> state.posts.posts)
-    const gatherPost = useSelector((state)=> state.gatherPosts.gatherPosts)
+    const navigate = useNavigate()
+    // const posts = useSelector((state)=> state.postSlice.posts)
+    //const gatherPost = useSelector((state)=> state.gatherPosts.gatherPosts)
     
-
+    //주소 API useState
     const [postAddress, setPostAddress] = useState("")
 
     //1.이미지 업로드 부분
@@ -29,7 +37,7 @@ const Post = () => {
         const files = e.currentTarget.files;
   
         if ([...files].length > 5) {
-          alert('이미지는 최대 3개까지 업로드가 가능합니다.');
+          alert('이미지는 최대 5개까지 업로드가 가능합니다.');
           return;
         }
   
@@ -47,7 +55,6 @@ const Post = () => {
           imageCompression(file, options)
             .then((res) => {
   
-              //이미지를 담기 : type에서 "image/*"을 하면 나오지 X split을 이용
               setImgFile(imgs => [...imgs, new File([res], res.name, { type: "image/" + res.name.split(".")[1] })]);
               const reader = new FileReader(); 
   
@@ -60,9 +67,7 @@ const Post = () => {
               console.log("파일 압축 실패", error);
             })
         });
-  
       }
-
 
     //2-1 게시글 작성 - 행사글
         
@@ -72,8 +77,8 @@ const Post = () => {
             endPeriod : "",
             title : "",
             content : "",
-            link : "",
-            //multiFile : "" 
+            postLink : "",
+            detailAddress: "" //상세 주소를 보내주기 위함
         })
 
         const onChangeHandler =(e) => {
@@ -90,50 +95,56 @@ const Post = () => {
 
             if (imgFile.length > 0) {
                 imgFile.forEach((file) => {
-                  formData.append("multiFile", file);
+                  formData.append("multipartFile", file);
                 })
               } else {
-                formData.append("multiFile", null);
+                formData.append("multipartFile", null);
               }
                
-            //폼 데이터에 데이터 넣기
-            formData.append("postId", posts.length+1);
-            formData.append("category", festival.category);
-            formData.append("startPeriod", festival.startPeriod);
-            formData.append("endPeriod", festival. endPeriod);
-            formData.append("title", festival.title);
-            formData.append("content", festival.content);
-            formData.append("postAddress", postAddress);
-            //formData.append("link", festival.link);
-
-            
-            //Api 날리기
+            const obj = {
+                category : festival.category,
+                startPeriod : festival.startPeriod,
+                endPeriod : festival.endPeriod,
+                title:festival.title,
+                content:festival.content,
+                postLink : festival.postLink,
+                postAddress: postAddress+festival.detailAddress, //상세 주소 내용 추가
+                }
+                
+                formData.append("eventPostReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
+       
             dispatch(__addPost(formData));
             //window.location.replace("/postlist")
-
-            // dispatch(__addPost({
-            //     postId:posts.length+1,
-            //     category : festival.category,
-            //     startPeriod : festival.startPeriod,
-            //     endPeriod : festival.endPeriod,
-            //     title : festival.title,
-            //     content : festival.content,
-            //     postAddress : postAddress,
-            //     link : festival.link,}))
-
-                // if(festival.title.trim() === ""|| !festival.content.trim() === "" ||!festival.link.trim() === "") {
-                //     return alert("모든 항목을 입력해주세요.");
-                // }
         }
 
 
     //2-2 게시글 작성 - 모집글
+
+        //모집인원
+        const [counter, setCounter] = useState(0);
+        
+        const handleAdd = (e) => {
+            setCounter(counter+1);
+        }
+
+        const handleminus = (e)=> {
+            setCounter(counter-1)
+        }
+        // 남녀 성비
+        const [sexValue, setSexValue] = useState('');
+
+        const sexs = [
+          { name: '성비무관', value: 'NF' },
+          { name: '남', value: 'M' },
+          { name: '여', value: 'W' },
+        ];
+
+        //나머지 내용
         const [gatherPosts, setGatherPosts] = useState({
             category :"",
             date : "",
-            number: "",
             kakaoLink:"",
-            sex:"",
+            //sex:"",
             startAge:"",
             endAge:"",
             title:"",
@@ -156,64 +167,35 @@ const Post = () => {
 
             if (imgFile.length > 0) {
                 imgFile.forEach((file) => {
-                  formData.append("multiFile", file);
+                  formData.append("multipartFile", file);
                 })
               } else {
-                formData.append("multiFile", null);
+                formData.append("multipartFile", null);
               }
             
-            //폼 데이터에 데이터 넣기
-            formData.append("postId", gatherPost.length+1);
-            formData.append("category", gatherPost.category);
-            formData.append("date", gatherPost.date );
-            formData.append("number", gatherPost.number);
-            formData.append("kakaoLink", gatherPost.kakaoLink);
-            formData.append("sex", gatherPost.sex);
-            formData.append("startAge", gatherPost.startAge);
-            formData.append("endAge", gatherPost.endAge);
-            formData.append("content", gatherPost.content);
-            formData.append("postLink", gatherPost.postLink);
-            formData.append("postAddress", postAddress);
+            const obj2 = {
+                category : gatherPosts.category,
+                date : gatherPosts.date,
+                number : counter,
+                kakaoLink : gatherPosts.kakaoLink,
+                sex : sexValue,
+                startAge : gatherPosts.startAge,
+                endAge : gatherPosts.endAge,
+                title : gatherPosts.title,
+                content : gatherPosts.content,
+                postLink : gatherPosts.postLink,
+                postAddress : postAddress,
+            }
 
+            formData.append(
+                "gatherPostDto",
+                new Blob([JSON.stringify(obj2)], { type: "application/json" })
+                );
 
             dispatch(__addPost2(formData));
-            //window.location.replace("/postlist")
-
-            // dispatch(__addPost2({
-            //     postId:gatherPost.length+1,
-            //     category :gatherPosts.category ,
-            //     date : gatherPosts.date,
-            //     number: gatherPosts.number,
-            //     kakaoLink: gatherPosts.kakaoLink,
-            //     sex: gatherPosts.sex,
-            //     startAge: gatherPosts.startAge,
-            //     endAge: gatherPosts.endAge,
-            //     title: gatherPosts.title,
-            //     content: gatherPosts.content,
-            //     postLink: gatherPosts.postLink,
-            //     postAddress:postAddress  ,
-            
-           // }))
-
-                // if(festival.title.trim() === ""|| !festival.content.trim() === "" ||!festival.link.trim() === "") {
-                //     return alert("모든 항목을 입력해주세요.");
-                // }
         }
-
-
-    //글작성 get 가져오기
-    // useEffect(() => {
-    //     dispatch(__getPost())
-    //   }, [dispatch])
-
-    //모집글 get 가져오기
-    // useEffect(() => {
-    //     dispatch(__getPost2())
-    //   }, [dispatch])
-
-    //map 가져오기
     
-
+       
     // 주소 API 팝업창 상태 관리
     const [isPopupOpen, setIsPopupOpen] = useState(false)
  
@@ -224,46 +206,58 @@ const Post = () => {
     // 모집 구분글
     const [option, setOption] = useState();
 
-    //-----------------------------------------------------------------
-    //map 가져오기
+    //날짜 제한
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth()+1;
+    const year = today.getFullYear()
 
-    // const [map,setMap] = useState(null);
-
-    // useEffect(()=>{
-    //     const container = document.getElementById('map');
-    //     const options = { center: new kakao.maps.LatLng(33.450701, 126.570667) };
-    //     const kakaoMap = new kakao.maps.Map(container, options);
-    //     setMap(kakaoMap);
-    // },[])
-
+    const today2= year + '-' + month + '-' + day;
+    
+    //console.log(festival.startPeriod);
     return (
         <Layout>
             <div>
                 <Form.Select aria-label="Default select example" style={{width :"250px"}}
                 value="option" onChange={(e)=>setOption(e.target.value)}>
                     <option>모집 구분</option>
-                    <option value="글작성">글작성</option>
+                    <option value="글작성">행사글</option>
                     <option value="모집글">모집글</option>
                 </Form.Select>
              
                 {
                     option==="글작성" &&
-                        (<div>
-                            <label>글작성</label>
+                        (<>
+                          
                             <Form.Select aria-label="Default select example" style={{width :"250px"}} name="category" onChange={onChangeHandler}>
                                 <option>카테고리</option>
                                 <option value="마라톤">마라톤</option>
                                 <option value="페스티벌">페스티벌</option>
                                 <option value="전시회">전시회</option>
+                                <option value="공연">공연</option>
+                                <option value="기타">기타</option>
                             </Form.Select>
-                        
-                            <input type="date" name="startPeriod" onChange={onChangeHandler} min={new Date()} /> ~ 
-                            <input type="date" name="endPeriod" onChange={onChangeHandler}  min={new Date()} />
-                            
-                            <div>
+                            <Row className="mb-3">
+                                <Form.Group as={Col} controlId="formGridCity">
+                                    <Form.Label>행사시작</Form.Label>
+                                    <Form.Control type="date" name="startPeriod" onChange={onChangeHandler} min={today2}/>
+                                </Form.Group>
+                                <Form.Group as={Col} controlId="formGridCity">
+                                    <Form.Label>행사마감</Form.Label>
+                                    <Form.Control type="date" name="endPeriod" onChange={onChangeHandler}  min={today2}/>
+                                </Form.Group>
+                            </Row>
+                            <hr/>
+                            {/* <input type="date" name="startPeriod" onChange={onChangeHandler} min={today2} data-placeholder="행사 시작"/> ~ 
+                            <input type="date" name="endPeriod" onChange={onChangeHandler}  min={today2} /> */}
+                            <Form.Group className="mb-3" controlId="formGridAddress1">
+                                <Form.Label>글 작성</Form.Label>
+                                <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler} />
+                            </Form.Group>
+                            {/* <div>
                                 <label>글 작성</label><br/>
                                 <input type="text" placeholder="제목" name="title" onChange={onChangeHandler}/>
-                            </div>
+                            </div> */}
 
                             <div><br/>
                             <button onClick={()=> { imgRef.current.click()}}> 업로드 버튼</button><br/>
@@ -276,79 +270,115 @@ const Post = () => {
                                         accept="image/*"
                                         ref={imgRef}
                                         name="imgFile"/>
-                                
-                                            {
+                                <Carousel fade>
+                                    
+                                        {
                                             imgUrl.map((img) => {
                                                 return (
-                                                <div key={img.id}>
-                                                    <img src={img ? img : ""}  style={{height: "300px", width : "300px"}}/>
-                                                </div>
+                                                <Carousel.Item key={img.id}>            
+                                                            <img src={img ? img : ""} />  
+                                                </Carousel.Item>
                                                 )
-                                                })
-                                            }
+                                            })
+                                        }
+                                   
+                                </Carousel>
                                 </label>
                             </div >
-
-                            <input type="text" placeholder="소개글" name="content" onChange={onChangeHandler}/>
+            
+                                <Form.Control  type="text" placeholder="소개글" name="content" onChange={onChangeHandler} style={{height : '200px'}}/>
+                                {/* <input type="text" placeholder="소개글" name="content" onChange={onChangeHandler}/> */}
+                               
+                                <Form.Group as={Row} className="mb-3" controlId="formHorizontalEmail">
+                                    <Form.Label column sm={2} style={{fontSize : "15px"}}> 행사장 링크 </Form.Label>
+                                    <Col sm={1}>
+                                        <Form.Control type="text" placeholder="링크" name="postLink" onChange={onChangeHandler} style={{width : '500px'}}/>
+                                    </Col>
+                                </Form.Group>
                             {/* <div>
                                 <label>행사장 링크</label>
-                                <input type="text" placeholder="링크" name="link" onChange={onChangeHandler}/>
+                                
+                                <input type="text" placeholder="링크" name="postLink" onChange={onChangeHandler}/>
                             </div> */}
                             
                             <div>
                                 <button type='button' onClick={popupPostCode}>우편번호 검색</button>
+                                {postAddress}
+                                <input type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} />
                         
                                 <div id='popupDom'>
-                                    {postAddress}
                                     {isPopupOpen && (
                                         <PopupDom>
                                             <SearchAddress onClose={popupPostCode} setPostAddres={setPostAddress}/>  
-                                        
                                         </PopupDom>
                                     )}
                                 </div>
-                                <MapApi />
-                                <button onClick={onSubmit}>등록하기</button>
-                            </div>
-                        </div>
+                               
+                                {
+                                    postAddress !== ""&&<KakaoMap address={postAddress} width="500px" height="300px"/>
+                                }
+                                                          
+                            </div><br/>
+                            <button onClick={onSubmit}>등록하기</button>
+                            <button onClick={()=>navigate(-1)}>취소</button>
+                        </>
                     )   
                 }   
 
 
                 { 
-                    option==="모집글" &&(<div>
-
-                        <label>모집글</label>
-                        <div>
-                            <label>모집인원</label><br/>
-                            <input type="text" placeholder="제목" name="number" onChange={onChangeHandler2}/>
-                        </div>                  
+                    option==="모집글" &&(
+                    
+                    <>    
+                        <label>모집인원</label>
+                        <button onClick={handleAdd}>+</button>{counter>=0? counter : alert("인원을 입력해주세요")}<button onClick={handleminus}>-</button>
+                                         
                         <Form.Select aria-label="Default select example" style={{width :"250px"}} name="category" onChange={onChangeHandler2}>
                             <option>카테고리</option>
                             <option value="마라톤">마라톤</option>
                             <option value="페스티벌">페스티벌</option>
                             <option value="전시회">전시회</option>
+                            <option value="공연">공연</option>
+                            <option value="기타">기타</option>
                         </Form.Select>
-                        {/* 제외할 것 같다. <Form.Select aria-label="Default select example" style={{width :"250px"}}>
-                            <option>연락방법</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
-                        </Form.Select> */}
 
-                        <input type="date" name="date" onChange={onChangeHandler2} /> 
-                        
-
-                        <select name="sex" onChange={onChangeHandler2} >
-                            <option value="NF">성비무관</option>
-                            <option value="M">남</option>
-                            <option value="W">여</option>
-                        </select>
+                        <ButtonGroup className="mb-2">
+                            {sexs.map((radio, idx) => (
+                            <ToggleButton
+                                key={idx}
+                                id={`radio-${idx}`}
+                                type="radio"
+                                variant="secondary"
+                                name="radio"
+                                value={radio.value}
+                                checked={sexValue === radio.value}
+                                onChange={(e) => setSexValue(e.currentTarget.value)}
+                            >
+                                {radio.name}
+                            </ToggleButton>
+                            ))}
+                        </ButtonGroup>
+                        {/* <input type="date" name="date" onChange={onChangeHandler2} min={today2}/><br/> */}
+                        <Row className="mb-3">
+                                <Form.Group as={Col} controlId="formGridCity">
+                                <Form.Label>행사시작</Form.Label>
+                                <Form.Control type="date"  name="date" onChange={onChangeHandler2} min={today2} style={{width:'200px'}}/>
+                                </Form.Group>
+                        </Row>
                         <div>
+                            <input type="text" placeholder='나이' name="startAge" style={{width: "60px"}} onChange={onChangeHandler2}/> ~ 
+                            <input type="text" placeholder='나이' name="endAge" style={{width: "60px"}} onChange={onChangeHandler2}/>
+                        </div>
+                        <Form.Group className="mb-3" controlId="formGridAddress1">
+                            <Form.Label>글 작성</Form.Label>
+                            <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler2}/>
+                        </Form.Group>
+
+                        {/* <div>
                             <label>글 작성</label><br/>
                             <input type="text" placeholder="제목" name="title" onChange={onChangeHandler2}/>
                         </div>
-                       
+                        */}
                         <div><br/>
                             <button onClick={()=> { imgRef.current.click()}}> 업로드 버튼</button><br/>
                                 <label htmlFor="imgFile">
@@ -373,76 +403,49 @@ const Post = () => {
                                 </label>
                             </div >
 
-
-                        <input type="text" placeholder="소개글" name="content" onChange={onChangeHandler2}/>
-                        <div>
+                        <Form.Control  type="text" placeholder="소개글" name="content" onChange={onChangeHandler2} style={{height : '200px'}}/>
+                        {/* <input type="text" placeholder="소개글" name="content" onChange={onChangeHandler2}/> */}
+                        <Form.Group className="mb-3" controlId="formGridAddress1">
+                            <Form.Label>카카오 링크</Form.Label>
+                            <Form.Control type="text" placeholder="링크" name="kakaoLink" onChange={onChangeHandler2}/>
+                        </Form.Group>
+                        {/* <div>
                             <label>카카오 링크</label>
                             <input type="text" placeholder="링크" name="kakaoLink" onChange={onChangeHandler2}/>
-                        </div>
-
-                        <div>
-                            <input type="text" placeholder='나이' name="startAge" style={{width: "60px"}} onChange={onChangeHandler2}/> ~ 
-                            <input type="text" placeholder='나이' name="endAge" style={{width: "60px"}} onChange={onChangeHandler2}/>
-                        </div>
-                            <div>
-                                <label>행사장 링크</label>
-                                <input type="text" placeholder="링크" name="postLink" onChange={onChangeHandler2}/>
-                            </div>
+                        </div> */}
+                        <Form.Group className="mb-3" controlId="formGridAddress1">
+                            <Form.Label>행사장 링크</Form.Label>
+                            <Form.Control type="text" placeholder="링크" name="postLink" onChange={onChangeHandler2}/>
+                        </Form.Group>
+                        {/* <div>
+                            <label>행사장 링크</label>
+                            <input type="text" placeholder="링크" name="postLink" onChange={onChangeHandler2}/>
+                        </div> */}
                             
                             
                         <div>
-                            <button type='button' onClick={popupPostCode}>우편번호 검색</button>
-                        
+                            <input type="text" value={postAddress} placeholder='버튼을 클릭해주세요' style={{width: "70%"}}/>
+                            <button type='button' onClick={popupPostCode}>우편번호 검색</button><br/>
+                            {/* {postAddress} */}
+                            <input type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{width: "70%"}}/>
                             <div id='popupDom'>
-                                {postAddress}
                                 {isPopupOpen && (
                                     <PopupDom>
                                         <SearchAddress onClose={popupPostCode} setPostAddres={setPostAddress}/>  
                                     </PopupDom>
                                 )}
-                            </div>                       
-                            <button onClick={onSubmit2}>등록하기</button>
+                            </div>    
+                            {
+                                postAddress !== ""&&<KakaoMap address={postAddress} width="500px" height="300px"/>
+                            }                   
+                           
                         </div>
-                    </div>)
-                }
-
-
-                
+                        <br/>
+                        <button onClick={onSubmit2}>등록하기</button>
+                        <button onClick={()=>navigate(-1)}>취소</button>
+                    </>)
+                }      
             </div>
-            {/* 확인하기 위한 것 - 행사글 게시글 작성 */}
-            {/* {
-                posts.length > 0 &&(posts.map((post)=> (
-                <div key={post.id}>
-                    <div>카테고리 : {post.category}</div>
-                    <div>{post.startPeriod} ~ {post.endPeriod}</div>
-                    <img src={Racoon} style={{width:"300px", height: "300px"}} /><br/>
-                    <div>제목 : {post.title}</div>
-                    <div>내용 : {post.content}</div>
-                    <div>주소 : {post.postAddress}</div>
-                    <div>링크 : {post.link}</div>
-                    <hr/>
-                </div>
-                )))
-            } */}
-            
-            {/* 확인하기 위한 것 - 모집글 게시글 작성 */}
-            {/* {
-                gatherPost !== undefined &&(gatherPost.map((item)=>(
-                    <div key={item}>
-                        <div>{item.category}</div>
-                        <div>{item.date}</div>
-                        <div>{item.number}</div>
-                        <div>{item.kakaoLink}</div>
-                        <div>{item.sex}</div>
-                        <div>{item.startAge}~{item.endAge}</div>
-                        <div>{item.title}</div>
-                        <div>{item.content}</div>
-                        <div>{item.postLink}</div>
-                        <div>{item.postAddress}</div>
-                        <hr/>
-                    </div>)
-                ))
-            } */}
         </Layout>
     );
 };

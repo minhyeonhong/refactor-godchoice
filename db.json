@@ -25,34 +25,22 @@
   ],
   "comments": [
     {
-      "postId": 1,
-      "category": "마라톤",
-      "date": "2022-11-17",
-      "number": "ㅁㄴㄹㅇㄹㄴㅇ",
-      "kakaoLink": "kakaotalk",
-      "sex": "W",
-      "startAge": "20",
-      "endAge": "25",
-      "title": "ㅁㄴㅇㄹ",
-      "content": "ㅁㄴㅇ",
-      "postLink": "http://localhost:3001",
-      "postAddress": "서울 서초구 전원말안길 2 (방배동, 마을회관)",
+      "title": "안녕하세요ㅁㄴㄻㄴㅇ",
+      "content": "ㅁㄴㅇㄻㄴㅇㄹ",
+      "postAddress": "전북 전주시 덕진구 가련산로 5 (덕진동2가)",
       "id": 1
     },
     {
-      "postId": 2,
-      "category": "페스티벌",
-      "date": "2022-11-11",
-      "number": "ㅁ123124",
-      "kakaoLink": "kakaotalk",
-      "sex": "W",
-      "startAge": "20",
-      "endAge": "25",
-      "title": "12124124",
-      "content": "ㅁㄴㅇㄻㄴㅇㄹ",
-      "postLink": "http://localhost:3001",
-      "postAddress": "서울 동대문구 답십리로 3 (전농동)",
+      "title": "ㅁㄴㅇㄻㄴㄹㅇ",
+      "content": "ㅁㄴㅇㅁㄴㅇㄹ",
+      "postAddress": "부산 부산진구 전포대로 124-2 (전포동)",
       "id": 2
+    },
+    {
+      "title": "ㅁㄴㄹㅇ",
+      "content": "121121",
+      "postAddress": "서울 성동구 마조로 42 (사근동, 한양대부속중고등학교)",
+      "id": 3
     }
   ]
 }

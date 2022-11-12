@@ -4,6 +4,9 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "../pages/Home";
 import MyPage from "../pages/MyPage";
 import Post from "../pages/Post";
+import Detail from "../pages/Detail";
+import QuestionPost from "../pages/QuestionPost";
+
 
 const Router = () => {
     return (
@@ -15,6 +18,10 @@ const Router = () => {
                 <Route path="/mypage" element={<MyPage />} />
                 {/* 포스트 페이지 */}
                 <Route path="/post" element={<Post />} />
+                {/*작성글 페이지 */}
+                <Route path="/questionpost" element={<QuestionPost />} />
+                {/* 디테일 페이지 */}
+                <Route path="/detail" element={<Detail />} />
             </Routes>
         </BrowserRouter>
     );
