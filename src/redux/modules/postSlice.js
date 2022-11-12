@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 import { postApis } from "../../api/api-functions/postApis"
 
 
@@ -41,6 +42,31 @@ export const __insertPost = createAsyncThunk(
     }
 )
 
+export const __addPost = createAsyncThunk(
+    "posts/__addPost",
+    async (payload, thunkAPI) => {
+        try {
+            console.log(payload)
+            await axios
+                .post(`http://3.38.255.232/eventposts`, payload, {
+                    headers: {
+                        Access_Token: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrX21oaDIwMjhAbmF2ZXIuY29tIiwiZXhwIjoxNjY4MTc4OTE5LCJpYXQiOjE2NjgxNzUzMTl9.t5DHMsToXqeNwbuHxQiRJzj2aq4if6comErbPql_pEo"
+                        // RefreshToken: refreshToken, 생략 예정
+                        //"Cache-Control": "no-cache",
+                    },
+                })
+                .then((response) => {
+                    console.log("response", response.data);
+                });
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error);
+        }
+    }
+);
+
+
+
 export const postSlice = createSlice({
     name: "postSlice",
     initialState: {
@@ -73,6 +99,21 @@ export const postSlice = createSlice({
         [__postList.rejected]: (state, action) => {
             state.isLoading = false;
             console.log(action.payload);
+        },
+
+
+
+        //__addPost
+        [__addPost.pending]: (state) => {
+            state.isLoading = true;
+        },
+        [__addPost.fulfilled]: (state, action) => {
+            state.isLoading = false;
+            state.posts = action.payload;
+        },
+        [__addPost.rejected]: (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
         },
     }
 });

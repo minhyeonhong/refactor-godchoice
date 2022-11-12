@@ -10,6 +10,7 @@ import LoginPage from "../pages/LoginPage";
 import MyPage from "../pages/MyPage";
 import Post from "../pages/Post";
 import Detail from "../pages/Detail";
+import QuestionPost from "../pages/QuestionPost";
 
 
 const Router = () => {
@@ -31,6 +32,8 @@ const Router = () => {
                 <Route path="/member/signup/naver" element={<Naver />} />
                 {/* 구글 로그인 --- Redirect_URI 경로로 넣기*/}
                 <Route path="/member/signup/google" element={<Google />} />
+                {/*작성글 페이지 */}
+                <Route path="/questionpost" element={<QuestionPost />} />
                 {/* 디테일 페이지 */}
                 <Route path="/detail" element={<Detail />} />
             </Routes>

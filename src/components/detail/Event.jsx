@@ -77,3 +77,5 @@ const Event = () => {
 };
 
 export default Event;
+
+export default Event;
