@@ -1,6 +1,8 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Kakao from "../components/login/Kakao";
+import Naver from "../components/login/Naver";
+import Google from "../components/login/Google";
 
 
 import Home from "../pages/Home";
@@ -25,6 +27,10 @@ const Router = () => {
 
                 {/* 카카오 로그인 --- Redirect_URI 경로로 넣기*/}
                 <Route path="/member/signup/kakao" element={<Kakao />} />
+                {/* 네이버 로그인 --- Redirect_URI 경로로 넣기*/}
+                <Route path="/member/signup/naver" element={<Naver />} />
+                {/* 구글 로그인 --- Redirect_URI 경로로 넣기*/}
+                <Route path="/member/signup/google" element={<Google />} />
                 {/* 디테일 페이지 */}
                 <Route path="/detail" element={<Detail />} />
             </Routes>
