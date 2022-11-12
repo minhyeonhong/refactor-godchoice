@@ -3,12 +3,14 @@ import React, { useState } from 'react';
 import Layout from '../components/layout/Layout';
 import List from '../components/home/List'
 import Search from '../components/home/Search'
-
+import Loading from '../components/common/Loading'
 import Carousel from 'react-bootstrap/Carousel';
 import styled from 'styled-components';
 
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+
+import { getCookie } from '../cookie/cookie';
 
 const Home = () => {
     const [index, setIndex] = useState(0);
@@ -16,9 +18,10 @@ const Home = () => {
     const handleSelect = (selectedIndex, e) => {
         setIndex(selectedIndex);
     };
+
+    console.log('쿠키 ====> ', getCookie('token'))
     return (
         <Layout>
-
             {/* 슬라이드 */}
             <StCarouselWrap>
                 <Carousel activeIndex={index} onSelect={handleSelect}>
@@ -66,22 +69,24 @@ const Home = () => {
             <Search />
 
             {/* 리스트 */}
-            <Tabs
-                defaultActiveKey="home"
-                id="justify-tab-example"
-                className="mb-3"
-                justify
-            >
-                <Tab eventKey="home" title="행사글">
-                    <List />
-                </Tab>
-                <Tab eventKey="profile" title="모집글">
-                    a
-                </Tab>
-                <Tab eventKey="longer-tab" title="질문글">
-                    s
-                </Tab>
-            </Tabs>
+            <StTabBox>
+                <Tabs
+                    defaultActiveKey="home"
+                    id="justify-tab-example"
+                    className="mb-3"
+                    justify
+                >
+                    <Tab eventKey="home" title="행사글">
+                        <List />
+                    </Tab>
+                    <Tab eventKey="profile" title="모집글">
+                        a
+                    </Tab>
+                    <Tab eventKey="longer-tab" title="질문글">
+                        s
+                    </Tab>
+                </Tabs>
+            </StTabBox>
 
         </Layout>
     );
@@ -94,4 +99,32 @@ const StCarouselWrap = styled.div`
         width:3px;
         border-radius : 50%;
     }
+`
+const StTabBox = styled.div`
+     margin : 0 10px;
+     .nav-link {
+        color : #ADABA9;
+        font-weight : bold;
+    }
+    .nav-link.active {
+        color : black;
+        font-weight : bold;
+    }
+     /*
+    li {
+        border-bottom : 1px solid #dee2e6;
+    }
+    .nav-tabs {
+        --bs-nav-tabs-border-width: none;
+    }
+    .nav-link {
+        color : #ADABA9;
+        font-weight : bold;
+    }
+    .nav-link.active {
+        color : black;
+        font-weight : bold;
+        border-bottom : 3px solid black;
+        border-width : 30%;
+    } */
 `

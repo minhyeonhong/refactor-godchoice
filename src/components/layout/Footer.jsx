@@ -16,9 +16,9 @@ const StFooterWrap = styled.div`
 `
 
 const StCopyright = styled.span`
-  position: fixed;
+  /* position: fixed;
   bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
-  font-weight: 400;
+  font-weight: 400; */
 `;
