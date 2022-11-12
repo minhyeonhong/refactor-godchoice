@@ -12,16 +12,18 @@ import {
     StButtonBox
 } from '../styles/Detail.styled'
 
+import noImg from '../../assets/images/common/noImg.jpg'
+
 const Questions = () => {
     return (
         <StWrap>
             <StTitleBox>제목</StTitleBox>
 
             <StImgBox>
-                <img className='main-img' src={`${process.env.PUBLIC_URL}/img/noImg.jpg`} />
+                <img className='main-img' src={noImg} />
                 <div className='sub-img-wrap'>
-                    <img className='sub-img' src={`${process.env.PUBLIC_URL}/img/noImg.jpg`} />
-                    <img className='sub-img' src={`${process.env.PUBLIC_URL}/img/noImg.jpg`} />
+                    <img className='sub-img' src={noImg} />
+                    <img className='sub-img' src={noImg} />
                 </div>
             </StImgBox>
 

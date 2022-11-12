@@ -16,6 +16,3 @@ export const hInstance = axios.create({
     },
     withCredentials: true,
 });
-
-
-

@@ -12,9 +12,9 @@ export const __kakaoLogin = createAsyncThunk(
         .then((res) => {
           console.log("넘어온 값", res); // 토큰이 넘어올 것임
           const Access_Token = res.headers.access_token;
-          console.log(Access_Token)
-          setCookie("token", Access_Token)
-          window.location.replace("/")
+          localStorage.setItem("token", Access_Token);
+          //setCookie("token", Access_Token)
+          //window.location.replace("/")
         }).catch((error) => {
           console.log("소셜로그인 에러", error);
           //window.alert("로그인에 실패하였습니다.");
