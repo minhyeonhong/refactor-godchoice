@@ -10,12 +10,16 @@ import styled from 'styled-components';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
+import { getCookie } from '../cookie/cookie';
+
 const Home = () => {
     const [index, setIndex] = useState(0);
 
     const handleSelect = (selectedIndex, e) => {
         setIndex(selectedIndex);
     };
+
+    console.log('쿠키 ====> ', getCookie('token'))
     return (
         <Layout>
 
