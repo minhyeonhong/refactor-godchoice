@@ -63,8 +63,7 @@ const Search = () => {
 export default Search;
 
 const StSearchWrap = styled.div`
-    height : 140px;
-    //background-color : pink;
+    height : 140px;    
     display:flex;
     flex-direction: column;
     justify-content : space-evenly
@@ -93,7 +92,6 @@ const StSearchBox = styled.div`
 `
 
 const StTagBox = styled.div`
-    width : 355px;
     overflow : scroll;
     display :flex;
     flex-direction : row;
