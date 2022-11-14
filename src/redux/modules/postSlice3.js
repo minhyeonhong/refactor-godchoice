@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { getCookie } from "../../pages/Post";
+import { getCookie } from "../../cookie/cookie";
 
 const initialState={
     questionPosts : [
@@ -18,7 +18,7 @@ export const __addPost3 = createAsyncThunk(
           .post(`http://3.38.255.232/askposts`, payload, {
             headers: {
               enctype: "multipart/form-data",
-              Access_Token: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrX21oaDIwMjhAbmF2ZXIuY29tIiwiZXhwIjoxNjY4MTc4OTE5LCJpYXQiOjE2NjgxNzUzMTl9.t5DHMsToXqeNwbuHxQiRJzj2aq4if6comErbPql_pEo",
+              Access_Token: getCookie('Access_Token'),
               // RefreshToken: refreshToken, 생략 예정
               //"Cache-Control": "no-cache",
             },
