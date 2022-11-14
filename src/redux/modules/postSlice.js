@@ -20,29 +20,6 @@ export const __postList = createAsyncThunk(
     }
 )
 
-//글작성
-export const __insertPost = createAsyncThunk(
-    "postSlice/__insertPost",
-    async (payload, thunkAPI) => {
-        try {
-            await postApis.insertPostAX(payload)
-                .then((res) => {
-                    console.log("res", res)
-                }).catch((error) => {
-                    console.log("error", error)
-                })
-
-            // const obj = {
-            //     access_token: res.headers.access_token,
-            //     data: res.data
-            // }
-            // return thunkAPI.fulfillWithValue(obj);
-        } catch (error) {
-            return thunkAPI.rejectWithValue(error.response.data);
-        }
-    }
-)
-
 export const __addPost = createAsyncThunk(
     "posts/__addPost",
     async (payload, thunkAPI) => {
@@ -82,13 +59,6 @@ export const postSlice = createSlice({
         // },
     },
     extraReducers: {
-        //__insertPost
-        [__insertPost.fulfilled]: (state, action) => {
-
-        },
-        [__insertPost.rejected]: (state, action) => {
-
-        },
         //__postList
         [__postList.pending]: (state, action) => {
             state.isLoading = true;
@@ -101,7 +71,6 @@ export const postSlice = createSlice({
             state.isLoading = false;
             console.log(action.payload);
         },
-
 
 
         //__addPost
