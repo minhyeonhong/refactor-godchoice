@@ -92,7 +92,6 @@ const StSearchBox = styled.div`
 `
 
 const StTagBox = styled.div`
-    width : 355px;
     overflow : scroll;
     display :flex;
     flex-direction : row;
