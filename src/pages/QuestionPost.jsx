@@ -1,18 +1,19 @@
 import React, {useState, useEffect, useRef} from 'react';
 import Layout from '../components/layout/Layout';
-import SearchAddress from './SearchAddress';
+import SearchAddress from '../components/post/SearchAddress';
 import KakaoMap from '../components/common/KakaoMap'
-import PopupDom from './PopupDom';
-import { useDispatch, useSelector } from 'react-redux';
+import PopupDom from '../components/post/PopupDom';
+import { useDispatch } from 'react-redux';
 import imageCompression from 'browser-image-compression';
 import { useNavigate } from 'react-router-dom';
 import {__addPost3 } from "../redux/modules/postSlice3"
+import Carousel from 'react-bootstrap/Carousel';
 
 const QuestionPost =() => {
 
     const navigate = useNavigate()
     const dispatch = useDispatch();
-    const questionPosts = useSelector((state)=> state.questionPosts.questionPosts)
+    //const questionPosts = useSelector((state)=> state.questionPosts.questionPosts)
 
     // 주소 API 팝업창 상태 관리
     const [postAddress, setPostAddress] = useState("")
@@ -26,7 +27,8 @@ const QuestionPost =() => {
     const [question, setQuestion] = useState({
         title :"",
         content : "",
-        postLink : ""
+        postLink : "",
+        detailAddress : ""
     })
 
     const onChangeHandler =(e) => {
@@ -95,8 +97,8 @@ const QuestionPost =() => {
         const obj3 = {
             title : question.title,
             content : question.content,
-            //postLink : question.postLink,
-            //postAddress : postAddress,
+            postLink : question.postLink,
+            postAddress : postAddress+question.detailAddress,
         }
 
         formData.append(
@@ -126,17 +128,19 @@ const QuestionPost =() => {
                                 onChange={onChangeImage}
                                 accept="image/*"
                                 ref={imgRef}
-                                name="imgFile"/>
+                                name="imgFile"
+                                multiple/>
                                     
+                            <Carousel fade>
                                 {
                                     imgUrl.map((img) => {
                                         return (
-                                            <div key={img.id}>
-                                                <img src={img ? img : ""}  style={{height: "300px", width : "300px"}}/>
-                                            </div>
-                                        )
+                                            <Carousel.Item key={img.id}>            
+                                                <img style={{width:'550px'}} src={img ? img : ""} />  
+                                            </Carousel.Item>)
                                     })
                                 }
+                            </Carousel>
                         </label>
                 </div >
                 <input type="text" placeholder="소개글" name="content" onChange={onChangeHandler}/>
@@ -145,10 +149,11 @@ const QuestionPost =() => {
                     <input type="text" placeholder="링크" name="postLink" onChange={onChangeHandler}/>
                 </div>
                 <div>
+                <input type="text" value={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{width: "70%"}}/>
                     <button type='button' onClick={popupPostCode}>우편번호 검색</button>
-                            
+                    <input type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{width: "70%"}}/>    
                         <div id='popupDom'>
-                            {postAddress}
+                            {/* {postAddress} */}
                             {isPopupOpen && (
                                 <PopupDom>
                                     <SearchAddress onClose={popupPostCode} setPostAddres={setPostAddress}/>  
@@ -162,18 +167,6 @@ const QuestionPost =() => {
 
                     <button onClick={onSubmit}>등록하기</button>
                     <button onClick={()=>navigate(-1)}>취소</button>
-
-                    {
-                       questionPosts&&questionPosts.map((item)=> (
-                            <div key={item.id}>
-                                <div>{item.title}</div>
-                                <div>여기에 이미지가 들어갑니다</div>
-                                <div>{item.content}</div>
-                                <div>{item.postAddress}</div>
-                                <hr/>
-                            </div>
-                        ))
-                    }
             </Layout>
         </div>
     )
