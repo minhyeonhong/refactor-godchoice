@@ -20,6 +20,7 @@ function SearchAddress(props) {
     }
     //props.onClose()
     props.setPostAddres(fullAddress)
+    props.popupPostCode()
     console.log(data)
     //setInputs(fullAddress)
     console.log(fullAddress)
@@ -33,6 +34,7 @@ function SearchAddress(props) {
       <DaumPostcode
         onComplete={handleComplete}
         {...props}
+
       />
     </div>
     

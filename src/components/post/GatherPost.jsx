@@ -3,16 +3,13 @@ import { useDispatch} from 'react-redux';
 import {__addPost2} from "../../redux/modules/PostSlice2"
 import { useNavigate } from 'react-router-dom';
 import imageCompression from 'browser-image-compression';
+import { FiSearch } from 'react-icons/fi'
 //kakao 주소 관련
 import SearchAddress from './SearchAddress';
-import PopupDom from './PopupDom';
 import KakaoMap from '../../components/common/KakaoMap'
 //부트스트랩
-import Form from 'react-bootstrap/Form';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
 import Carousel from 'react-bootstrap/Carousel';
 import styled from 'styled-components';
 
@@ -75,7 +72,9 @@ const GatherPost =() => {
         }
 
         const handleminus = (e)=> {
-            setCounter(counter-1)
+            if(counter>0){
+                setCounter(counter-1)
+            }
         }
         // 남녀 성비
         const [sexValue, setSexValue] = useState('');
@@ -111,6 +110,24 @@ const GatherPost =() => {
 
         const onSubmit2 = () => {
 
+            // //모집인원, 카테고리, 성비관련, 행사시작, 연령대, 제목, 내용, 카카오링크
+            if(counter<1){return (alert('모집인원을 입력하세요'))}
+            if(gatherPosts.category===""){return (alert('카테고리를 입력하세요'))}
+            if(sexValue===""){return (alert('성비를 선택하세요'))}
+            if(gatherPosts.startAge===""||gatherPosts.endAge===""){return (alert('연령대를 입력하세요'))}
+            if(gatherPosts.title===""){return (alert('제목을 입력하세요'))}
+            if(gatherPosts.content===""){return (alert('내용을 입력하세요'))}
+            if(gatherPosts.date===""){return (alert('행사시작 일자를 입력하세요'))}
+            if(gatherPosts.kakaoLink===""){return (alert('연락할 카카오 링크를 입력하세요'))}
+
+            // //링크 검사(행사장링크 필수 아님)
+            const arr = gatherPosts.postLink.indexOf("http://"||"https://") !==-1
+            if(gatherPosts.postLink!==""){
+                if(arr===false){
+                    return(alert('http:// 또는 https://가 포함된 링크를 입력해주세요'))
+                }
+            }
+
             const formData = new FormData();
 
             if (imgFile.length > 0) {
@@ -140,6 +157,7 @@ const GatherPost =() => {
         }
     
        
+  
     // 주소 API 팝업창 상태 관리
     const [isPopupOpen, setIsPopupOpen] = useState(false)
  
@@ -155,22 +173,29 @@ const GatherPost =() => {
 
     const today2= year + '-' + month + '-' + day;
 
+    //주소 앞에 두글자 따기
+    const region = postAddress.split("")[0]+postAddress.split("")[1]
+
     return (
         <>
-            <label>모집인원</label>
-                <button onClick={handleAdd}>+</button>{counter>=0? counter : alert("인원을 입력해주세요")}<button onClick={handleminus}>-</button>
-                    <Form.Select aria-label="Default select example" style={{width :"250px"}} name="category" onChange={onChangeHandler2}>
-                        <option>카테고리</option>
-                        <option value="마라톤">마라톤</option>
-                        <option value="페스티벌">페스티벌</option>
-                        <option value="전시회">전시회</option>
-                        <option value="공연">공연</option>
-                        <option value="기타">기타</option>
-                    </Form.Select>
+            <STNumber>
+                <STButton onClick={handleAdd}>+</STButton> {counter===0? "모집인원" : counter}<STButton onClick={handleminus}>-</STButton>
+            </STNumber>
+            <br/><br/>
 
-                <ButtonGroup className="mb-2">
-                    {sexs.map((radio, idx) => (
-                        <ToggleButton
+            <STSelect name="category" onChange={onChangeHandler2} >
+                <option>카테고리</option>
+                <option value="마라톤">마라톤</option>
+                <option value="페스티벌">페스티벌</option>
+                <option value="전시회">전시회</option>
+                <option value="공연">공연</option>
+                <option value="기타">기타</option>
+            </STSelect>
+
+            <ButtonGroup className="mb-2">
+                {sexs.map((radio, idx) => (
+                    <STSelectButton >
+                        <STSelectButton2
                             key={idx}
                             id={`radio-${idx}`}
                             type="radio"
@@ -180,41 +205,31 @@ const GatherPost =() => {
                             checked={sexValue === radio.value}
                             onChange={(e) => setSexValue(e.currentTarget.value)}>
                                 {radio.name}
-                        </ToggleButton>
+                        </STSelectButton2>
+                    </STSelectButton >
                     ))}
-                </ButtonGroup>
+            </ButtonGroup><br/>
 
-                {/* <input type="date" name="date" onChange={onChangeHandler2} min={today2}/><br/> */}
-                <Row className="mb-3">
-                    <Form.Group as={Col} controlId="formGridCity">
-                    <Form.Label>행사시작</Form.Label>
-                    <Form.Control type="date"  name="date" onChange={onChangeHandler2} min={today2} style={{width:'200px'}}/>
-                    </Form.Group>
-                </Row>
-                <div>
-                    <input type="text" placeholder='나이' name="startAge" style={{width: "60px"}} onChange={onChangeHandler2}/> ~ 
-                    <input type="text" placeholder='나이' name="endAge" style={{width: "60px"}} onChange={onChangeHandler2}/>
-                </div>
-                <Form.Group className="mb-3" controlId="formGridAddress1">
-                    <Form.Label>글 작성</Form.Label>
-                    <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler2}/>
-                </Form.Group>
-                {/* <div>
-                    <label>글 작성</label><br/>
-                    <input type="text" placeholder="제목" name="title" onChange={onChangeHandler2}/>
-                </div>*/}
-                <div><br/>
-                    <button onClick={()=> { imgRef.current.click()}}> 업로드 버튼</button><br/>
-                        <label htmlFor="imgFile">
-                            <input
-                                style={{ display: "none" }}
-                                type="file"
-                                id="imgFile"
-                                onChange={onChangeImage}
-                                accept="image/*"
-                                ref={imgRef}
-                                name="imgFile"
-                                multiple/>
+            <AllInput type="date" name="date" onChange={onChangeHandler2} min={today2} style={{width : "48%"}}/>
+            <AllInput type="text" placeholder='나이' name="startAge" style={{width: "60px"}} onChange={onChangeHandler2}/> ~ {''}
+            <AllInput type="text" placeholder='나이' name="endAge" style={{width: "60px"}} onChange={onChangeHandler2}/>
+            <br/>
+                
+            <label>글 작성</label><br/>
+            <AllInput type="text" placeholder="제목" name="title" onChange={onChangeHandler2} style={{width : "100%"}}/>
+          
+            <div><br/>
+                <button onClick={()=> { imgRef.current.click()}}> 업로드 버튼</button><br/>
+                    <label htmlFor="imgFile">
+                        <input
+                            style={{ display: "none" }}
+                            type="file"
+                            id="imgFile"
+                            onChange={onChangeImage}
+                            accept="image/*"
+                            ref={imgRef}
+                            name="imgFile"
+                            multiple />
                      
                         <Carousel>
                             {
@@ -225,49 +240,148 @@ const GatherPost =() => {
                                         </Carousel.Item>
                                     )})
                             }
-                        </Carousel> 
-                       
-                            </label>
-                </div >
+                        </Carousel>                        
+                    </label>
+            </div >
 
-                <Form.Control  type="text" placeholder="소개글" name="content" onChange={onChangeHandler2} style={{height : '200px'}}/>
-                {/* <input type="text" placeholder="소개글" name="content" onChange={onChangeHandler2}/> */}
-                    <Form.Group className="mb-3" controlId="formGridAddress1">
-                        <Form.Label>카카오 링크</Form.Label>
-                        <Form.Control type="text" placeholder="링크" name="kakaoLink" onChange={onChangeHandler2}/>
-                    </Form.Group>
-                        {/* <div>
-                            <label>카카오 링크</label>
-                            <input type="text" placeholder="링크" name="kakaoLink" onChange={onChangeHandler2}/>
-                        </div> */}
-                    <Form.Group className="mb-3" controlId="formGridAddress1">
-                        <Form.Label>행사장 링크</Form.Label>
-                        <Form.Control type="text" placeholder="링크" name="postLink" onChange={onChangeHandler2}/>
-                    </Form.Group>
-                        {/* <div>
-                            <label>행사장 링크</label>
-                            <input type="text" placeholder="링크" name="postLink" onChange={onChangeHandler2}/>
-                        </div> */}
-                <div>
-                    <input type="text" value={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{width: "70%"}}/>
-                    <button type='button' onClick={popupPostCode}>우편번호 검색</button><br/>
-                    {/* {postAddress} */}
-                    <input type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler2} style={{width: "70%"}}/>
-                    <div id='popupDom'>
-                        {isPopupOpen && (
-                            <PopupDom>
-                                <SearchAddress onClose={popupPostCode} setPostAddres={setPostAddress}/>  
-                            </PopupDom>)}
-                    </div>    
+            <AllTextarea type="text" placeholder="소개글" name="content" onChange={onChangeHandler2} style={{height : '200px'}}/>
+
+            <br/><label>카카오 링크</label><br/>
+            <AllInput type="text" placeholder="링크" name="kakaoLink" onChange={onChangeHandler2} style={{width : "100%"}}/>
+
+            <br/><label>행사장 링크</label><br/>
+            <AllInput type="text" placeholder="링크" name="postLink" onChange={onChangeHandler2} style={{width : "100%"}}/>
+
+            <div>
+                <StSearchBox onClick={popupPostCode}>
+                    <button ><FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00' }}/></button>
+                </StSearchBox>
+
+                {isPopupOpen && (
+                                <ModalWrap>
+                                        <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode}/>  
+                                </ModalWrap>
+                          )}
+                
+                <AddressBox >
                         {
-                            postAddress !== ""&&<KakaoMap address={postAddress} width="500px" height="300px"/>
-                        }                      
-                 </div><br/>
-                <button onClick={onSubmit2}>등록하기</button>
-                <button onClick={()=>navigate(-1)}>취소</button>
+                            postAddress !== ""&&(
+                                <>
+                                    <RegionButton>{"#"+region}</RegionButton>
+                                    <AddressInput type="text" value={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{width: "80%"}}/>
+                                    <AddressInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler2} style={{width: "80%"}}/>
+                                    <KakaoMap address={postAddress} width="328px" height="300px"/>
+                                </>)
+                        }
+                </AddressBox >                                            
+            </div><br/>
+    
+            <div>
+                <AllButton style={{background:"#B6B6B6"}} onClick={onSubmit2}>등록하기</AllButton>
+                {/* <AllButton onClick={()=>navigate(-1)}>취소</AllButton>      */}
+            </div>
         </>
     )
 }
 
 export default GatherPost;
 
+const STNumber = styled.div`
+    float: right;
+    border-radius: 8px;
+    background-color: #F4F4F4;
+    width : 48%;
+    font-size: 14px;
+    text-align: center;
+    height : 32px;
+`
+const STButton = styled.button`
+    background-color: transparent;
+    color : #5E5E5E;
+    vertical-align : middle;
+    height : 100%;
+    border-color: transparent;
+    font-size: 14px;
+`
+const STSelect = styled.select`
+    font-size: 14px;
+    background-color: #F4F4F4;
+    width : 48%;
+    border-radius: 10px;
+    border : transparent;
+    padding:5px;
+    height : 32px;
+`
+const STSelectButton = styled.div`
+    margin-left: 5px;
+`
+const STSelectButton2 = styled(ToggleButton)`
+    background-color: #F4F4F4;
+    color : #AEAEAE;
+    border : transparent;
+    height : 32px;
+    font-size: 14px;
+`
+const AllButton = styled.button`
+    width : 100%;
+    height: 48px;
+    border: transparent;
+`
+const AllInput = styled.input`
+    border-radius: 10px;
+    background-color: #F4F4F4;
+    border : transparent;
+    font-size: 14px;
+    height : 32px;
+    margin-right: 7px;
+`
+const AllTextarea = styled.textarea`
+    border-radius: 10px;
+    border: transparent;
+    width :100%;
+    background-color: #F4F4F4;
+`
+
+const StSearchBox = styled.div`
+    background: #EEEAE3;
+    box-shadow: inset 0px 2px 2px rgba(0, 0, 0, 0.1);
+    border-radius : 30px;
+    display : flex;
+    flex-direction : row;
+    margin : 0px 10px;
+    height : 36px;
+    button{
+        background-color : transparent;
+        border : none;
+        border-radius :  30px 0 0 30px ; 
+    }
+`
+const RegionButton = styled.button`
+    border-radius: 14px;
+    border: transparent;
+    background-color: #D9D9D9;
+`
+const AddressBox = styled.div`
+    margin : 20px 20px 20px 20px;
+`
+const AddressInput = styled.input`
+    border-radius: 5px;
+    margin-bottom: 5px;
+    border: transparent;
+    background-color: #F4F4F4;
+    float : right;
+`
+const ModalWrap = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 0 15px;
+  box-sizing: border-box;
+`;
