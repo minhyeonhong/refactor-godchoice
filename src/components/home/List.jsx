@@ -14,21 +14,30 @@ const List = ({ totalPages, posts, isLoading, page, setPage }) => {
 
     const [ref, inView] = useInView();
 
+    //마지막 체크를 위해
+    const [listLength, setListLength] = useState(0);
+
     useEffect(() => {
         // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니고 마지막이 아니면 페이지+1
-        if (inView && !isLoading && page < totalPages) {
+        if (inView && !isLoading && posts.length > listLength) {
+            console.log("페이지 증가");
+            setListLength(posts.length);
             setPage(prevState => prevState + 1)
         }
-    }, [inView, isLoading, page])
+    }, [inView, isLoading])
+
+    useEffect(() => {
+        console.log("list posts", posts);
+    }, [posts])
 
     return (
         <StCardWrap>
-            {posts.length < 1 ?
+            {Object.keys(posts).length < 1 ?
                 <div>콘텐츠 없음</div>
                 :
-                posts.map((val) => {
+                posts.map((val, i) => {
                     return (
-                        <StCardItem key={val.id.toString()}>
+                        <StCardItem key={i}>
                             <StImgBox>
                                 <img />
                             </StImgBox>
