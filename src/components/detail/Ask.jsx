@@ -14,10 +14,10 @@ import {
 
 import noImg from '../../assets/images/common/noImg.jpg'
 
-const Questions = () => {
+const Ask = () => {
     return (
         <StWrap>
-            <StTitleBox>제목</StTitleBox>
+            <StTitleBox>askPost</StTitleBox>
 
             <StImgBox>
                 <img className='main-img' src={noImg} />
@@ -49,4 +49,4 @@ const Questions = () => {
     );
 };
 
-export default Questions;
+export default Ask;

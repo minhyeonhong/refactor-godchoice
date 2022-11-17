@@ -35,7 +35,7 @@ const Router = () => {
                 {/*작성글 페이지 */}
                 <Route path="/questionpost" element={<QuestionPost />} />
                 {/* 디테일 페이지 */}
-                <Route path="/detail" element={<Detail />} />
+                <Route path="/:url/:postId" element={<Detail />} />
             </Routes>
         </BrowserRouter>
     );

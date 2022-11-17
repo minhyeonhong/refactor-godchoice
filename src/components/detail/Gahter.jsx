@@ -14,10 +14,10 @@ import {
 
 import noImg from '../../assets/images/common/noImg.jpg'
 
-const Recruitment = () => {
+const Gahter = () => {
     return (
         <StWrap>
-            <StTitleBox>Recruitment</StTitleBox>
+            <StTitleBox>Gahter</StTitleBox>
 
             <StImgBox>
                 <img className='main-img' src={noImg} />
@@ -49,4 +49,4 @@ const Recruitment = () => {
     );
 };
 
-export default Recruitment;
+export default Gahter;
