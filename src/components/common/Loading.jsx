@@ -4,18 +4,18 @@ import styled from 'styled-components';
 import spinerImg from '../../assets/images/common/spiner.gif'
 
 const Loading = (props) => {
-    return (
-        <Background height={props.height}>
-            <img src={spinerImg} alt="로딩중" width="5%" />
-            <LoadingText>잠시만 기다려 주세요.</LoadingText>
-        </Background>
-    );
+  return (
+    <Background height={props.height} position={props.position} >
+      <img src={spinerImg} alt="로딩중" width="5%" />
+      <LoadingText>잠시만 기다려 주세요.</LoadingText>
+    </Background>
+  );
 };
 
 export default Loading;
 
 const Background = styled.div`
-  position: absolute;
+  position: ${(props) => props.position}; //absolute
   width: 100vw;
   height: ${(props) => props.height};
   top: 0;

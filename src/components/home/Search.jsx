@@ -1,59 +1,82 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Form from 'react-bootstrap/Form';
-import { FiSearch } from 'react-icons/fi'
+import { FiSearch } from 'react-icons/fi';
+import useInput from '../../hooks/useInput';
+import ToggleButton from 'react-bootstrap/ToggleButton';
+import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 
-const Search = () => {
+const Search = ({ updateSearchInfo }) => {
 
-    const [radioProp, setRadioProp] = useState({
-        label: "진행중",
-        checked: true
+    const tagList = ['서울', '강원도', '경기도', '충청도', '전라도', '경상도', '제주도'];
+
+    //검색정보 state
+    const [searchInfo, setSearchInfo, searchInfoHandle] = useInput({
+        tag: [],
+        progress: '진행중',
+        sort: '최신순',
+        search: '',
+        page: 0
     });
-    const radioHandle = (e) => {
+    //검색어 state
+    const [search, setSearch, searchHandle] = useInput({ search: '' });
+    //진행중 마감 핸들
+    const stateHandle = (e) => {
         if (e.target.checked) {
-            setRadioProp({
-                label: "진행중",
-                checked: true
-            });
+            setSearchInfo({ ...searchInfo, progress: "진행중" });
         } else {
-            setRadioProp({
-                label: "마감",
-                checked: false
-            });
+            setSearchInfo({ ...searchInfo, progress: "마감" });
         }
     }
+    //태그 핸들
+    const tagHandle = (val) => {
+        setSearchInfo({ ...searchInfo, tag: val })
+    }
+    //검색정보 state 바뀔때마다 api요청
+    useEffect(() => {
+        updateSearchInfo(searchInfo);
+    }, [searchInfo])
 
     return (
         <StSearchWrap>
             <StSearchBox>
-                <button><FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00' }} /></button>
-                <input />
+                <button onClick={() => setSearchInfo({ ...searchInfo, search: search.search })}>
+                    <FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00' }} />
+                </button>
+                <input name='search' value={search.search || ""} onChange={searchHandle}
+                    onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                            setSearchInfo({ ...searchInfo, search: search.search })
+                        }
+                    }} />
             </StSearchBox>
             <StTagBox>
-                <button>#전국</button>
-                <button>#서울</button>
-                <button>#강원도</button>
-                <button>#경기도</button>
-                <button>#충청도</button>
-                <button>#전라도</button>
-                <button>#경상도</button>
-                <button>#제주도</button>
+                <ToggleButtonGroup type="checkbox" value={searchInfo.tag} onChange={tagHandle}>
+                    {tagList.map((tag, i) => {
+                        return (
+                            // <StTagBtn bgColor={'#F7DBB4'} onClick={tagHandle} value={tag} key={i}>#{tag}</StTagBtn>
+                            <ToggleButton id={`tbg-btn-${i + 1}`} value={tag} key={i}>
+                                #{tag}
+                            </ToggleButton>
+                        )
+                    })}
+                </ToggleButtonGroup>
             </StTagBox>
             <StFilterBox>
                 <div>
-                    <select>
-                        <option value="">전체</option>
-                        <option value="">인기</option>
+                    <select name='sort' onChange={searchInfoHandle}>
+                        <option value="최신순">최신순</option>
+                        <option value="인기순">인기순</option>
                     </select>
                 </div>
                 <StRadioBox>
                     <Form.Check
                         type="switch"
                         id="custom-switch"
-                        checked={radioProp.checked}
-                        onChange={radioHandle}
+                        checked={searchInfo.progress === '진행중' ? true : false}
+                        onChange={stateHandle}
                     />
-                    <label>{radioProp.label}</label>
+                    <label>{searchInfo.progress}</label>
                 </StRadioBox>
             </StFilterBox>
         </StSearchWrap>
@@ -83,6 +106,7 @@ const StSearchBox = styled.div`
         border : none;
         border-radius : 0 30px 30px 0;
     }
+    input:focus {outline: none;}
     button{
         background-color : transparent;
         border : none;
@@ -95,7 +119,6 @@ const StTagBox = styled.div`
     overflow : scroll;
     display :flex;
     flex-direction : row;
-    gap : 5px;
     margin : 0 10px;
     /* 가로 스크롤 */
     overflow: auto;
@@ -103,10 +126,25 @@ const StTagBox = styled.div`
     ::-webkit-scrollbar{
         display: none; 
     }
-    button{
+    .btn-group {
+        gap : 5px;
+    }
+    .btn-primary {
+        font-weight : bold;
+        color : black;
+        --bs-btn-bg : #F7DBB4;
+        --bs-btn-border-color :#F7DBB4; 
+        /*  */
+        --bs-btn-active-bg : #DEC5A2;
+        --bs-btn-active-color :  black;
+    }
+    .btn-group > .btn:not(:last-child):not(.dropdown-toggle) {
         border : none;
         border-radius :  50px ;
-        background-color : #F7DBB4;
+    }
+    .btn-group > :not(.btn-check:first-child) + .btn {
+        border : none;
+        border-radius :  50px ;
     }
 `
 
@@ -123,6 +161,7 @@ const StFilterBox = styled.div`
         border-radius: 8px;
         border : none;
     }
+    select:focus {outline: none;}
 `
 
 const StRadioBox = styled.div`

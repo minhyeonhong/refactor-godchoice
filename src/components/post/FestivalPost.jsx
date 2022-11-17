@@ -3,15 +3,18 @@ import { __addPost} from '../../redux/modules/postSlice';
 import imageCompression from 'browser-image-compression';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
+import { FiSearch } from 'react-icons/fi'
+import pictureAdd from '../../assets/pictureAdd.png'
 //kakao 주소 관련
 import SearchAddress from './SearchAddress';
-import PopupDom from './PopupDom';
 import KakaoMap from '../../components/common/KakaoMap'
 //부트스트랩
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Carousel from 'react-bootstrap/Carousel';
 import Col from 'react-bootstrap/Col';
+
 
 const FestivalPost =() => {
 
@@ -81,9 +84,25 @@ const FestivalPost =() => {
                  [name] : value
              })
          }
-     
+
          const onSubmit = () => {
- 
+
+            //카테고리, 행사시작, 행사마감, 글작성, content 검사
+            if(festival.category===""){return (alert('카테고리를 입력하세요'))}
+            if(festival.startPeriod===""){return (alert('행사시작 일자를 입력하세요'))}
+            if(festival.endPeriod===""){return (alert('행사마감 일자를 입력하세요'))}
+            if(festival.title===""){return (alert('제목을 입력하세요'))}
+            if(festival.content===""){return (alert('내용을 입력하세요'))}
+
+            //링크 검사
+            const arr = festival.postLink.indexOf("http://"||"https://") !==-1
+            if(festival.postLink!==""){
+                if(arr===false){
+                    return(alert('http:// 또는 https://가 포함된 링크를 입력해주세요'))
+                }
+            }
+        
+
              const formData = new FormData();
  
              if (imgFile.length > 0) {
@@ -107,7 +126,7 @@ const FestivalPost =() => {
                  formData.append("eventPostReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
         
              dispatch(__addPost(formData));
-             //window.location.replace("/postlist")
+             //window.location.replace("/")
          }
 
     
@@ -126,41 +145,61 @@ const FestivalPost =() => {
     const year = today.getFullYear()
 
     const today2= year + '-' + month + '-' + day;
-
+    
+    //주소 앞에 두글자 따기
+    const region = postAddress.split("")[0]+postAddress.split("")[1]
 
     return (
           <>
-            <Form.Select aria-label="Default select example" style={{width :"250px"}} name="category" onChange={onChangeHandler}>
+            <STSelect style={{width :"50%"}} name="category" onChange={onChangeHandler}>
                 <option>카테고리</option>
                 <option value="마라톤">마라톤</option>
                 <option value="페스티벌">페스티벌</option>
                 <option value="전시회">전시회</option>
                 <option value="공연">공연</option>
                 <option value="기타">기타</option>
-            </Form.Select>
-                <Row className="mb-3">
-                    <Form.Group as={Col} controlId="formGridCity">
-                        <Form.Label>행사시작</Form.Label>
-                            <Form.Control type="date" name="startPeriod" onChange={onChangeHandler} min={today2}/>
-                            </Form.Group>
-                                <Form.Group as={Col} controlId="formGridCity">
-                                    <Form.Label>행사마감</Form.Label>
-                                    <Form.Control type="date" name="endPeriod" onChange={onChangeHandler}  min={today2}/>
-                            </Form.Group>
-                </Row>
-                <hr/>
-                            {/* <input type="date" name="startPeriod" onChange={onChangeHandler} min={today2} data-placeholder="행사 시작"/> ~ 
-                            <input type="date" name="endPeriod" onChange={onChangeHandler}  min={today2} /> */}
-                    <Form.Group className="mb-3" controlId="formGridAddress1">
-                        <Form.Label>글 작성</Form.Label>
-                            <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler} />
-                    </Form.Group>
-                            {/* <div>
-                                <label>글 작성</label><br/>
-                                <input type="text" placeholder="제목" name="title" onChange={onChangeHandler}/>
-                            </div> */}
+            </STSelect>
+
+            <Row className="mb-3">
+                <Form.Group as={Col} controlId="formGridCity">
+                    <Form.Label>행사시작</Form.Label>
+                        <Form.Control type="date" name="startPeriod" onChange={onChangeHandler} min={today2}/>
+                </Form.Group>
+                <Form.Group as={Col} controlId="formGridCity">
+                    <Form.Label>행사마감</Form.Label>
+                        <Form.Control type="date" name="endPeriod" onChange={onChangeHandler}  min={today2}/>
+                </Form.Group>
+            </Row>
+
+            <Hr/>
+                <Form.Group className="mb-3" controlId="formGridAddress1">
+                    <Form.Label>글 작성</Form.Label>
+                    <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler} />
+                </Form.Group>
+
             <div><br/>
-                <button onClick={()=> { imgRef.current.click()}}> 업로드 버튼</button><br/>
+                {
+                    imgUrl.length ===0? 
+                    (
+                    <STPicture style={{width : "192px", height :"192px", float : "left"}}>
+                        <Img src={pictureAdd} />
+                    </STPicture>
+                    ) : 
+                    ( 
+                        <Carousel fade>
+                            {
+                                imgUrl.map((img) => {
+                                    return (
+                                        <Carousel.Item key={img.id}>            
+                                            <img style={{width:'550px'}} src={img} />  
+                                        </Carousel.Item>)
+                                })
+                            }
+                        </Carousel>
+                    )
+                }
+                <STUploadButton onClick={()=> { imgRef.current.click()}}>+</STUploadButton><br/>
+
                     <label htmlFor="imgFile">
                         <input
                             style={{ display: "none" }}
@@ -171,53 +210,139 @@ const FestivalPost =() => {
                             ref={imgRef}
                             name="imgFile"
                             multiple/>
-                        <Carousel fade>
-                            {
-                                imgUrl.map((img) => {
-                                    return (
-                                        <Carousel.Item key={img.id}>            
-                                            <img style={{width:'550px'}} src={img ? img : ""} />  
-                                        </Carousel.Item>)
-                                })
-                            }
-                        </Carousel>
                     </label>
             </div >
+            <AllTextarea type="text" placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" name="content" onChange={onChangeHandler} maxLength={2500} style={{height : '200px', width: "100%"}}/>
+            <Hr/>
 
-            <Form.Control  type="text" placeholder="행사글을 2500자 이내로 입력해주세요" name="content" onChange={onChangeHandler} maxLength={2500} style={{height : '200px'}}/>
-            {/* <input type="text" placeholder="소개글" name="content" onChange={onChangeHandler}/> */}
-                <Form.Group as={Row} className="mb-3" controlId="formHorizontalEmail">
-                    <Form.Label column sm={2} style={{fontSize : "15px"}}> 행사장 링크 </Form.Label>
-                        <Col sm={1}>
-                    <Form.Control type="text" placeholder="링크" name="postLink" onChange={onChangeHandler} style={{width : '500px'}}/>
-                        </Col>
-                </Form.Group>
-                {/* <div>
-                    <label>행사장 링크</label>
-                    <input type="text" placeholder="링크" name="postLink" onChange={onChangeHandler}/>
-                    </div> */}
-                            
+            <Form.Group className="mb-3" controlId="formGridAddress1">
+                <Form.Label>행사장 링크</Form.Label>
+                <Form.Control type="text" placeholder="링크" name="postLink" onChange={onChangeHandler} />
+            </Form.Group>
+
+            {/* 주소 부분 */}
             <div>
-                <input type="text" value={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{width: "70%"}}/>
-                <button type='button' onClick={popupPostCode}>우편번호 검색</button>
-                {/* {postAddress} */}
-                <input type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{width: "70%"}}/>
-                <div id='popupDom'>
-                    {isPopupOpen && (
-                        <PopupDom>
-                            <SearchAddress onClose={popupPostCode} setPostAddres={setPostAddress}/>  
-                        </PopupDom>)}
-                </div>
-                    {
-                        postAddress !== ""&&<KakaoMap address={postAddress} width="500px" height="300px"/>
-                    }
-                                                          
+                <StSearchBox onClick={popupPostCode}>
+                    <button ><FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00' }}/></button>
+                </StSearchBox>
+
+                {isPopupOpen && (
+                                <ModalWrap>
+                                        <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode}/>  
+                                </ModalWrap>
+                          )}
+                
+                <AddressBox >
+                        {
+                            postAddress !== ""&&(
+                                <>
+                                    <RegionButton>{"#"+region}</RegionButton>
+                                    <AddressInput type="text" value={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{width: "80%"}}/>
+                                    <AddressInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{width: "80%"}}/>
+                                    <KakaoMap address={postAddress} width="328px" height="300px"/>
+                                </>)
+                        }
+                </AddressBox >                                            
             </div><br/>
-            <button onClick={onSubmit}>등록하기</button>
-            <button onClick={()=>navigate(-1)}>취소</button>     
+            <AllButton style={{background:"#B6B6B6"}} onClick={onSubmit}>작성</AllButton>
+            {/*<AllButton onClick={()=>navigate(-1)}>취소</AllButton>  <AddressModal />*/}   
+            
         </>
 
     )
 }
 
 export default FestivalPost;
+
+const Hr = styled.hr`
+    background-color : #F4F4F4;
+    margin : 10px 5px 5px 5px;
+`
+
+const StSearchBox = styled.div`
+    background: #EEEAE3;
+    box-shadow: inset 0px 2px 2px rgba(0, 0, 0, 0.1);
+    border-radius : 30px;
+    display : flex;
+    flex-direction : row;
+    margin : 0px 10px;
+    height : 36px;
+    button{
+        background-color : transparent;
+        border : none;
+        border-radius :  30px 0 0 30px ; 
+    }
+`
+const RegionButton = styled.button`
+    border-radius: 14px;
+    border: transparent;
+    background-color: #D9D9D9;
+`
+const AddressBox = styled.div`
+    margin : 20px 20px 20px 20px;
+`
+const AddressInput = styled.input`
+    border-radius: 5px;
+    margin-bottom: 5px;
+    border: transparent;
+    background-color: #F4F4F4;
+    float : right;
+`
+
+const AllButton = styled.button`
+    width : 100%;
+    height: 48px;
+    border: transparent;
+`
+
+const AllTextarea = styled.textarea`
+border-radius: 10px;
+border: 1px solid #C8C9CA;
+`
+const STPicture = styled.div`
+    background-color: #F4F4F4;
+    border-radius: 10px;
+    border : transparent;
+`
+const Img = styled.img`
+    width : 30px;
+    margin: 84px;
+`
+const STUploadButton = styled.button`
+    margin-left:10px;
+    width : 60px;
+    height : 60px;
+    background-color: #F4F4F4;
+    color : #5E5E5E;
+    float : left;
+    font-size: 40px;
+    vertical-align : middle;
+    height : 100%;
+    border-radius: 10px;
+    border : transparent;
+`
+const STSelect = styled.select`
+    font-size: 14px;
+    background-color: #F4F4F4;
+    width : 48%;
+    border-radius: 10px;
+    border : transparent;
+    padding:5px;
+    height : 32px;
+`
+//modal
+const ModalWrap = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 0 15px;
+  box-sizing: border-box;
+`;
+
