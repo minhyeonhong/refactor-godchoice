@@ -137,9 +137,10 @@ const GatherPost =() => {
               } else {
                 formData.append("multipartFile", null);
               }
+
+              formData.append("category", gatherPosts.category)
             
             const obj2 = {
-                category : gatherPosts.category,
                 date : gatherPosts.date,
                 number : counter,
                 kakaoLink : gatherPosts.kakaoLink,
@@ -151,7 +152,7 @@ const GatherPost =() => {
                 postLink : gatherPosts.postLink,
                 postAddress : postAddress+gatherPosts.detailAddress,
             }
-
+            console.log(obj2)
             formData.append("gatherPostDto", new Blob([JSON.stringify(obj2)], { type: "application/json" }));
             dispatch(__addPost2(formData));
         }

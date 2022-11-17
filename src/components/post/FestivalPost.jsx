@@ -65,6 +65,7 @@ const FestivalPost =() => {
          });
        }
  
+       
      //2-1 게시글 작성 - 행사글
          
          const [festival, setFestival] = useState({
@@ -85,6 +86,7 @@ const FestivalPost =() => {
              })
          }
 
+
          const onSubmit = () => {
 
             //카테고리, 행사시작, 행사마감, 글작성, content 검사
@@ -102,13 +104,14 @@ const FestivalPost =() => {
                 }
             }
         
-
+            
              const formData = new FormData();
  
              if (imgFile.length > 0) {
                  imgFile.forEach((file) => {
                    formData.append("multipartFile", file);
                  })
+                // formData.append("multipartFile", imgFile)
                } else {
                  formData.append("multipartFile", null);
                }
@@ -119,15 +122,17 @@ const FestivalPost =() => {
                  endPeriod : festival.endPeriod,
                  title:festival.title,
                  content:festival.content,
-                 postLink : festival.postLink,
-                 postAddress: postAddress+festival.detailAddress, //상세 주소 내용 추가
-                 }
                  
+                 postAddress: postAddress+festival.detailAddress, //상세 주소 내용 추가
+                 postLink : festival.postLink,
+                 }
+                 console.log(obj)
                  formData.append("eventPostReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
         
              dispatch(__addPost(formData));
              //window.location.replace("/")
          }
+
 
     
     // 주소 API 팝업창 상태 관리
