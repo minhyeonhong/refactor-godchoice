@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import Layout from '../components/layout/Layout';
 import List from '../components/home/List'
@@ -6,20 +6,45 @@ import Search from '../components/home/Search'
 import Loading from '../components/common/Loading'
 import Carousel from 'react-bootstrap/Carousel';
 import styled from 'styled-components';
-
+import useInput from '../hooks/useInput';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
 import { getCookie } from '../cookie/cookie';
 
-const Home = () => {
-    const [index, setIndex] = useState(0);
+import { useDispatch, useSelector } from "react-redux";
+import { __getAllPostList, putSearchState, putSearchStatePage, __postList } from '../redux/modules/postSlice';
 
+const Home = () => {
+    const dispatch = useDispatch();
+
+    //슬라이드 자동으로 넘기는 부분
+    const [index, setIndex] = useState(0);
     const handleSelect = (selectedIndex, e) => {
         setIndex(selectedIndex);
     };
 
-    console.log('쿠키 ====> ', getCookie('token'))
+    //store state
+    const { searchState, posts, totalPages, isLoading } = useSelector((state) => state.postSlice)
+    const [page, setPage] = useState(0);
+
+    //검색 상태 업데이트
+    const updateSearchInfo = (searchInfo) => {
+        dispatch(putSearchState({ main: searchState.main === undefined ? 'event' : searchState.main, ...searchInfo }));
+    }
+
+    //페이지 업데이트
+    useEffect(() => {
+        dispatch(putSearchStatePage(page))
+    }, [page])
+
+    //리스트 불러오기
+    useEffect(() => {
+        if (Object.keys(searchState).length > 0) {
+            dispatch(__getAllPostList(searchState));
+        }
+    }, [searchState])
+
     return (
         <Layout>
             <StHomeWrap>
@@ -60,29 +85,27 @@ const Home = () => {
                 </StCarouselWrap>
 
                 {/* 검색 */}
-                <Search />
+                <Search updateSearchInfo={updateSearchInfo} />
 
                 {/* 리스트 */}
                 <StTabBox>
                     <Tabs
-                        defaultActiveKey="home"
+                        defaultActiveKey="event"
                         id="justify-tab-example"
+                        activeKey={searchState.main}
+                        onSelect={(key) => dispatch(putSearchState({ ...searchState, main: key, page: 0 }))}
                         className="mb-3"
                         justify
                     >
-                        <Tab eventKey="home" title="행사글">
-                            <List />
-                        </Tab>
-                        <Tab eventKey="profile" title="모집글">
-                            a
-                        </Tab>
-                        <Tab eventKey="longer-tab" title="질문글">
-                            s
-                        </Tab>
+                        <Tab eventKey="event" title="행사글" />
+                        <Tab eventKey="gather" title="모집글" />
+                        <Tab eventKey="ask" title="질문글" />
                     </Tabs>
+                    {/* 리스트 */}
+                    <List totalPages={totalPages} posts={posts} isLoading={isLoading} page={page} setPage={setPage} />
                 </StTabBox>
             </StHomeWrap>
-        </Layout>
+        </Layout >
     );
 };
 
