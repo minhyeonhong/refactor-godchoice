@@ -17,16 +17,13 @@ export const __getAllPostList = createAsyncThunk(
     }
 )
 
-export const __postList = createAsyncThunk(
-    "postSlice/__postList",
+export const __getPost = createAsyncThunk(
+    "postSlice/__getPost",
     async (payload, thunkAPI) => {
         try {
+            const res = await postApis.getPostAX(payload);
 
-            const res = await postApis.postListAX();
-
-            const curPage = payload * 10;
-
-            return thunkAPI.fulfillWithValue(res.data.slice((curPage - 10), curPage));
+            return thunkAPI.fulfillWithValue(res.data);
         } catch (error) {
             return thunkAPI.rejectWithValue(error);
         }
@@ -118,6 +115,7 @@ export const postSlice = createSlice({
     name: "postSlice",
     initialState: {
         posts: [],
+        post: {},
         searchState: {},
         totalPages: 3,
         comments: [],
@@ -140,7 +138,6 @@ export const postSlice = createSlice({
             state.isLoading = false;
             console.log("action.payload", action.payload)
             if (action.payload.status === 200) {
-                console.log("200 go");
                 state.posts.push(...action.payload.data.content);
                 state.totalPages = action.payload.data.totalPages;
             }
@@ -149,18 +146,21 @@ export const postSlice = createSlice({
             state.isLoading = false;
             console.log(action.payload);
         },
-        //__postList test
-        [__postList.pending]: (state, action) => {
+        //__getPost
+        [__getPost.pending]: (state, action) => {
             state.isLoading = true;
         },
-        [__postList.fulfilled]: (state, action) => {
+        [__getPost.fulfilled]: (state, action) => {
             state.isLoading = false;
-            state.posts.push(...action.payload);
+            if (action.payload.status === 200) {
+                state.post = action.payload.data;
+            }
         },
-        [__postList.rejected]: (state, action) => {
+        [__getPost.rejected]: (state, action) => {
             state.isLoading = false;
             console.log(action.payload);
         },
+
 
 
         //__addPost

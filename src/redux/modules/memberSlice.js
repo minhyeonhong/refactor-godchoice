@@ -12,14 +12,16 @@ export const __kakaoLogin = createAsyncThunk(
         .then((res) => {
           console.log("넘어온 값", res); // 토큰이 넘어올 것임
           const Access_Token = res.headers.access_token;
-          console.log(Access_Token)
-          //   setCookie("token", Access_Token)
-          // const Access_Token = res.headers.access_token;
+          const resData = res.data.data;
+
           localStorage.setItem("token", Access_Token);
 
-          console.log("토큰나와라 ===> ", localStorage.getItem("token"))
+          localStorage.setItem("role", resData.role);
+          localStorage.setItem("userAddressTag", resData.userAddressTag);
+          localStorage.setItem("userId", resData.userId);
+          localStorage.setItem("userImgUrl", resData.userImgUrl);
 
-          //window.location.replace("/mypage")
+          window.location.replace("/mypage")
         }).catch((error) => {
           console.log("소셜로그인 에러", error);
           //window.alert("로그인에 실패하였습니다.");
