@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import Layout from '../components/layout/Layout';
-import Form from 'react-bootstrap/Form';
 import FestivalPost from '../components/post/FestivalPost';
 import GatherPost from '../components/post/GatherPost';
-
+import styled from 'styled-components';
 const Post = () => {
 
     // 모집 구분글
@@ -11,19 +10,27 @@ const Post = () => {
 
     return (
         <Layout>
-            <div>
-                <Form.Select aria-label="Default select example" style={{ width: "250px" }}
-                    value="option" onChange={(e) => setOption(e.target.value)}>
+                <STSelect value="option" onChange={(e) => setOption(e.target.value)}
+                style={{ width: "50%" }}>
                     <option>모집 구분</option>
                     <option value="행사글">행사글</option>
                     <option value="모집글">모집글</option>
-                </Form.Select>
+                </STSelect>
 
                 {option === "행사글" && (<FestivalPost />)}
                 {option === "모집글" && (<GatherPost />)}
-            </div>
         </Layout>
     );
 };
 
 export default Post;
+
+const STSelect = styled.select`
+    font-size: 14px;
+    background-color: #F4F4F4;
+    width : 40%;
+    border-radius: 10px;
+    border : transparent;
+    padding:5px;
+    height : 32px;
+`

@@ -57,6 +57,63 @@ export const __addPost = createAsyncThunk(
     }
 );
 
+export const __addComment = createAsyncThunk(
+    "comments/__addComment",
+    async (payload, thunkAPI) => {
+        try {
+            //console.log(payload)
+            const data = await axios.post(
+                `http://localhost:3001/comments`, { comment: payload },
+                //  `http://localhost:3001/comments${payload.id}`,{comment : payload.comment},
+                //   {
+                //     headers: {
+                //       "Content-Type": `application/json`,
+                //       Access_Token: getCookie('Access_Token'),
+                //       // RefreshToken: refreshToken, 생략 예정
+                //       "Cache-Control": "no-cache",
+                //     },
+                //   }
+            );
+            return thunkAPI.fulfillWithValue(data.data);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    }
+);
+
+export const __getComment = createAsyncThunk(
+    "comments/__getComment",
+    async (payload, thunkAPI) => {
+        try {
+            const data = await axios.get("http://localhost:3001/comments");
+            return thunkAPI.fulfillWithValue(data.data);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    }
+);
+
+export const __deleteComment = createAsyncThunk(
+    "comments/__deleteComment",
+    async (payload, thunkAPI) => {
+        try {
+            console.log(payload);
+            const data = await axios.delete(
+                `https://study.o-r.kr/api/feed/${payload}`,
+                //   {
+                //     headers: {
+                //       Access_Token: getCookie('Access_Token'),
+                //       // RefreshToken: refreshToken, 생략 예정
+                //       "Cache-Control": "no-cache",
+                //     },
+                //   }
+            );
+            return thunkAPI.fulfillWithValue(payload);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    }
+)
 
 export const postSlice = createSlice({
     name: "postSlice",
@@ -64,6 +121,7 @@ export const postSlice = createSlice({
         posts: [],
         searchState: {},
         totalPages: 3,
+        comments: [],
         isLoading: false
     },
     reducers: {
@@ -118,6 +176,47 @@ export const postSlice = createSlice({
             state.isLoading = false;
             state.error = action.payload;
         },
+
+        //__addComment
+        [__addComment.pending]: (state) => {
+            state.isLoading = true;
+        },
+        [__addComment.fulfilled]: (state, action) => {
+            state.isLoading = false;
+            state.comments.push(action.payload);
+        },
+        [__addComment.rejected]: (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+        },
+
+        //__getComment
+        [__getComment.pending]: (state) => {
+            state.isLoading = true;
+        },
+        [__getComment.fulfilled]: (state, action) => {
+            state.isLoading = false;
+            state.comments = action.payload;
+        },
+        [__getComment.rejected]: (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+        },
+
+        //__deleteComment
+        [__deleteComment.pending]: (state) => {
+            state.isLoading = true;
+        },
+        [__deleteComment.fulfilled]: (state, action) => {
+            state.isLoading = false;
+            state.comments = state.comments.filter(
+                (comment) => comment.commentid !== action.payload);
+        },
+        [__deleteComment.rejected]: (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+        },
+
     }
 });
 
