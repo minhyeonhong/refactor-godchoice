@@ -4,6 +4,20 @@ import { postApis } from "../../api/api-functions/postApis"
 import { getCookie } from "../../cookie/cookie";
 
 
+export const __getAllPostList = createAsyncThunk(
+    "postSlice/__getAllPostList",
+    async (payload, thunkAPI) => {
+        try {
+            console.log("payload", payload)
+            const res = await postApis.searchPostAX(payload);
+
+            return thunkAPI.fulfillWithValue(res.data);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    }
+)
+
 export const __postList = createAsyncThunk(
     "postSlice/__postList",
     async (payload, thunkAPI) => {
@@ -44,22 +58,41 @@ export const __addPost = createAsyncThunk(
 );
 
 
-
 export const postSlice = createSlice({
     name: "postSlice",
     initialState: {
         posts: [],
+        searchState: {},
+        totalPages: 3,
         isLoading: false
-        //loginModal: false
     },
     reducers: {
-        //모달 토글
-        // modalTogle(state, action) {
-        //     state.loginModal = !state.loginModal;
-        // },
+        putSearchState(state, action) {
+            state.searchState = { ...state.searchState, ...action.payload };
+        },
+        putSearchStatePage(state, action) {
+            state.searchState = { ...state.searchState, page: action.payload };
+        }
     },
     extraReducers: {
-        //__postList
+        //__getAllPostList
+        [__getAllPostList.pending]: (state, action) => {
+            state.isLoading = true;
+        },
+        [__getAllPostList.fulfilled]: (state, action) => {
+            state.isLoading = false;
+            console.log("action.payload", action.payload)
+            if (action.payload.status === 200) {
+                console.log("200 go");
+                state.posts.push(...action.payload.data.content);
+                state.totalPages = action.payload.data.totalPages;
+            }
+        },
+        [__getAllPostList.rejected]: (state, action) => {
+            state.isLoading = false;
+            console.log(action.payload);
+        },
+        //__postList test
         [__postList.pending]: (state, action) => {
             state.isLoading = true;
         },
@@ -88,5 +121,5 @@ export const postSlice = createSlice({
     }
 });
 
-export const { } = postSlice.actions;
+export const { putSearchState, putSearchStatePage } = postSlice.actions;
 export default postSlice.reducer;

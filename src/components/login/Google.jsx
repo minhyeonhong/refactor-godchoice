@@ -42,16 +42,16 @@ const Login = () => {
       // }
 
       //  axios.get(`${process.env.REACT_APP_API_URL}/member/signup/google?code=${code}`)
-       axios.get(`http://52.79.184.114/member/signup/google?code=${code}`)
+      axios.get(`http://52.79.184.114/member/signup/google?code=${code}`)
         .then((res) => {
           console.log("넘어온 값", res); // 토큰이 넘어올 것임
           const Access_Token = res.headers.access_token;
           console.log(Access_Token)
-        //   setCookie("token", Access_Token)
-        // const Access_Token = res.headers.access_token;
-        localStorage.setItem("token", Access_Token);
+          //   setCookie("token", Access_Token)
+          // const Access_Token = res.headers.access_token;
+          localStorage.setItem("token", Access_Token);
 
-        console.log("토큰나와라 ===> ", localStorage.getItem("token"))
+          console.log("토큰나와라 ===> ", localStorage.getItem("token"))
 
           window.location.replace("/mypage")
         }).catch((error) => {
@@ -68,8 +68,8 @@ const Login = () => {
   };
   useEffect(() => {
     if (code) {
-    getGoogleToken();
-  }
+      getGoogleToken();
+    }
   }, [code]);
 
   return (

@@ -19,7 +19,7 @@ export const __kakaoLogin = createAsyncThunk(
 
           console.log("토큰나와라 ===> ", localStorage.getItem("token"))
 
-          window.location.replace("/mypage")
+          //window.location.replace("/mypage")
         }).catch((error) => {
           console.log("소셜로그인 에러", error);
           //window.alert("로그인에 실패하였습니다.");

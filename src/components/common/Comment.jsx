@@ -6,6 +6,17 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 
 const Comment = () => {
+
+    const eventSource = new EventSource(`/subscribe`);
+
+    eventSource.onmessage = event => {
+        const data = JSON.parse(event.data);
+        console.log(data.message);
+    };
+    eventSource.onerror = error => {
+        eventSource.close();
+    };
+
     return (
         <StCommentWrap>
             <StCommentBox>
