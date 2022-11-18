@@ -39,7 +39,7 @@ export const __addPost = createAsyncThunk(
             await axios
                 .post(`http://3.38.255.232/eventposts`, payload, {
                     headers: {
-                        "Access_Token": getCookie('Access_Token')
+                        "Access_Token": localStorage.getItem('token')
                         // RefreshToken: refreshToken, 생략 예정
                         //"Cache-Control": "no-cache",
                     },
@@ -47,6 +47,24 @@ export const __addPost = createAsyncThunk(
                 .then((response) => {
                     console.log("response", response.data);
                 });
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error);
+        }
+    }
+);
+
+export const __putPost = createAsyncThunk(
+    "posts/__putPost",
+    async (payload, thunkAPI) => {
+        try {
+            postApis.putPostAx(payload)
+                .then((res) => {
+
+                }).catch((error) => {
+
+                })
+
         } catch (error) {
             console.log("error", error);
             return thunkAPI.rejectWithValue(error);

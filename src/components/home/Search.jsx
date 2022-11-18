@@ -25,7 +25,7 @@ const Search = ({ updateSearchInfo }) => {
         if (e.target.checked) {
             setSearchInfo({ ...searchInfo, progress: "진행중" });
         } else {
-            setSearchInfo({ ...searchInfo, progress: "마감" });
+            setSearchInfo({ ...searchInfo, progress: "종료" });
         }
     }
     //태그 핸들

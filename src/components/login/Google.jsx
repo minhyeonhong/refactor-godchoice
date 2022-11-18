@@ -50,6 +50,9 @@ const Login = () => {
           //   setCookie("token", Access_Token)
           // const Access_Token = res.headers.access_token;
           localStorage.setItem("token", Access_Token);
+          localStorage.setItem("email", res.data.email);
+          localStorage.setItem("nickName", res.data.nickName);
+          localStorage.setItem("userImg", res.data.userImg);
 
           console.log("토큰나와라 ===> ", localStorage.getItem("token"))
 

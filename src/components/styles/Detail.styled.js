@@ -63,3 +63,24 @@ export const StButtonBox = styled.div`
     flex-direction :row;
     justify-content :space-between;
 `
+
+export const AllTextarea = styled.textarea`
+border-radius: 10px;
+border: 1px solid #C8C9CA;
+`
+
+//modal
+export const ModalWrap = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 0 15px;
+  box-sizing: border-box;
+`
