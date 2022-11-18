@@ -25,13 +25,14 @@ import {
     ModalWrap
 } from '../styles/Detail.styled'
 
-import noImg from '../../assets/images/common/noImg.jpg'
 import { useEffect } from 'react';
 
 import useImgUpload from "../../hooks/useImgUpload";
-import useInput from "../../hooks/useInput";
+import { __putPost } from '../../redux/modules/postSlice';
+import { useDispatch } from 'react-redux';
 
-const Event = ({ post, modPost, setmodPost, modPostHandle }) => {
+const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
+    const dispatch = useDispatch();
     //슬라이드 자동으로 넘기는 부분
     const [index, setIndex] = useState(0);
     const handleSelect = (selectedIndex, e) => {
@@ -66,6 +67,8 @@ const Event = ({ post, modPost, setmodPost, modPostHandle }) => {
 
     //이미지 업로드 훅
     const [files, fileUrls, uploadHandle] = useImgUpload(5, true, 0.5, 1000);
+    //기존 프리뷰 지울 state
+    const [delImg, setDelImg] = useState([]);
 
     //이미지 업로드 인풋돔 선택 훅
     const imgRef = useRef();
@@ -84,19 +87,37 @@ const Event = ({ post, modPost, setmodPost, modPostHandle }) => {
             formData.append("multipartFile", null);
         }
 
-        //폼 데이터에 글작성 데이터 넣기
-        formData.append("eventPostReqDto", new Blob([JSON.stringify(modPost)], { type: "application/json" }));
+        const obj = {
+            imgId: delImg.join(),
+            category: modPost.category,
+            startPeriod: modPost.startPeriod,
+            endPeriod: modPost.endPeriod,
+            title: modPost.title,
+            content: modPost.content,
+            // postLink: modPost.postLink,
+            //postState: modPost.postState,
+            postAddress: modPost.postAddress
+        }
 
-        console.log("files", files);
-        console.log("modPost", modPost);
+        console.log("obj", obj);
+        //폼 데이터에 글작성 데이터 넣기
+        formData.append("eventPostPutReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
+
+
         //Api 날리기
-        //dispatch(__insertContent(formData));
+        dispatch(__putPost({ postId, content: formData }));
     }
 
     const categoryOption = ['마라톤', '페스티벌', '전시회', '공연', '기타'];
     //날짜 제한
     const today = new Date();
     const today2 = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+
+
+    //기존글의 삭제할 이미지
+    const delImgHandle = (postImgId) => {
+        setDelImg((e) => [...e, postImgId]);
+    }
 
     return (
         Object.keys(post).length < 1 ?
@@ -172,25 +193,32 @@ const Event = ({ post, modPost, setmodPost, modPostHandle }) => {
                         </StTitleBox>
 
                         <StCarouselWrap>
-                            <Carousel activeIndex={index} onSelect={handleSelect}>
-                                {modPost.postImgInfo.map((imgInfo, i) => {
-                                    return (
-                                        <Carousel.Item key={i}>
-                                            <img style={{ height: "180px" }}
-                                                className="d-block w-100"
-                                                src={imgInfo.postImgUrl}
-                                                alt={`slide${i + 1}`}
-                                            />
-                                        </Carousel.Item>
-                                    )
-                                })}
-                            </Carousel>
+                            {//modPost.postImgInfo.length > 1 &&
+                                <Carousel activeIndex={index} onSelect={handleSelect}>
+                                    {modPost.postImgInfo.map((imgInfo, i) => {
+                                        return (
+                                            <Carousel.Item key={i}>
+                                                <img style={{ height: "180px" }}
+                                                    className="d-block w-100"
+                                                    src={imgInfo.postImgUrl}
+                                                    alt={`slide${i + 1}`}
+                                                />
+                                            </Carousel.Item>
+                                        )
+                                    })}
+                                </Carousel>
+                            }
                             {modPost.postImgInfo.map((imgInfo, i) => {
                                 return (
-                                    <img style={{ width: '60px', height: '60px' }} src={imgInfo.postImgUrl} key={i} />
+                                    imgInfo.postImgId &&
+                                    // <button style={{ width: '60px', height: '60px', backgroundImage: `url(${imgInfo.postImgUrl})` }} ></button>
+                                    <button style={{ display: delImg.indexOf(imgInfo.postImgId) > -1 ? "none" : "inline-block" }}
+                                        onClick={() => delImgHandle(imgInfo.postImgId)} key={i}>
+                                        <img style={{ width: '60px', height: '60px' }} src={imgInfo.postImgUrl} />
+                                    </button>
                                 )
                             })}
-                            <STUploadButton onClick={() => { imgRef.current.click() }}>+</STUploadButton><br />
+                            <STUploadButton onClick={() => { imgRef.current.click() }}>+</STUploadButton>
 
                             <label htmlFor="imgFile">
                                 <input
@@ -298,4 +326,5 @@ const STSelect = styled.select`
     border : transparent;
     padding:5px;
     height : 32px;
+    
 `
