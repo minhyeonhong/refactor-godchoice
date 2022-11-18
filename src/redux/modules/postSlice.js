@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { postApis } from "../../api/api-functions/postApis"
+import { getCookie } from "../../cookie/cookie";
 
 
 export const __postList = createAsyncThunk(
@@ -19,29 +20,6 @@ export const __postList = createAsyncThunk(
     }
 )
 
-//글작성
-export const __insertPost = createAsyncThunk(
-    "postSlice/__insertPost",
-    async (payload, thunkAPI) => {
-        try {
-            await postApis.insertPostAX(payload)
-                .then((res) => {
-                    console.log("res", res)
-                }).catch((error) => {
-                    console.log("error", error)
-                })
-
-            // const obj = {
-            //     access_token: res.headers.access_token,
-            //     data: res.data
-            // }
-            // return thunkAPI.fulfillWithValue(obj);
-        } catch (error) {
-            return thunkAPI.rejectWithValue(error.response.data);
-        }
-    }
-)
-
 export const __addPost = createAsyncThunk(
     "posts/__addPost",
     async (payload, thunkAPI) => {
@@ -50,7 +28,7 @@ export const __addPost = createAsyncThunk(
             await axios
                 .post(`http://3.38.255.232/eventposts`, payload, {
                     headers: {
-                        Access_Token: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrX21oaDIwMjhAbmF2ZXIuY29tIiwiZXhwIjoxNjY4MTc4OTE5LCJpYXQiOjE2NjgxNzUzMTl9.t5DHMsToXqeNwbuHxQiRJzj2aq4if6comErbPql_pEo"
+                        "Access_Token": getCookie('Access_Token')
                         // RefreshToken: refreshToken, 생략 예정
                         //"Cache-Control": "no-cache",
                     },
@@ -81,13 +59,6 @@ export const postSlice = createSlice({
         // },
     },
     extraReducers: {
-        //__insertPost
-        [__insertPost.fulfilled]: (state, action) => {
-
-        },
-        [__insertPost.rejected]: (state, action) => {
-
-        },
         //__postList
         [__postList.pending]: (state, action) => {
             state.isLoading = true;
@@ -100,7 +71,6 @@ export const postSlice = createSlice({
             state.isLoading = false;
             console.log(action.payload);
         },
-
 
 
         //__addPost

@@ -6,6 +6,8 @@ import { __postList } from '../../redux/modules/postSlice'
 import { useInView } from "react-intersection-observer"
 import styled from 'styled-components';
 
+import { BsEye } from 'react-icons/bs';
+
 const List = () => {
     const dispatch = useDispatch();
     const { posts, isLoading } = useSelector((state) => state.postSlice);
@@ -41,23 +43,81 @@ const List = () => {
     }, [posts])
 
     return (
-        <div style={{ gap: "5px", display: "flex", flexDirection: "column" }}>
-            {posts.map((val, i) => {
+        <StCardWrap>
+            {posts.map((val) => {
                 return (
-                    <StCardItem backC='orange' key={val.id.toString()}>
-                        <div>title:{val.title}</div>
-                        <div>content:{val.content}</div>
+                    <StCardItem key={val.id.toString()}>
+                        <StImgBox>
+                            <img />
+                        </StImgBox>
+                        <StContentBox>
+                            <div className='inlineBox'>
+                                <div className='titleBox'>제목:{val.title}</div>
+                                <div>카테고리</div>
+                                <div>내용:{val.content}</div>
+                                <div className='dtateBox'>
+                                    <div>2022.00.00</div>
+                                    <div className='lookBox'>12&nbsp;<BsEye style={{ width: '16px', height: '16px' }} /></div>
+                                </div>
+                            </div>
+                        </StContentBox>
                     </StCardItem>
                 )
             })}
             <div ref={ref} ></div>
-        </div>
+        </StCardWrap>
     );
 };
 
 export default List;
 
+const StCardWrap = styled.div`
+    gap: 5px;
+    display: flex; 
+    flex-direction: column;
+`
+
 const StCardItem = styled.div`
-    height : 100px;
-    background-color : ${(prop) => prop.backC};
+    height : 136px;
+    display : flex;
+    flex-direction: row;
+`
+
+const StImgBox = styled.div`
+    img {
+        width:136px;
+        height:136px;       
+        border-radius : 20px;         
+        background-color : pink;
+    }
+`
+
+const StContentBox = styled.div`
+    width : 100%;
+    height : 136px;
+    border-radius : 20px;    
+    background-color : #E7E7E7;
+    display : flex;
+    justify-content : center;
+    align-items : center;
+    .inlineBox {
+        width: 90%;
+        height: 90%;
+        display : flex;
+        flex-direction : column;
+        justify-content : space-evenly;
+    }
+    .titleBox{
+        font-weight : bold;
+    }
+    .dtateBox{
+        display : flex;
+        justify-content : space-between;
+        border-top : 1px solid #AEAEAE;
+        font-size : 14px;
+    }
+    .lookBox {
+        display : flex;
+        align-items : center;
+    }
 `

@@ -13,9 +13,14 @@ export const __kakaoLogin = createAsyncThunk(
           console.log("넘어온 값", res); // 토큰이 넘어올 것임
           const Access_Token = res.headers.access_token;
           console.log(Access_Token)
-          //   setCookie("token", Access_Token)
-          // const Access_Token = res.headers.access_token;
           localStorage.setItem("token", Access_Token);
+          localStorage.setItem("email", res.data.email);              
+          localStorage.setItem("nickName", res.data.nickName);
+          localStorage.setItem("userImg", res.data.userImg);
+              
+          // setCookie("nickName", res.data.nickName);
+          // setCookie("userImg", res.data.userImg);
+          // setCookie("nickName", res.data.email);
 
           console.log("토큰나와라 ===> ", localStorage.getItem("token"))
 
