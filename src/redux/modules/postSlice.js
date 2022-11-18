@@ -30,7 +30,7 @@ export const __addPost = createAsyncThunk(
             console.log("error", error);
             return thunkAPI.rejectWithValue(error);
         }
-    );
+    });
 
 export const __putPost = createAsyncThunk(
     "posts/__putPost",
