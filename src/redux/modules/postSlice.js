@@ -60,7 +60,13 @@ export const __putPost = createAsyncThunk(
         try {
             postApis.putPostAx(payload)
                 .then((res) => {
-
+                    console.log("res", res);
+                    if (res.data.status === 200) {
+                        window.location.reload();
+                    } else {
+                        console.log(res.data);
+                        alert(res.data.msg);
+                    }
                 }).catch((error) => {
 
                 })

@@ -19,153 +19,153 @@ import userProfile from '../../assets/images/common/userProfile.png'
 
 
 const MyPage = () => {
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const data = useSelector((state) => state.myPage?.myPage);
-    const nickName = localStorage.getItem("nickName");
-    const userImg = localStorage.getItem("userImg");
-    // const email = localStorage.getItem("email");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const data = useSelector((state) => state.myPage?.myPage);
+  const nickName = localStorage.getItem("nickName");
+  const userImg = localStorage.getItem("userImg");
+  // const email = localStorage.getItem("email");
 
-    // const basicProfileImg = () => {
-    //   if (nickName === null) {
-    //     return <BasicProfile onClick={() => navigate("/login")} />;
-    //   } else {
-    //     if (data?.userImgUrl === null || data?.userImgUrl === undefined) {
-    //       return <BasicProfile />;
-    //     } else {
-    //       return <img src={data?.userImgUrl} alt="" />;
-    //     }
-    //   }
-    // };
+  // const basicProfileImg = () => {
+  //   if (nickName === null) {
+  //     return <BasicProfile onClick={() => navigate("/login")} />;
+  //   } else {
+  //     if (data?.userImgUrl === null || data?.userImgUrl === undefined) {
+  //       return <BasicProfile />;
+  //     } else {
+  //       return <img src={data?.userImgUrl} alt="" />;
+  //     }
+  //   }
+  // };
 
 
-    useEffect(() => {
-        dispatch(__getMyInfo(nickName));
-      }, [nickName, JSON.stringify[data]]);
+  useEffect(() => {
+    dispatch(__getMyInfo(nickName));
+  }, [nickName, JSON.stringify[data]]);
 
-      
-      const MyPageList = ({ listName, onClick }) => {
-        return (
-          <div>
-            <div className="listTitle" onClick={onClick}>
-              {listName}
-            </div>
-          </div>
-        );
-      };
 
-// 로그아웃
-const handleLogout = () => {
+  const MyPageList = ({ listName, onClick }) => {
+    return (
+      <div>
+        <div className="listTitle" onClick={onClick}>
+          {listName}
+        </div>
+      </div>
+    );
+  };
+
+  // 로그아웃
+  const handleLogout = () => {
     localStorage.clear();
     // delCookie("nickName");
     // delCookie("email")
     // delCookie("userImg")
     // delCookie("addressTag")
     navigate("/")
-}
+  }
 
 
-    return (
-        <Layout>
-            <div>
-                <h1>마이페이지</h1>
-            </div>
+  return (
+    <Layout>
+      <div>
+        <h1>마이페이지</h1>
+      </div>
 
-            <MyPageWrap>
-          <MyProfileWrap>
-            <MyImgContainer>
-              <MyImgBox>< img src={userImg} alt={'userImg'} /></MyImgBox>
-            </MyImgContainer>
-            {/* MyImgContainer */}
+      <MyPageWrap>
+        <MyProfileWrap>
+          <MyImgContainer>
+            <MyImgBox>< img src={userImg} alt={'userImg'} /></MyImgBox>
+          </MyImgContainer>
+          {/* MyImgContainer */}
 
-            <NickBox>
-                {nickName !== null ? (
-                  <>
-                    <div className="nickName">
-                      {/* {data?.nickName} */}
-                      {nickName}
-                    </div>
-                    <div
-                      className="myPageEdit"
-                      onClick={() => {
-                        navigate("/mypageedit");
-                      }}>
-                      프로필 수정
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="needNickName" onClick={() => navigate("/login")}>
-                      로그인이 필요합니다.
-                    </div>
-                  </>
-                )}
-              </NickBox>
-              {/* NickBox */}
-            </MyProfileWrap>
-            {/* MyProfileWrap */}
-
-            <MyStateWrap>
-            {nickName === null ? (
+          <NickBox>
+            {nickName !== null ? (
               <>
-                <div className="MyStateWrap" onClick={() => navigate("/login")}>
-                  <div className="stateBox">
-                    <div className="title">내가 쓴 글</div>
-                  </div>
-                  <StateBox>
-                  <div className="stateBox">
-                    <div className="title">댓글 단 글</div>
-                  </div>
-                  </StateBox>
-                  <div className="stateBox">
-                    <div className="title">스크랩</div>
-                  </div>
-                </div>{" "}
+                <div className="nickName">
+                  {/* {data?.nickName} */}
+                  {nickName}
+                </div>
+                <div
+                  className="myPageEdit"
+                  onClick={() => {
+                    navigate("/mypageedit");
+                  }}>
+                  프로필 수정
+                </div>
               </>
             ) : (
               <>
-                <div className="MyStateWrap">
-                  <div
-                    className="stateBox"
-                    onClick={() => navigate("/mypagepost")}>
-                    <div className="title">내가 쓴 글</div>
-                  </div>
-                  <StateBox>
-                    <div
-                      className="stateBox"
-                      onClick={() => navigate("/mypagecomment")}>
-                      <div className='title'>댓글 단 글</div>
-                    </div>
-                  </StateBox>
-                  <div
-                    className="stateBox"
-                    onClick={() => navigate("/mypagescrap")}>
-                    <div className="title">스크랩</div>
-                  </div>
+                <div className="needNickName" onClick={() => navigate("/login")}>
+                  로그인이 필요합니다.
                 </div>
               </>
             )}
-          </MyStateWrap>
-          {/* MyStateWrap */}
+          </NickBox>
+          {/* NickBox */}
+        </MyProfileWrap>
+        {/* MyProfileWrap */}
 
-          <div>
+        <MyStateWrap>
           {nickName === null ? (
-              <MyPageList
-                listName={`로그인`}
-                onClick={() => navigate("/login")}
-              />
-            ) : (
-              <MyPageList
-                listName={`로그아웃`}
-                onClick={() => handleLogout()}
-              />
-            )}
-          </div>
+            <>
+              <div className="MyStateWrap" onClick={() => navigate("/login")}>
+                <div className="stateBox">
+                  <div className="title">내가 쓴 글</div>
+                </div>
+                <StateBox>
+                  <div className="stateBox">
+                    <div className="title">댓글 단 글</div>
+                  </div>
+                </StateBox>
+                <div className="stateBox">
+                  <div className="title">스크랩</div>
+                </div>
+              </div>{" "}
+            </>
+          ) : (
+            <>
+              <div className="MyStateWrap">
+                <div
+                  className="stateBox"
+                  onClick={() => navigate("/mypagepost")}>
+                  <div className="title">내가 쓴 글</div>
+                </div>
+                <StateBox>
+                  <div
+                    className="stateBox"
+                    onClick={() => navigate("/mypagecomment")}>
+                    <div className='title'>댓글 단 글</div>
+                  </div>
+                </StateBox>
+                <div
+                  className="stateBox"
+                  onClick={() => navigate("/mypagescrap")}>
+                  <div className="title">스크랩</div>
+                </div>
+              </div>
+            </>
+          )}
+        </MyStateWrap>
+        {/* MyStateWrap */}
 
-            </MyPageWrap >
-            {/* MyPageWrap */}
-        </Layout>
-    );
+        <div>
+          {nickName === null ? (
+            <MyPageList
+              listName={`로그인`}
+              onClick={() => navigate("/login")}
+            />
+          ) : (
+            <MyPageList
+              listName={`로그아웃`}
+              onClick={() => handleLogout()}
+            />
+          )}
+        </div>
+
+      </MyPageWrap >
+      {/* MyPageWrap */}
+    </Layout>
+  );
 };
 
 export default MyPage;

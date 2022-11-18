@@ -35,7 +35,7 @@ const Detail = () => {
 
     return (
         <Layout>
-            {url === 'eventposts' && <Event post={post} modPost={modPost} setmodPost={setmodPost} modPostHandle={modPostHandle} />}
+            {url === 'eventposts' && <Event post={post} postId={postId} modPost={modPost} setmodPost={setmodPost} modPostHandle={modPostHandle} />}
             {url === 'gahterposts' && <Gahter post={post} />}
             {url === 'askposts' && <Ask post={post} />}
         </Layout>
