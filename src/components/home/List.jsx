@@ -10,7 +10,7 @@ import Loading from '../../components/common/Loading'
 
 import { BsEye } from 'react-icons/bs';
 
-const List = ({ totalPages, posts, isLoading, page, setPage }) => {
+const List = ({ posts, isLoading, page, setPage }) => {
 
     const [ref, inView] = useInView();
 

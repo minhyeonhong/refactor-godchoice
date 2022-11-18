@@ -102,7 +102,7 @@ const Home = () => {
                         <Tab eventKey="ask" title="질문글" />
                     </Tabs>
                     {/* 리스트 */}
-                    <List totalPages={totalPages} posts={posts} isLoading={isLoading} page={page} setPage={setPage} />
+                    <List posts={posts} isLoading={isLoading} page={page} setPage={setPage} />
                 </StTabBox>
             </StHomeWrap>
         </Layout >
