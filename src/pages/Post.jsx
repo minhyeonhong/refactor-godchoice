@@ -10,7 +10,7 @@ const Post = () => {
 
     return (
         <Layout>
-                <STSelect value="option" onChange={(e) => setOption(e.target.value)}
+                <STSelect onChange={(e) => setOption(e.target.value)}
                 style={{ width: "50%" }}>
                     <option>모집 구분</option>
                     <option value="행사글">행사글</option>

@@ -150,6 +150,7 @@ const FestivalPost =() => {
     const year = today.getFullYear()
 
     const today2= year + '-' + month + '-' + day;
+    const today3=festival.startPeriod
     
     //주소 앞에 두글자 따기
     const region = postAddress.split("")[0]+postAddress.split("")[1]
@@ -172,7 +173,7 @@ const FestivalPost =() => {
                 </Form.Group>
                 <Form.Group as={Col} controlId="formGridCity">
                     <Form.Label>행사마감</Form.Label>
-                        <Form.Control type="date" name="endPeriod" onChange={onChangeHandler}  min={today2}/>
+                        <Form.Control type="date" name="endPeriod" onChange={onChangeHandler}  min={today3}/>
                 </Form.Group>
             </Row>
 
