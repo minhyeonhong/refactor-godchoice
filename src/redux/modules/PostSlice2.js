@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { getCookie } from "../../cookie/cookie";
 
 const initialState={
     gatherPosts : [
@@ -18,9 +17,9 @@ export const __addPost2 = createAsyncThunk(
           .post(`http://3.38.255.232/gatherposts`, payload, {
             headers: {
               enctype: "multipart/form-data",
-              Access_Token: getCookie('Access_Token'),
+              "Access_Token": localStorage.getItem("token"),
               // RefreshToken: refreshToken, 생략 예정
-              "Cache-Control": "no-cache",
+              //"Cache-Control": "no-cache",
             },
           })
           .then((response) => {

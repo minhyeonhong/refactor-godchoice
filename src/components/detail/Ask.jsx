@@ -14,10 +14,16 @@ import {
 
 import noImg from '../../assets/images/common/noImg.jpg'
 
-const Ask = () => {
+const Ask = ({post}) => {
+
+    // const region = (post.postAddress.split(" ")[0]);
+
     return (
+        Object.keys(post).length < 1 ?
+        <div>페이지 정보 없음</div>
+        :
         <StWrap>
-            <StTitleBox>askPost</StTitleBox>
+            <StTitleBox>{post.title}</StTitleBox>
 
             <StImgBox>
                 <img className='main-img' src={noImg} />
@@ -27,23 +33,23 @@ const Ask = () => {
                 </div>
             </StImgBox>
 
-            <StContentBox>소개글</StContentBox>
+            <StContentBox>{post.content}</StContentBox>
             <StEventLinkBox>
                 <div>행사장 링크</div>
-                <input type="text" />
+                <input type="text" value={post.postLink || ""}/>
             </StEventLinkBox>
             <StEventPlaceBox>
                 <div>행사장소</div>
                 <div className='address-box'>
-                    <div className='tag'>#서울</div>
-                    <div className='address'>서울특별시 성북구 동소문로15길 99</div>
+                <div className='tag'>#{post.postAddress.split(" ")[0]}</div>
+                    <div className='address'>{post.postAddress}</div>
                 </div>
             </StEventPlaceBox>
-            <KakaoMap address='서울특별시 성북구 동소문로15길 99(동소문동7가, 한신휴아파트)' width='100%' height='130px' />
+            <KakaoMap address={post.postAddress} width='100%' height='130px' />
             <StButtonBox>
                 <button>수정</button>
             </StButtonBox>
-            <Comment />
+            {/* <Comment /> */}
 
         </StWrap>
     );

@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { getCookie } from "../../cookie/cookie";
 
 const initialState={
     questionPosts : [
@@ -11,14 +10,14 @@ const initialState={
 
 
 export const __addPost3 = createAsyncThunk(
-    "gatherPosts/__addPost3",
+    "questionPosts/__addPost3",
     async (payload, thunkAPI) => {
       try {
         await axios
           .post(`http://3.38.255.232/askposts`, payload, {
             headers: {
               enctype: "multipart/form-data",
-              Access_Token: getCookie('Access_Token'),
+              Access_Token: localStorage.getItem("token"),
               // RefreshToken: refreshToken, 생략 예정
               //"Cache-Control": "no-cache",
             },
@@ -33,6 +32,26 @@ export const __addPost3 = createAsyncThunk(
     }
   );
 
+
+export const __getPost3 = createAsyncThunk(
+    "questionPosts/__getPost3",
+    async (payload, thunkAPI) => {
+      try {
+        const data = await axios.get("http://3.38.255.232/allposts", 
+        // {
+        //   headers: {
+        //     "Content-Type": `application/json`,
+        //     Access_Token: getCookie('Access_Token'),
+        //     "Cache-Control": "no-cache",
+        //   },
+        // }
+        );
+        return thunkAPI.fulfillWithValue(data.data);
+      } catch (error) {
+        return thunkAPI.rejectWithValue(error);
+      }
+    }
+  );
 
 export const PostSlice3 = createSlice({
     name: "questionPosts", 
@@ -52,6 +71,19 @@ export const PostSlice3 = createSlice({
         state.isLoading = false; 
         state.error = action.payload; 
     },
+
+     //__getPost3
+     [__getPost3.pending]: (state) => {
+      state.isLoading = true;
+      },
+      [__getPost3.fulfilled]: (state, action) => {
+            state.isLoading = false;
+            state.questionPosts = action.payload;
+      },
+      [__getPost3.rejected]: (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+      }
 
         
     }})
