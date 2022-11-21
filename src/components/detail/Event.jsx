@@ -347,8 +347,3 @@ const LikeBox = styled.div`
     width:100%;
     height:50px;
 `
-
-const LikeBox = styled.div`
-    width:100%;
-    height:50px;
-`
