@@ -144,13 +144,16 @@ export const postSlice = createSlice({
         searchState: {},
         totalPages: 3,
         comments: [],
-        isLoading: false
+        isLoading: false,
+        isResetSearch: true
     },
     reducers: {
         putSearchState(state, action) {
+            state.isResetSearch = true;
             state.searchState = { ...state.searchState, ...action.payload };
         },
         putSearchStatePage(state, action) {
+            state.isResetSearch = false;
             state.searchState = { ...state.searchState, page: action.payload };
         }
     },
@@ -163,7 +166,12 @@ export const postSlice = createSlice({
             state.isLoading = false;
             console.log("action.payload", action.payload)
             if (action.payload.status === 200) {
-                state.posts.push(...action.payload.data.content);
+                if (state.isResetSearch) {
+                    state.posts = action.payload.data.content;
+                } else {
+                    state.posts.push(...action.payload.data.content);
+                }
+
                 state.totalPages = action.payload.data.totalPages;
             }
         },

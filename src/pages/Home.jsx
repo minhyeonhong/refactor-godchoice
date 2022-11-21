@@ -25,7 +25,7 @@ const Home = () => {
     };
 
     //store state
-    const { searchState, posts, totalPages, isLoading } = useSelector((state) => state.postSlice)
+    const { searchState, posts, totalPages, isLoading, isResetSearch } = useSelector((state) => state.postSlice)
     const [page, setPage] = useState(0);
 
     //검색 상태 업데이트
@@ -41,6 +41,7 @@ const Home = () => {
     //리스트 불러오기
     useEffect(() => {
         if (Object.keys(searchState).length > 0) {
+            console.log("isResetSearch", isResetSearch);
             dispatch(__getAllPostList(searchState));
         }
     }, [searchState])
