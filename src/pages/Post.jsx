@@ -3,29 +3,27 @@ import Layout from '../components/layout/Layout';
 import FestivalPost from '../components/post/FestivalPost';
 import GatherPost from '../components/post/GatherPost';
 import styled from 'styled-components';
+import QuestionPost from '../components/post/QuestionPost'
+import { useNavigate } from 'react-router-dom';
 const Post = () => {
 
     // 모집 구분글
     const [option, setOption] = useState();
-
+    const navigate = useNavigate();
     return (
         <Layout>
-            <STSelect onChange={(e) => setOption(e.target.value)}
-                style={{ width: "50%" }}>
-                <option>모집 구분</option>
-                <option value="행사글">행사글</option>
-                <option value="모집글">모집글</option>
-            </STSelect>
+            <STdiv onClick={()=> {navigate('/festivalpost')}}>행사글</STdiv><br/>
+            <STdiv onClick={()=> {navigate('/gatherpost')}}>모집글</STdiv><br/>
+            <STdiv onClick={()=> {navigate('/questionpost')}}>질문글</STdiv><br/>
 
-            {option === "행사글" && (<FestivalPost />)}
-            {option === "모집글" && (<GatherPost />)}
+          
         </Layout>
     );
 };
 
 export default Post;
 
-const STSelect = styled.select`
+const STdiv= styled.button`
     font-size: 14px;
     background-color: #F4F4F4;
     width : 40%;
@@ -33,4 +31,5 @@ const STSelect = styled.select`
     border : transparent;
     padding:5px;
     height : 32px;
+    margin-top: 10px;
 `

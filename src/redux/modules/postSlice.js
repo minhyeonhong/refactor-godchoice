@@ -37,7 +37,7 @@ export const __addPost = createAsyncThunk(
         try {
             console.log(payload)
             await axios
-                .post(`http://3.38.255.232/eventposts`, payload, {
+                .post(`http://54.180.201.200/eventposts`, payload, {
                     headers: {
                         "Access_Token": localStorage.getItem('token')
                         // RefreshToken: refreshToken, 생략 예정
@@ -76,6 +76,25 @@ export const __putPost = createAsyncThunk(
         }
     }
 );
+
+export const __deletePost = createAsyncThunk(
+    "posts/__deletePost",
+    async (payload, thunkAPI) => {
+      // console.log(payload)
+      try {
+        postApis.deleteEventPostAx(payload)
+        .then((res) => {
+          console.log("res", res);
+          window.location.replace('/');
+      })
+  
+      } catch (error) {
+        console.log("error", error);
+        return thunkAPI.rejectWithValue(error);
+      }
+    }
+  );
+  
 
 export const __addComment = createAsyncThunk(
     "comments/__addComment",
