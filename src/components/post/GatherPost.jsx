@@ -137,10 +137,9 @@ const GatherPost =() => {
               } else {
                 formData.append("multipartFile", null);
               }
-
-              formData.append("category", gatherPosts.category)
             
             const obj2 = {
+                category : gatherPosts.category,
                 date : gatherPosts.date,
                 number : counter,
                 kakaoLink : gatherPosts.kakaoLink,
@@ -179,6 +178,10 @@ const GatherPost =() => {
 
     return (
         <>
+              <STSelect value="모집글" style={{ width: "50%" }}>
+                <option value="모집글">모집글</option>
+              </STSelect>
+
             <STNumber>
                 <STButton onClick={handleAdd}>+</STButton> {counter===0? "모집인원" : counter}<STButton onClick={handleminus}>-</STButton>
             </STNumber>

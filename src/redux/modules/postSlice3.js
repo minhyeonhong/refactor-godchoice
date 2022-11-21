@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { postApis } from "../../api/api-functions/postApis"
+
 
 const initialState={
     questionPosts : [
@@ -18,8 +20,7 @@ export const __addPost3 = createAsyncThunk(
             headers: {
               enctype: "multipart/form-data",
               Access_Token: localStorage.getItem("token"),
-              // RefreshToken: refreshToken, 생략 예정
-              //"Cache-Control": "no-cache",
+
             },
           })
           .then((response) => {
@@ -37,21 +38,56 @@ export const __getPost3 = createAsyncThunk(
     "questionPosts/__getPost3",
     async (payload, thunkAPI) => {
       try {
-        const data = await axios.get("http://3.38.255.232/allposts", 
-        // {
-        //   headers: {
-        //     "Content-Type": `application/json`,
-        //     Access_Token: getCookie('Access_Token'),
-        //     "Cache-Control": "no-cache",
-        //   },
-        // }
-        );
+        const data = await axios.get("http://54.180.201.200/allposts");
         return thunkAPI.fulfillWithValue(data.data);
       } catch (error) {
         return thunkAPI.rejectWithValue(error);
       }
     }
   );
+
+  export const __putPost = createAsyncThunk(
+    "posts/__putPost",
+    async (payload, thunkAPI) => {
+        try {
+            postApis.putGatherAskAx(payload)
+                .then((res) => {
+                    console.log("res", res);
+                    if (res.data.status === 200) {
+                        window.location.reload();
+                    } else {
+                        console.log(res.data);
+                        alert(res.data.msg);
+                    }
+                }).catch((error) => {
+
+                })
+
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error);
+        }
+    }
+);
+
+export const __deletePost = createAsyncThunk(
+  "posts/__deletePost",
+  async (payload, thunkAPI) => {
+    // console.log(payload)
+    try {
+      postApis.deleteEventPostAx(payload)
+      .then((res) => {
+        console.log("res", res);
+        window.location.replace('/');
+    })
+
+    } catch (error) {
+      console.log("error", error);
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 
 export const PostSlice3 = createSlice({
     name: "questionPosts", 

@@ -1,4 +1,4 @@
-import React, { useState,  useRef } from 'react';
+import React, { useState,  useRef, useEffect } from 'react';
 import Comment from '../common/Comment';
 import KakaoMap from '../common/KakaoMap';
 import Carousel from 'react-bootstrap/Carousel';
@@ -15,127 +15,84 @@ import {
 } from '../styles/Detail.styled'
 import {ModalWrap, STButton, AddressBox} from '../styles/GatherDetail.styled'
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import SearchAddress from '../post/SearchAddress';
-
-const Gather = ({post}) => {
+import useImgUpload from "../../hooks/useImgUpload";
+import {__deletePost, __putPost} from '../../redux/modules/PostSlice2'
+import {useNavigate } from 'react-router-dom';
+const Gather = ({post, postId, modPost, setmodPost, modPostHandle}) => {
 
     const dispatch = useDispatch();
-  
+    const navigate = useNavigate();
     //수정하기
     const [edit, setEdit] = useState(false);
     const toggleEdit = () => {setEdit(!edit);};
 
-    //input onChange
-    const [gatherPosts, setGatherPosts] = useState({
-        category :post.category,
-        date : post.date,
-        kakaoLink: post.kakaoLink,
-        sex: post.sex,
-        startAge: post.startAge,
-        endAge: post.endAge,
-        title: post.title,
-        content: post.content,
-        postLink: post.postLink,
-        detailAddress: ""
-    })
+    // const {gatherPosts} = useSelector((state)=>(state.gatherPosts))
+    // console.log(gatherPosts)
+    //이미지 업로드 훅
+    const [files, fileUrls, uploadHandle] = useImgUpload(5, true, 0.5, 1000);
+    //기존 프리뷰 지울 state
+    const [delImg, setDelImg] = useState([]);
 
-    const onChangeGather =(e) => {
-        const {value, name} = e.target;
-        setGatherPosts({
-            ...gatherPosts,
-            [name] : value
-        })
-    }
+    //이미지 업로드 인풋돔 선택 훅
+    const imgRef = useRef();
 
-//이미지 부분 놔두기!
-const [imgFile, setImgFile] = useState([]);
-const [imgUrl, setImgUrl] = useState([]);
-const imgRef = useRef();
+    //submit
+    const onSubmitGather = () => {
 
-// const onChangeImage = (e) => {
-//     const files = e.currentTarget.files;
-
-//     if ([...files].length > 5) {
-//       alert('이미지는 최대 5개까지 업로드가 가능합니다.');
-//       return;
-//     }
-
-//     //선택한 이미지 파일 반복문 돌리기
-//     [...files].forEach(file => {
-
-//       //이미지 압축 지정 
-//       const options = {
-//         maxSizeMB: 0.5,
-//         maxWidthOrHeight: 220,
-//         useWebWorker: true,
-//       };
-
-//       //압축 관련 내용
-//       imageCompression(file, options)
-//         .then((res) => {
-
-//           setImgFile(imgs => [...imgs, new File([res], res.name, { type: "image/" + res.name.split(".")[1] })]);
-//           const reader = new FileReader(); 
-
-//           reader.onload = () => {
-//             setImgUrl(imgUrl => [...imgUrl, reader.result]);
-//           };
-//           reader.readAsDataURL(res); 
-//         })
-//         .catch((error) => {
-//           console.log("파일 압축 실패", error);
-//         })
-//     });
-//  }
-    const onSubmitHandler = () => {
-
-        //모집인원, 카테고리, 성비관련, 행사시작, 연령대, 제목, 내용, 카카오링크
         if(counter<1){return (alert('모집인원을 입력하세요'))}
-        if(gatherPosts.category===""){return (alert('카테고리를 입력하세요'))}
-        if(gatherPosts.sex===""){return (alert('성비를 선택하세요'))}
-        if(gatherPosts.startAge===""||gatherPosts.endAge===""){return (alert('연령대를 입력하세요'))}
-        if(gatherPosts.title===""){return (alert('제목을 입력하세요'))}
-        if(gatherPosts.content===""){return (alert('내용을 입력하세요'))}
-        if(gatherPosts.date===""){return (alert('행사시작 일자를 입력하세요'))}
-        if(gatherPosts.kakaoLink===""){return (alert('연락할 카카오 링크를 입력하세요'))}
+        if(modPost.kakaoLink===""){return (alert('연락할 카카오 링크를 입력하세요'))}
+        if(modPost.sex===""){return (alert('성비를 선택하세요'))}
+        if(modPost.startAge===""||modPost.endAge===""){return (alert('연령대를 입력하세요'))}
+        if(modPost.title===""){return (alert('제목을 입력하세요'))}
+        if(modPost.content===""){return (alert('내용을 입력하세요'))}
+        if(modPost.category===""){return (alert('카테고리를 입력하세요'))}
 
         //링크 검사(행사장링크 필수 아님)
-        const arr = gatherPosts.postLink.indexOf("http://"||"https://") !==-1
-        if(gatherPosts.postLink!==""){
+        const arr = modPost.postLink.indexOf("http://"||"https://") !==-1
+        if(modPost.postLink!==""){
             if(arr===false){
                 return(alert('http:// 또는 https://가 포함된 링크를 입력해주세요'))
             }
         }
 
+       
+
+        //request로 날릴 폼데이터
         const formData = new FormData();
 
-        if (imgFile.length > 0) {
-            imgFile.forEach((file) => {
-            formData.append("multipartFile", file);
+        //폼 데이터에 파일 담기
+        if (files.length > 0) {
+            files.forEach((file) => {
+                formData.append("multipartFile", file);
             })
         } else {
             formData.append("multipartFile", null);
         }
+        const detail  = modPost.detailAddress ===undefined? "":modPost.detailAddress 
 
-        formData.append("category", gatherPosts.category)
-        
         const obj = {
-            date : gatherPosts.date,
+            category : modPost.category,
+            content: modPost.content,
+            date : modPost.date,
+            endAge : modPost.endAge,
+            imgId: delImg.join(),
+            kakaoLink : modPost.kakaoLink,
             number : counter,
-            kakaoLink : gatherPosts.kakaoLink,
-            sex :  gatherPosts.sex,
-            startAge : gatherPosts.startAge,
-            endAge : gatherPosts.endAge,
-            title : gatherPosts.title,
-            content : gatherPosts.content,
-            postLink : gatherPosts.postLink,
-            postAddress : postAddress+gatherPosts.detailAddress
+            postAddress: modPost.postAddress+detail,
+            postLink: modPost.postLink,
+            sex :  modPost.sex,
+            startAge : modPost.startAge,
+            title: modPost.title,
         }
-        console.log(obj)
+
+        console.log("obj", obj);
+        //폼 데이터에 글작성 데이터 넣기
         formData.append("gatherPostDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
-        // dispatch(__editPost(formData));
-        toggleEdit()
+
+        //Api 날리기
+        dispatch(__putPost({ postId, content: formData }));
     }
 
     //날짜 제한
@@ -149,7 +106,8 @@ const imgRef = useRef();
     const sex = post.sex==="W"? ("여"):(post.sex==="M"? ("남"):("상관없음"))
 
     //모집인원 counter 세기
-    const [counter, setCounter] = useState(Number(post.number));
+    const [counter, setCounter] = useState(post.number);
+
     const handleAdd = () => {setCounter(counter+1);}
 
     const handleminus = ()=> {
@@ -158,10 +116,38 @@ const imgRef = useRef();
         }
     }
 
+    useEffect(() => {
+        if(post.number!== NaN){
+            setCounter(post.number)
+        }
+    }, [post.number])
+
     // 주소 API 팝업창 상태 관리& useState
     const [isPopupOpen, setIsPopupOpen] = useState(false)
     const popupPostCode = () => {setIsPopupOpen(!isPopupOpen)}
     const [postAddress, setPostAddress] = useState(post.postAddress)
+
+    //슬라이드 자동으로 넘기는 부분
+    const [index, setIndex] = useState(0);
+    const handleSelect = (selectedIndex, e) => {
+        setIndex(selectedIndex);
+    };
+   
+    //기존글의 삭제할 이미지
+    const delImgHandle = (postImgId) => {
+        setDelImg((e) => [...e, postImgId]);
+    }
+        
+    useEffect(() => {
+        if (postAddress !== "") {
+            setmodPost({ ...modPost, postAddress })
+        }
+    }, [postAddress])
+
+    //게시글 삭제하기
+    const onGatherDelete =(postId) => {
+        dispatch(__deletePost(postId))
+    }
 
     return (
         Object.keys(post).length < 1 ?
@@ -176,7 +162,7 @@ const imgRef = useRef();
 
                         <button>모집글</button>
 
-                        <STSelect name="category" defaultValue={post.category||""} onChange={onChangeGather}>
+                        <STSelect name="category" defaultValue={modPost.category||""} onChange={modPostHandle}>
                             <option value="마라톤">마라톤</option>
                             <option value="페스티벌">페스티벌</option>
                             <option value="전시회">전시회</option>
@@ -184,11 +170,11 @@ const imgRef = useRef();
                             <option value="기타">기타</option>
                         </STSelect>
 
-                        <AllInput type="date" name="date" defaultValue={post.date||""} onChange={onChangeGather} min={today2} />
-                        <AllInput type="text" defaultValue={post.startAge} name="startAge" onChange={onChangeGather} /> ~ {''}
-                        <AllInput type="text" defaultValue={post.endAge} name="endAge" onChange={onChangeGather} />
+                        <AllInput type="date" name="date" defaultValue={modPost.date||""} onChange={modPostHandle} min={today2} />
+                        <AllInput type="text" defaultValue={modPost.startAge} name="startAge" onChange={modPostHandle} /> ~ {''}
+                        <AllInput type="text" defaultValue={modPost.endAge} name="endAge" onChange={modPostHandle} />
                         
-                        <STSelect name="category" defaultValue={post.sex} onChange={onChangeGather}>
+                        <STSelect name="category" defaultValue={modPost.sex} onChange={modPostHandle}>
                             <option value="NF">성비무관</option>
                             <option value="M">남</option>
                             <option value="W">여</option>
@@ -198,37 +184,75 @@ const imgRef = useRef();
                             <STButton onClick={handleAdd}>+</STButton> {counter}<STButton onClick={handleminus}>-</STButton>
                         </STNumber><br/>
                         <StTitleBox>
-                            <AllInput type="text" placeholder="제목" name="title"  defaultValue={post.title||""} onChange={onChangeGather} style={{width : "100%"}}/>
+                            <AllInput type="text" placeholder="제목" name="title"  defaultValue={modPost.title||""} onChange={modPostHandle} style={{width : "100%"}}/>
                         </StTitleBox>
 
                         {/*사진 업로드*/}
-                        <div>
-                            <Carousel fade>
-                                {
-                                    post.postImgInfo
-                                    &&post.postImgInfo.map((img,i) => {
+                      
+                    {/*이미지 올리기*/}
+                    <StCarouselWrap>
+                            <Carousel activeIndex={index} onSelect={handleSelect}>
+                                    {modPost.postImgInfo.map((imgInfo, i) => {
                                         return (
-                                            <Carousel.Item key={img.id+i}>            
-                                                <img style={{width:'400px'}} 
-                                                src={img.postImgUrl} />  
-                                            </Carousel.Item>)
+                                            <Carousel.Item key={imgInfo.id}>
+                                                <img style={{ height: "180px" }}
+                                                    className="d-block w-100"
+                                                    src={imgInfo.postImgUrl}
+                                                    alt={`slide${i + 1}`}
+                                                />
+                                            </Carousel.Item>
+                                        )
+                                    })}
+                            </Carousel>
+
+                            {modPost.postImgInfo.map((imgInfo, i) => {
+                                return (
+                                    imgInfo.postImgId &&
+                                    <button style={{ display: delImg.indexOf(imgInfo.postImgId) > -1 ? "none" : "inline-block" }}
+                                        onClick={() => delImgHandle(imgInfo.postImgId)} key={i}>
+                                        <img style={{ width: '60px', height: '60px' }} src={imgInfo.postImgUrl} />
+                                    </button>
+                                )
+                            })}
+
+                            <STUploadButton onClick={() => { imgRef.current.click() }}>+</STUploadButton>
+
+                            <label htmlFor="imgFile">
+                                <input
+                                    style={{ display: "none" }}
+                                    type="file"
+                                    id="imgFile"
+                                    onChange={uploadHandle}
+                                    accept="image/*"
+                                    ref={imgRef}
+                                    name="imgFile"
+                                    multiple />
+                            </label>
+
+                            <div>
+                                {
+                                    fileUrls.map((imgUrl, i) => {
+                                        return (
+                                            <img style={{ width: '60px', height: '60px' }} src={imgUrl} key={i} />
+                                        )
                                     })
                                 }
-                            </Carousel>
-                        </div>
+                            </div>
+                        </StCarouselWrap>
+
                         
                         <StContentBox>
-                            <AllTextarea type="text" name="content" defaultValue={post.content|| ""} onChange={onChangeGather} />
+                            <AllTextarea type="text" name="content" defaultValue={modPost.content|| ""} onChange={modPostHandle} />
                         </StContentBox>
 
                         <StEventLinkBox>
                             <br/><label>카카오 링크</label><br/>
-                            <AllInput type="text" name="kakaoLink" defaultValue={post.kakaoLink} onChange={onChangeGather} style={{width : "100%"}}/>
+                            <AllInput type="text" name="kakaoLink" defaultValue={modPost.kakaoLink} onChange={modPostHandle} style={{width : "100%"}}/>
                         </StEventLinkBox>
                         
                         <StEventLinkBox>
                             <br/><label>행사장 링크</label><br/>
-                            <AllInput type="text" name="postLink" defaultValue={post.postLink} onChange={onChangeGather} style={{width : "100%"}}/>
+                            <AllInput type="text" name="postLink" defaultValue={modPost.postLink} onChange={modPostHandle} style={{width : "100%"}}/>
                         </StEventLinkBox>
                         <br/>
 
@@ -242,16 +266,16 @@ const imgRef = useRef();
                                         </ModalWrap>
                                     )}
                                     <div className='address-box'>
-                                        <div className='tag'>#{postAddress&&postAddress.split(' ')[0]}</div>
-                                        <div className='address'>{postAddress}</div>
+                                        <div className='tag'>#{modPost.postAddress.split(' ')[0]}</div>
+                                        <div className='address'>{modPost.postAddress}</div>
                                     </div>
                             </StEventPlaceBox><br/>
-                            <input type="text" placeholder='상세주소' name="detailAddress" onChange={onChangeGather}/>
-                            <KakaoMap address={postAddress} width='100%' height='130px' />                                                            
+                            <input type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle}/>
+                            <KakaoMap address={modPost.postAddress} width='100%' height='130px' />                                                            
                         </div><br/>
 
                         <div>
-                            <button onClick={onSubmitHandler}>수정완료</button>
+                            <button onClick={onSubmitGather}>수정완료</button>
                             <button onClick={toggleEdit}>취소</button>
                         </div>
                     </div>
@@ -306,11 +330,13 @@ const imgRef = useRef();
                         </div>
                     </StEventPlaceBox>
                     <KakaoMap address={post.postAddress} width='100%' height='200px' />
-                    
-                    
 
                     <StButtonBox>
-                        <button onClick={toggleEdit}>수정</button>
+                        {localStorage.getItem('userId') === post.userId.toString() && 
+                                (<div>
+                                <button onClick={toggleEdit}>수정</button>
+                                    <button onClick={()=> {onGatherDelete(postId); }}>삭제</button>
+                                </div>)}
                     </StButtonBox>
                 </div>
                 )
@@ -355,4 +381,24 @@ const STNumber = styled.div`
     float: right;
     text-align: center;
     height : 32px;
+`
+const StCarouselWrap = styled.div`
+    .carousel-indicators [data-bs-target]{
+        width:3px;
+        border-radius : 50%;
+    }
+`
+
+const STUploadButton = styled.button`
+    margin-left:10px;
+    width : 60px;
+    height : 60px;
+    background-color: #F4F4F4;
+    color : #5E5E5E;
+    float : left;
+    font-size: 40px;
+    vertical-align : middle;
+    height : 100%;
+    border-radius: 10px;
+    border : transparent;
 `

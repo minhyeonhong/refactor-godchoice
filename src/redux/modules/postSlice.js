@@ -70,8 +70,7 @@ export const __addPost = createAsyncThunk(
             console.log("error", error);
             return thunkAPI.rejectWithValue(error);
         }
-    }
-);
+    });
 
 export const __putPost = createAsyncThunk(
     "posts/__putPost",
@@ -96,6 +95,25 @@ export const __putPost = createAsyncThunk(
         }
     }
 );
+
+export const __deletePost = createAsyncThunk(
+    "posts/__deletePost",
+    async (payload, thunkAPI) => {
+      // console.log(payload)
+      try {
+        postApis.deleteEventPostAx(payload)
+        .then((res) => {
+          console.log("res", res);
+          window.location.replace('/');
+      })
+  
+      } catch (error) {
+        console.log("error", error);
+        return thunkAPI.rejectWithValue(error);
+      }
+    }
+  );
+  
 
 export const __addComment = createAsyncThunk(
     "comments/__addComment",

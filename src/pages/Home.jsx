@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import useInput from '../hooks/useInput';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-
+import AddPostButton from '../components/home/AddPostButton'
 import { getCookie } from '../cookie/cookie';
 
 import { useDispatch, useSelector } from "react-redux";
@@ -48,6 +48,7 @@ const Home = () => {
 
     return (
         <Layout>
+            <AddPostButton />
             <StHomeWrap>
                 {/* 슬라이드 */}
                 <StCarouselWrap>

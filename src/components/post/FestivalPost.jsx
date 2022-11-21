@@ -157,6 +157,10 @@ const FestivalPost =() => {
 
     return (
           <>
+            <STSelect value="행사글" style={{ width: "50%" }}>
+                <option value="행사글">행사글</option>
+            </STSelect>
+
             <STSelect style={{width :"50%"}} name="category" onChange={onChangeHandler}>
                 <option>카테고리</option>
                 <option value="마라톤">마라톤</option>
