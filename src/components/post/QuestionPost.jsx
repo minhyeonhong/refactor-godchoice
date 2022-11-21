@@ -1,11 +1,11 @@
 import React, {useState, useEffect, useRef} from 'react';
-import Layout from '../components/layout/Layout';
-import SearchAddress from '../components/post/SearchAddress';
-import KakaoMap from '../components/common/KakaoMap'
+import Layout from '../layout/Layout';
+import SearchAddress from './SearchAddress';
+import KakaoMap from '../common/KakaoMap'
 import { useDispatch } from 'react-redux';
 import imageCompression from 'browser-image-compression';
 import { useNavigate } from 'react-router-dom';
-import {__addPost3 } from "../redux/modules/postSlice3"
+import {__addPost3 } from "../../redux/modules/postSlice3"
 import Carousel from 'react-bootstrap/Carousel';
 import styled from 'styled-components';
 import { FiSearch } from 'react-icons/fi'

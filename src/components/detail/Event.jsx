@@ -35,7 +35,7 @@ import {
 import { useEffect } from 'react';
 
 import useImgUpload from "../../hooks/useImgUpload";
-import { __putPost } from '../../redux/modules/postSlice';
+import { __deletePost, __putPost } from '../../redux/modules/postSlice';
 import { useDispatch } from 'react-redux';
 
 const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
@@ -64,13 +64,13 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         }
     }, [postAddress])
 
-    const ingHandle = (e) => {
-        if (e.target.checked) {
-            setmodPost({ ...modPost, postState: "진행중" });
-        } else {
-            setmodPost({ ...modPost, postState: "종료" });
-        }
-    }
+    // const ingHandle = (e) => {
+    //     if (e.target.checked) {
+    //         setmodPost({ ...modPost, postState: "진행중" });
+    //     } else {
+    //         setmodPost({ ...modPost, postState: "종료" });
+    //     }
+    // }
 
     //이미지 업로드 훅
     const [files, fileUrls, uploadHandle] = useImgUpload(5, true, 0.5, 1000);
@@ -94,6 +94,10 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
             formData.append("multipartFile", null);
         }
 
+        const detail = modPost.detailAddress === undefined ? "" : modPost.detailAddress
+        console.log(delImg.join())
+
+
         const obj = {
             imgId: delImg.join(),
             category: modPost.category,
@@ -101,9 +105,9 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
             endPeriod: modPost.endPeriod,
             title: modPost.title,
             content: modPost.content,
-            // postLink: modPost.postLink,
+            postLink: modPost.postLink,
             //postState: modPost.postState,
-            postAddress: modPost.postAddress
+            postAddress: modPost.postAddress + detail
         }
 
         console.log("obj", obj);
@@ -126,6 +130,10 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         setDelImg((e) => [...e, postImgId]);
     }
 
+    //게시글 삭제
+    const onEventDelete = (postId) => {
+        dispatch(__deletePost(postId))
+    }
     return (
         Object.keys(post).length < 1 ?
             <div>페이지 정보 없음</div>
@@ -133,7 +141,25 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
             <StWrap>
                 {!mod ?
                     <>
-                        <StTitleBox>{post.title}</StTitleBox>
+                        <br />
+                        <STIng>
+                            <STIngDiv>{post.postState}</STIngDiv>
+                        </STIng>
+                        <div>
+                            <span>행사글</span>
+
+                            <span>{post.category}</span>
+                            <span>
+                                <span>{post.startPeriod}</span>{" ~ "}
+                                <span>{post.endPeriod}</span>
+                            </span>
+                        </div>
+                        <div>
+                            <img src={post.userImg} style={{ width: "36px", height: "36px", borderRadius: "30px" }} />
+                            <STUsername>{post.username}</STUsername>
+                        </div>
+
+                        <STTitle><p>{post.title}</p></STTitle>
 
                         {/* 스크랩  ----- 일단 임의 위치!! 기능 확인 후 수정하기 */}
                         <LikeBox>
@@ -171,7 +197,12 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                         <KakaoMap address={post.postAddress} width='100%' height='130px' />
                         <StButtonBox>
                             <div style={{ border: '1px solid black' }}>{post.postState}</div>
-                            {localStorage.getItem('userId') === post.userId.toString() && <button onClick={() => { setMod(true) }}>수정</button>}
+
+                            {localStorage.getItem('userId') === post.userId.toString() &&
+                                (<div>
+                                    <button onClick={() => { onEventDelete(postId); }}>삭제</button>
+                                    <button onClick={() => { setMod(true) }}>수정</button>
+                                </div>)}
                         </StButtonBox>
                     </>
                     :
@@ -280,8 +311,9 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                             </div>
                         </StEventPlaceBox>
                         <KakaoMap address={modPost.postAddress} width='100%' height='130px' />
+                        <input type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle} />
                         <StButtonBox>
-                            <div>
+                            {/* <div>
                                 <label>{modPost.postState}</label>
                                 <Form.Check
                                     type="switch"
@@ -289,7 +321,7 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                     checked={modPost.postState === '진행중' ? true : false}
                                     onChange={ingHandle}
                                 />
-                            </div>
+                            </div> */}
 
                             <div>
 
@@ -343,9 +375,53 @@ const STSelect = styled.select`
     
 `
 
-const LikeBox = styled.div`
-    width:100%;
-    height:50px;
+//---------------------
+
+const STIng = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px;
+    gap: 206px;
+    width: 396px;
+    height: 44px;
+`
+
+const STIngDiv = styled.p`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    vertical-align: center;
+    padding: 14px 16px 14px 18px;
+    /* gap: 10px; */
+    width: 85px;
+    height: 44px;
+    background: #15DD95;
+    color: #FFFFFF;
+    /* line-height: 44px; */
+`
+const STUsername = styled.span`
+    color : #424754;
+    margin-left: 12px;
+`
+const STTitle = styled.div`
+    width: 396px;
+    height: 36px;
+    background: #F4F5F7;
+    border-radius: 10px;
+    font-weight: 500;
+    .p{
+        width: 372px;
+        height: 20px;
+
+        font-family: 'Pretendard Variable';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 17px;
+        line-height: 20px;
+        letter-spacing: -0.017em;
+        color: #161B27;
+    }
 `
 
 const LikeBox = styled.div`
