@@ -31,13 +31,32 @@ export const __getPost = createAsyncThunk(
     }
 )
 
+// 스크랩
+export const __postScrap = createAsyncThunk(
+    "postSlice/__postScrap", 
+    async (payload, thunkAPI) => {
+        try {
+            const res = await postApis.postScrapAx(payload)
+            console.log("postScrapAX res 나와랏!! ===> ", res)
+            return thunkAPI.fulfillWithValue(res.data)
+        } catch (error) {
+            console.log(error) 
+                alert(error.res.msg)
+                return thunkAPI.rejectWithValue(error)
+        }
+
+    }
+);
+
+
+
 export const __addPost = createAsyncThunk(
     "posts/__addPost",
     async (payload, thunkAPI) => {
         try {
             console.log(payload)
             await axios
-                .post(`http://3.38.255.232/eventposts`, payload, {
+                .post(`http://54.180.201.200/eventposts`, payload, {
                     headers: {
                         "Access_Token": localStorage.getItem('token')
                         // RefreshToken: refreshToken, 생략 예정
@@ -135,6 +154,7 @@ export const postSlice = createSlice({
     initialState: {
         posts: [],
         post: {},
+        scrap: [],
         searchState: {},
         totalPages: 3,
         comments: [],
@@ -178,6 +198,24 @@ export const postSlice = createSlice({
         [__getPost.rejected]: (state, action) => {
             state.isLoading = false;
             console.log(action.payload);
+        },
+
+
+        // __postScrap
+
+        [__postScrap.fulfilled]: (state, action) => {
+            state.isLoading = false;
+            if (action.payload.status === 200) {
+                state.scrap = action.payload;
+                console.log("postScrap payload ===>" , action.payload);
+            console.log("postScrap 액션 나와라 ===> ", action);
+            }
+        },
+        [__postScrap.rejected]: (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+            // console.log("postScrap payload ===>" ,action.payload);
+            // console.log("postScrap 액션 나와라 ===> ", action);
         },
 
 

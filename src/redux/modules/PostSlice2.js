@@ -15,7 +15,7 @@ export const __addPost2 = createAsyncThunk(
     async (payload, thunkAPI) => {
       try {
         await axios
-          .post(`http://3.38.255.232/gatherposts`, payload, {
+          .post(`http://54.180.201.200/gatherposts`, payload, {
             headers: {
               enctype: "multipart/form-data",
               Access_Token: getCookie('Access_Token'),

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 import Comment from '../common/Comment';
-
 import styled from 'styled-components';
 import { FiSearch } from 'react-icons/fi';
 
@@ -12,6 +12,13 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Carousel from 'react-bootstrap/Carousel';
 import Col from 'react-bootstrap/Col';
+
+
+// 스크랩
+import { __postScrap } from '../../redux/modules/postSlice';
+import PostScrap from '../post/PostScrap';
+
+
 
 import {
     StWrap,
@@ -30,6 +37,7 @@ import { useEffect } from 'react';
 
 import useImgUpload from "../../hooks/useImgUpload";
 import useInput from "../../hooks/useInput";
+
 
 const Event = ({ post, modPost, setmodPost, modPostHandle }) => {
     //슬라이드 자동으로 넘기는 부분
@@ -98,6 +106,10 @@ const Event = ({ post, modPost, setmodPost, modPostHandle }) => {
     const today = new Date();
     const today2 = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
 
+    // 스크랩
+    // const params = useParams();
+   
+
     return (
         Object.keys(post).length < 1 ?
             <div>페이지 정보 없음</div>
@@ -105,7 +117,12 @@ const Event = ({ post, modPost, setmodPost, modPostHandle }) => {
             <StWrap>
                 {!mod ?
                     <>
-                        <StTitleBox>{post.title}</StTitleBox>
+                    <StTitleBox>{post.title}</StTitleBox>
+
+                    {/* 스크랩  ----- 일단 임의 위치!! 기능 확인 후 수정하기 */}
+                    <LikeBox>
+                        <PostScrap />
+                    </LikeBox>
 
                         <StCarouselWrap>
                             <Carousel activeIndex={index} onSelect={handleSelect}>
@@ -252,6 +269,8 @@ const Event = ({ post, modPost, setmodPost, modPostHandle }) => {
                             </div>
 
                             <div>
+                              
+
                                 <button onClick={() => setMod(false)}>취소</button>
                                 <button onClick={putPostSubmit}>수정하기</button>
                             </div>
@@ -298,4 +317,9 @@ const STSelect = styled.select`
     border : transparent;
     padding:5px;
     height : 32px;
+`
+
+const LikeBox = styled.div`
+    width:100%;
+    height:50px;
 `

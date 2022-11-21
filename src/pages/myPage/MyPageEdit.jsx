@@ -8,6 +8,9 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Camera, Delete } from "../../assets";
 import Layout from "../../components/layout/Layout";
+import kakao from "../../assets/logo_kakao.png";
+import naver from "../../assets/logo_naver.png";
+import google from "../../assets/logo_google.png";
 
 
 const MyPageEdit = () => {
@@ -18,14 +21,15 @@ const MyPageEdit = () => {
       nickName: "",
     };
 
-    const userImg = localStorage.getItem("userImg");
+    console.log("이건 data야!",data);
   
-    const profileData = useSelector((state) => state?.myPage?.myPage);
+    const profileData = useSelector((state) => state.myPage.userInfo);
+    console.log("프로필 데이터가 뭔데",profileData);
     const img_ref = useRef(null);
   
     const [inputForm, setInputForm] = useState(data);
     const [imgFile, setImgFile] = useState([]);
-    const [imagePreview, setImagePreview] = useState(profileData?.userImgUrl);
+    const [imagePreview, setImagePreview] = useState(profileData.userImg);
   
     // const [optionVisible, setOptionVisible] = useState(false); // alert 모달
     // const [optionContent, setOptionContent] = useState({
@@ -36,7 +40,15 @@ const MyPageEdit = () => {
     //   onClickCloseBtn: () => {},
     // });
   
-    const nickName = localStorage?.getItem("nickName");
+    // const nickName = localStorage?.getItem("nickName");
+    const userId = localStorage.getItem("userId");
+    const email = localStorage.getItem("email");
+    const nickName = profileData.nickName;
+    console.log("userId ===> ",userId);
+    console.log("email ===> ",email);
+    console.log( "profileData.userImg ===> " ,profileData.userImg)
+    console.log("닉네임 ===> ", profileData.nickName)
+
   
     const onLoadFile = (e) => {
       const reader = new FileReader();
@@ -69,29 +81,24 @@ const MyPageEdit = () => {
       }
   
       const data = dispatch(
-        __putMyInfo({ nickName: nickName, formData: formData })
+        __putMyInfo({userId: userId, formData: formData })
       ).unwrap();
       if (data) {
-        // 포스팅 완료후 새로고침
-        // setOptionVisible(true);
-        // setOptionContent({
-        //   modalText: "프로필 변경이 \n 완료되었습니다.",
-        //   btnText: "확인",
-        //   // isConfirm: true,
-        //   onClickCloseBtn: () => navigate(-1, { replace: true }),
-        // });
+
         navigate(-1, {replace: true})
-        
       }
     };
   
     useEffect(() => {
-      dispatch(__getMyInfo(nickName));
+      dispatch(__getMyInfo(userId));
     }, [imagePreview]);
   
     return (
       <>
         <Layout>
+        <div>
+                <h3>프로필 수정</h3>
+            </div>
           <MyProfile>
             <MyImgWrap>
               <MyImgBox>
@@ -104,7 +111,7 @@ const MyPageEdit = () => {
                 ) : (
                   <img src={imagePreview} alt="" />
                 )} */}
-                < img src={userImg} alt={'userImg'} />
+                <img src={imagePreview} alt="" />
                 <label htmlFor="img_UpFile">
                   <Camera />
                 </label>
@@ -118,6 +125,16 @@ const MyPageEdit = () => {
                 />
               </MyImgBox>
             </MyImgWrap>
+
+            <LoginInfo>
+            <LoginInfoTitle>로그인 정보</LoginInfoTitle>
+            <LoginInfoContent>
+              {profileData.domain === 'google' ? <img src={google} alt="logoImg" /> : null}
+              {profileData.domain === 'kakao' ? <img src={kakao} alt="logoImg" /> : null}
+              {profileData.domain === 'naver' ? <img src={naver} alt="logoImg" /> : null}
+              {profileData.email}
+            </LoginInfoContent>
+          </LoginInfo>
   
             <MyTextWrap>
               <div className="MyTextNick">닉네임</div>
@@ -128,16 +145,16 @@ const MyPageEdit = () => {
                   name="nickName"
                   onChange={onChangeHandler}
                   placeholder={
-                    // profileData.nickName
-                    nickName
+                    nickName === null
+                    ? "닉네임을 입력해주세요."
+                    : nickName
                   }
-                  minLength="4"
+                  minLength="2"
                   maxLength="6"
                 />
-  
                 <Delete />
               </div>
-              <span className="MyTextCheck"></span>
+              {/* <span className="MyTextCheck"></span> */}
             </MyTextWrap>
           </MyProfile>
           <MyDoneBtnWrap>
@@ -157,8 +174,8 @@ const MyPageEdit = () => {
   display: flex;
   flex-direction: column;
 
-  margin: 70px 10px 10px 10px;
-  margin: 70px 20px 0px 20px;
+  margin: 0px 10px 10px 10px;
+  margin: 00px 20px 0px 20px;
 `;
 
 const MyImgWrap = styled.div`
@@ -192,6 +209,26 @@ const MyImgBox = styled.div`
     align-items: center;
     justify-content: center;
     background-color: #eee;
+  }
+`;
+const LoginInfo = styled.div`
+  width: 100%;
+  border-bottom: 1px solid black;
+
+`;
+const LoginInfoTitle = styled.h2`
+  font: 500 18px/1 "Noto sans", "sans-serif";
+`;
+const LoginInfoContent = styled.div`
+  font: 16px/1 "Noto sans", "sans-serif";
+  color: #7b7b7b;
+  padding: 20px 0 28px;
+  box-sizing: border-box;
+  display:flex;
+  align-items:center;
+  img{
+    width:20px;
+    margin-right:10px;
   }
 `;
 

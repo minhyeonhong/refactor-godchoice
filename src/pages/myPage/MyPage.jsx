@@ -8,7 +8,11 @@ import { useDispatch, useSelector } from 'react-redux';
 
 // Component import 
 import Layout from '../../components/layout/Layout';
-import userProfile from '../../assets/images/common/userProfile.png'
+import { flexColumn } from '../../components/styles/Flex';
+// import { ProfileImg } from '../../assets';
+import Button from '../../components/elements/Button';
+import { flexBetween, flexEvenly, flexRow } from '../../styles/Flex';
+import { BookmarkFill, Comment, MyPost } from '../../assets';
 
 
 
@@ -21,27 +25,34 @@ import userProfile from '../../assets/images/common/userProfile.png'
 const MyPage = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const data = useSelector((state) => state.myPage?.myPage);
-    const nickName = localStorage.getItem("nickName");
-    const userImg = localStorage.getItem("userImg");
-    // const email = localStorage.getItem("email");
+    const data = useSelector((state) => state.myPage.userInfo);
+    console.log("data ===> ",data)
+    const token = localStorage.getItem("token");
+    // const nickName = localStorage.getItem("nickName");
+    const nickName = data.nickName;
+    // const email = localStorage.setItem("email", data.email);
+    const userImgUrl = localStorage.getItem("userImgUrl");
 
-    // const basicProfileImg = () => {
+
+    // const userProfileImg = () => {
     //   if (nickName === null) {
-    //     return <BasicProfile onClick={() => navigate("/login")} />;
+    //     return <ProfileImg onClick={() => navigate("/login")} />;
     //   } else {
-    //     if (data?.userImgUrl === null || data?.userImgUrl === undefined) {
-    //       return <BasicProfile />;
+    //     if (userImgUrl === null || userImgUrl === undefined) {
+    //       return <ProfileImg />;
     //     } else {
-    //       return <img src={data?.userImgUrl} alt="" />;
+    //       return <img src={userImgUrl} alt="" />;
     //     }
     //   }
     // };
 
 
+    // useEffect(() => {
+    //     dispatch(__getMyInfo(nickName));
+    //   }, [nickName, JSON.stringify[data]]);
     useEffect(() => {
-        dispatch(__getMyInfo(nickName));
-      }, [nickName, JSON.stringify[data]]);
+        dispatch(__getMyInfo(token));
+      }, [token, JSON.stringify[data]]);
 
       
       const MyPageList = ({ listName, onClick }) => {
@@ -67,63 +78,35 @@ const handleLogout = () => {
 
     return (
         <Layout>
-            <div>
+            {/* <div>
                 <h1>마이페이지</h1>
-            </div>
+            </div> */}
 
             <MyPageWrap>
           <MyProfileWrap>
             <MyImgContainer>
-              <MyImgBox>< img src={userImg} alt={'userImg'} /></MyImgBox>
+              <MyImgBox>
+                < img src={userImgUrl} alt={'ProfileImg'} />
+                {/* {userProfileImg()} */}
+                </MyImgBox>
             </MyImgContainer>
             {/* MyImgContainer */}
 
             <NickBox>
-                {nickName !== null ? (
-                  <>
+
                     <div className="nickName">
-                      {/* {data?.nickName} */}
                       {nickName}
                     </div>
-                    <div
-                      className="myPageEdit"
-                      onClick={() => {
-                        navigate("/mypageedit");
-                      }}>
-                      프로필 수정
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="needNickName" onClick={() => navigate("/login")}>
-                      로그인이 필요합니다.
-                    </div>
-                  </>
-                )}
+                    <Btns>
+                    <Button btnType = "submit" onClick={() => { navigate("/mypageedit")}}>프로필 수정</Button>
+                    <Button btnType= "submit" onClick={handleLogout}>로그아웃</Button>
+                    </Btns>
               </NickBox>
               {/* NickBox */}
             </MyProfileWrap>
             {/* MyProfileWrap */}
 
-            <MyStateWrap>
-            {nickName === null ? (
-              <>
-                <div className="MyStateWrap" onClick={() => navigate("/login")}>
-                  <div className="stateBox">
-                    <div className="title">내가 쓴 글</div>
-                  </div>
-                  <StateBox>
-                  <div className="stateBox">
-                    <div className="title">댓글 단 글</div>
-                  </div>
-                  </StateBox>
-                  <div className="stateBox">
-                    <div className="title">스크랩</div>
-                  </div>
-                </div>{" "}
-              </>
-            ) : (
-              <>
+            {/* <MyStateWrap>
                 <div className="MyStateWrap">
                   <div
                     className="stateBox"
@@ -143,24 +126,28 @@ const handleLogout = () => {
                     <div className="title">스크랩</div>
                   </div>
                 </div>
-              </>
-            )}
-          </MyStateWrap>
+          </MyStateWrap> */}
           {/* MyStateWrap */}
+          <MyCateWrap>
+            <CateBox>
+              <div className='title'>내가 쓴 글</div>
+              <MyPost />
 
-          <div>
-          {nickName === null ? (
-              <MyPageList
-                listName={`로그인`}
-                onClick={() => navigate("/login")}
-              />
-            ) : (
-              <MyPageList
-                listName={`로그아웃`}
-                onClick={() => handleLogout()}
-              />
-            )}
-          </div>
+            </CateBox>
+            <CateBox >
+              <div className='title'>댓글 단 글</div>
+              <Comment />
+
+            </CateBox>
+            <CateBox >
+              <div className='title'>스크랩</div>
+              <BookmarkFill />
+
+            </CateBox>
+          </MyCateWrap>
+          {/* MyCateWrap */}
+
+         
 
             </MyPageWrap >
             {/* MyPageWrap */}
@@ -173,26 +160,22 @@ export default MyPage;
 
 
 const MyPageWrap = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 70px;
-  height: ${(props) =>
-    props.isIOS ? `calc(100vh - 150px)` : `calc(100vh - 140px)`};
+  ${flexColumn}
+  margin-top: 55px;
   overflow: auto;
+  margin: 55px auto;
 `;
 const MyProfileWrap = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  gap: 20px;
+${flexColumn};
+  gap: 25px;
   margin: 15px 20px 20px 20px;
 `;
 const MyImgContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 73px;
-  height: 73px;
+  width: 150px;
+  height: 150px;
 `;
 const MyImgBox = styled.div`
   display: flex;
@@ -201,94 +184,54 @@ const MyImgBox = styled.div`
 
   img {
     display: flex;
-    width: 73px;
+    width: 150px;
     height: 100%;
     border-radius: 120px;
   }
   svg {
     display: flex;
-    width: 73px;
+    width: 150px;
     height: 100%;
     border-radius: 120px;
   }
 `;
 
 const NickBox = styled.div`
-  display: flex;
-  flex-direction: column;
   width: 100%;
   height: 100%;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 1px;
+  ${flexColumn}
+  gap: 20px;
   .nickName {
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 28px;
-  }
-  .myPageEdit {
-    font-size: 14px;
-    font-weight: 400;
-    color: #9b9b9b;
-  }
-  .needNickName {
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 28px;
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 38px;
   }
 `;
 
-const MyStateWrap = styled.div`
+const Btns = styled.div`
+  ${flexRow}
+  gap: 10px;
+`
+const MyCateWrap = styled.div`
+  width : 100%;
   display: flex;
-  position: relative;
-  width: 100%;
-  justify-content: center;
-  margin-bottom: 40px;
-  height: 86px;
+  margin-top : 30px;
+  font-size : 18px;
+  font-weight: 400;
+  padding : 17px 26px;
+  gap : 16px;
 
-  .MyStateWrap {
-    display: flex;
-    width: 350px;
-    justify-content: space-evenly;
-    align-items: center;
-    border-radius: 8px;
-    background-color: powderblue;
-    /* box-shadow: 1px 1px 4px 1px #dadce0; */
+`
 
-    .stateBox {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      width: 114px;
-      height: 100%;
-      margin: 16px 0px;
+const CateBox = styled.div`
+  ${flexColumn};
+  flex: 1;
+  background: #FFFFFF;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding : 17px 26px;
 
-      .title {
-        display: flex;
-        font-size: 18px;
-        font-weight: 400;
-        color: black;
-      }
-    }
-  }
-`;
-const StateBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 114px;
-  height: 26px;
-  border-left: 1px solid black;
-  border-right: 1px solid black;
-  .title {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    font-size: 18px;
-    font-weight: 400;
-    color: #6d6d6d;
-  }
-`;
+
+  
+`
 

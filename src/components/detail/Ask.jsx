@@ -1,6 +1,7 @@
 import React from 'react';
 import Comment from '../common/Comment';
 import KakaoMap from '../common/KakaoMap';
+import styled from 'styled-components';
 
 import {
     StWrap,
@@ -14,10 +15,19 @@ import {
 
 import noImg from '../../assets/images/common/noImg.jpg'
 
+// 스크랩
+import { __postScrap } from '../../redux/modules/postSlice';
+import PostScrap from '../post/PostScrap';
+
 const Ask = () => {
     return (
         <StWrap>
             <StTitleBox>askPost</StTitleBox>
+
+                {/* 스크랩  ----- 일단 임의 위치!! 기능 확인 후 수정하기 */}
+                <LikeBox>
+                        <PostScrap />
+                </LikeBox>
 
             <StImgBox>
                 <img className='main-img' src={noImg} />
@@ -50,3 +60,9 @@ const Ask = () => {
 };
 
 export default Ask;
+
+
+const LikeBox = styled.div`
+    width:100%;
+    height:50px;
+`

@@ -1,5 +1,4 @@
 import styled, { css } from "styled-components";
-// import icons from "../../assets";
 import { colors } from "../../styles/color";
 
 const Button = ({
@@ -56,14 +55,16 @@ const StButton = styled.button`
     return (
       props.btnType === "submit" &&
       css`
-        width: 100%;
+        width: 90px;
         border: none;
-        line-height: 56px;
-        font-weight: 600;
-        font-size: 20px;
-        color: ${(props) => (props.on === "on" ? "white" : "#BEBEBE")};
-        background-color: ${(props) => (props.on === "on" ? colors.green00 : "#EDEDED")};
-        cursor: ${(props) => (props.on === "on" ? "pointer" : "default")};
+        line-height: 36px;
+        font-weight: 400;
+        font-size: 14px;
+        color: #fff;
+        background-color: ${(props) => (props.on === "on" ?  "#6C88FF" : "#2D4FDA")};
+        cursor: pointer;
+        border-radius: 30px;
+        padding: 5px 10px;
       `
     );
   }}
