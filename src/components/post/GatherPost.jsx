@@ -12,7 +12,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Carousel from 'react-bootstrap/Carousel';
 import styled from 'styled-components';
-
+import {STNumber, STButton, STSelect, STSelectButton, AllButton, AllInput, AllTextarea, StSearchBox, RegionButton, AddressBox, AddressInput, ModalWrap} from '../styles/GatherDetail.styled'
 
 const GatherPost =() => {
     const dispatch = useDispatch();
@@ -137,9 +137,10 @@ const GatherPost =() => {
               } else {
                 formData.append("multipartFile", null);
               }
+
+              formData.append("category", gatherPosts.category)
             
             const obj2 = {
-                category : gatherPosts.category,
                 date : gatherPosts.date,
                 number : counter,
                 kakaoLink : gatherPosts.kakaoLink,
@@ -151,7 +152,7 @@ const GatherPost =() => {
                 postLink : gatherPosts.postLink,
                 postAddress : postAddress+gatherPosts.detailAddress,
             }
-
+            console.log(obj2)
             formData.append("gatherPostDto", new Blob([JSON.stringify(obj2)], { type: "application/json" }));
             dispatch(__addPost2(formData));
         }
@@ -286,35 +287,6 @@ const GatherPost =() => {
 
 export default GatherPost;
 
-const STNumber = styled.div`
-    float: right;
-    border-radius: 8px;
-    background-color: #F4F4F4;
-    width : 48%;
-    font-size: 14px;
-    text-align: center;
-    height : 32px;
-`
-const STButton = styled.button`
-    background-color: transparent;
-    color : #5E5E5E;
-    vertical-align : middle;
-    height : 100%;
-    border-color: transparent;
-    font-size: 14px;
-`
-const STSelect = styled.select`
-    font-size: 14px;
-    background-color: #F4F4F4;
-    width : 48%;
-    border-radius: 10px;
-    border : transparent;
-    padding:5px;
-    height : 32px;
-`
-const STSelectButton = styled.div`
-    margin-left: 5px;
-`
 const STSelectButton2 = styled(ToggleButton)`
     background-color: #F4F4F4;
     color : #AEAEAE;
@@ -322,66 +294,3 @@ const STSelectButton2 = styled(ToggleButton)`
     height : 32px;
     font-size: 14px;
 `
-const AllButton = styled.button`
-    width : 100%;
-    height: 48px;
-    border: transparent;
-`
-const AllInput = styled.input`
-    border-radius: 10px;
-    background-color: #F4F4F4;
-    border : transparent;
-    font-size: 14px;
-    height : 32px;
-    margin-right: 7px;
-`
-const AllTextarea = styled.textarea`
-    border-radius: 10px;
-    border: transparent;
-    width :100%;
-    background-color: #F4F4F4;
-`
-
-const StSearchBox = styled.div`
-    background: #EEEAE3;
-    box-shadow: inset 0px 2px 2px rgba(0, 0, 0, 0.1);
-    border-radius : 30px;
-    display : flex;
-    flex-direction : row;
-    margin : 0px 10px;
-    height : 36px;
-    button{
-        background-color : transparent;
-        border : none;
-        border-radius :  30px 0 0 30px ; 
-    }
-`
-const RegionButton = styled.button`
-    border-radius: 14px;
-    border: transparent;
-    background-color: #D9D9D9;
-`
-const AddressBox = styled.div`
-    margin : 20px 20px 20px 20px;
-`
-const AddressInput = styled.input`
-    border-radius: 5px;
-    margin-bottom: 5px;
-    border: transparent;
-    background-color: #F4F4F4;
-    float : right;
-`
-const ModalWrap = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-  padding: 0 15px;
-  box-sizing: border-box;
-`;

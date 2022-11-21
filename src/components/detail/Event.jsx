@@ -286,7 +286,7 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                         </StButtonBox>
                     </>
                 }
-                <Comment />
+                <Comment postId={postId} kind='event' commentDtoList={post.commentDtoList} />
             </StWrap >
     );
 };

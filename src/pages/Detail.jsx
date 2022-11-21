@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Layout from '../components/layout/Layout';
 
 import Event from '../components/detail/Event';
-import Gahter from '../components/detail/Gahter';
+import Gather from '../components/detail/Gather';
 import Ask from '../components/detail/Ask';
 import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -36,7 +36,7 @@ const Detail = () => {
     return (
         <Layout>
             {url === 'eventposts' && <Event post={post} postId={postId} modPost={modPost} setmodPost={setmodPost} modPostHandle={modPostHandle} />}
-            {url === 'gahterposts' && <Gahter post={post} />}
+            {url === 'gatherposts' && <Gather post={post} />}
             {url === 'askposts' && <Ask post={post} />}
         </Layout>
     );
