@@ -24,10 +24,3 @@ export const flexBetween = css`
   justify-content: space-between;
   align-items: center;
 `;
-
-export const flexEvenly = css`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
-`;

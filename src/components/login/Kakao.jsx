@@ -26,41 +26,9 @@ const Kakao = () => {
 		}
 	}, [code])
 
-	// useEffect(async () => {
-	// 	console.log("code", code)
-	// 	await dispatch(__kakaoLogin(code));
-	// }, [code]);
-
 	return (
 		<H3>로그인 중입니다.</H3>
 	)
-
-
-
-
-	// useEffect(() => {
-	// 	if (!!code) {
-	// 		api
-	// 			.get(`/oauth/callback/kakao?code=${code}`)
-	// 			.then((res) => {
-	// 				if (res.data.success === true) {
-	// 					return (
-	// 						localStorage.setItem('userId', res.data.result.userId),
-	// 						localStorage.setItem('memberId', res.data.result.id),
-	// 						localStorage.setItem('accessToken', res.headers.authorization),
-	// 						setCookie('refreshToken', res.headers[`refresh-token`]),
-	// 						navigate(`/`)
-	// 					);
-	// 				}
-	// 			})
-	// 			.catch((err) => {
-	// 				console.log(err);
-	// 			});
-	// 	}
-	// }, [code]);
-	// return <></>;
-
-
 };
 
 export default Kakao;

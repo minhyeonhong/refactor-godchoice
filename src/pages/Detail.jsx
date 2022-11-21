@@ -17,6 +17,7 @@ const Detail = () => {
     const dispatch = useDispatch();
     const { post } = useSelector((state) => state.postSlice);
 
+
     //업데이트 인풋
     const [modPost, setmodPost, modPostHandle] = useInput();
 

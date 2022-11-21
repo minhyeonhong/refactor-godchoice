@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 import Comment from '../common/Comment';
-
 import styled from 'styled-components';
 import { FiSearch } from 'react-icons/fi';
 
@@ -12,6 +12,13 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Carousel from 'react-bootstrap/Carousel';
 import Col from 'react-bootstrap/Col';
+
+
+// 스크랩
+import { __postScrap } from '../../redux/modules/postSlice';
+import PostScrap from '../post/PostScrap';
+
+
 
 import {
     StWrap,
@@ -127,6 +134,11 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                 {!mod ?
                     <>
                         <StTitleBox>{post.title}</StTitleBox>
+
+                        {/* 스크랩  ----- 일단 임의 위치!! 기능 확인 후 수정하기 */}
+                        <LikeBox>
+                            <PostScrap />
+                        </LikeBox>
 
                         <StCarouselWrap>
                             <Carousel activeIndex={index} onSelect={handleSelect}>
@@ -280,6 +292,8 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                             </div>
 
                             <div>
+
+
                                 <button onClick={() => setMod(false)}>취소</button>
                                 <button onClick={putPostSubmit}>수정하기</button>
                             </div>
@@ -327,4 +341,14 @@ const STSelect = styled.select`
     padding:5px;
     height : 32px;
     
+`
+
+const LikeBox = styled.div`
+    width:100%;
+    height:50px;
+`
+
+const LikeBox = styled.div`
+    width:100%;
+    height:50px;
 `

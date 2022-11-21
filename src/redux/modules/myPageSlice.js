@@ -10,15 +10,15 @@ export const __getMyInfo = createAsyncThunk(
     async (payload, thunkAPI) => {
         try {
             const response = await myPageApis.getMyPageAX(payload)
-            console.log("getMyPageAX response ===> ", payload)
-            return thunkAPI.fulfillWithValue(response.data)
+            console.log("getMyPageAX response ===> ", response)
+            return thunkAPI.fulfillWithValue(response.data.data)
         } catch (error) {
             console.log(error) 
                 alert(error.response.msg)
                 return thunkAPI.rejectWithValue(error)
             
         }
-
+ 
     }
 );
 
@@ -34,7 +34,7 @@ export const __putMyInfo = createAsyncThunk(
             "Content-Type":"multipart/form/data",
         }
         );
-      return thunkAPI.fulfillWithValue(response.data);
+      return thunkAPI.fulfillWithValue(response.data.data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error)
     }
@@ -161,18 +161,18 @@ const myPageSlice = createSlice({
         },
 
 
-        [__putMyInfo.pending]: (state) => {
-            state.isLoading = true; 
-        },
+        // [__putMyInfo.pending]: (state) => {
+        //     state.isLoading = true; 
+        // },
         [__putMyInfo.fulfilled]: (state, action) => {
-            state.isLoading = false; 
+            // state.isLoading = false; 
             // state.myPage = action.payload;
             state.userInfo = action.payload;
         },
         [__putMyInfo.rejected]: (state, action) => {
             state.isLoading = false; 
             state.error = action.payload; 
-            console.log("action ===> ", action);
+            console.log("action 나와라!!! ===> ", action);
         },
 
 
