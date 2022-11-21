@@ -31,28 +31,19 @@ const Login = () => {
   let code = new URL(window.location.href).searchParams.get("code");
   const getGoogleToken = async () => {
     try {
-      // const data = await axios.get(`http://52.79.184.114/member/signup/google?code=${code}`);
-
-      // console.log('data===> ', data)
-
-      // if (data.headers.athorization) {
-      //   setCookie("mycookie", data.headers.athorization);
-      //   // setCookie("refreshToken", data.headers.refreshtoken);
-      //   // setCookie("memberId", data.data.memberId);
-      // }
-
-      //  axios.get(`${process.env.REACT_APP_API_URL}/member/signup/google?code=${code}`)
       axios.get(`http://52.79.184.114/member/signup/google?code=${code}`)
         .then((res) => {
           console.log("넘어온 값", res); // 토큰이 넘어올 것임
           const Access_Token = res.headers.access_token;
-          console.log(Access_Token)
-          //   setCookie("token", Access_Token)
-          // const Access_Token = res.headers.access_token;
-          localStorage.setItem("token", Access_Token);
-          localStorage.setItem("email", res.data.email);
-          localStorage.setItem("nickName", res.data.nickName);
-          localStorage.setItem("userImg", res.data.userImg);
+          const resData = res.data.data;
+
+        localStorage.setItem("token", Access_Token);
+
+        localStorage.setItem("role", resData.role);
+        localStorage.setItem("userAddressTag", resData.userAddressTag);
+        localStorage.setItem("userId", resData.userId);
+        localStorage.setItem("userImgUrl", resData.userImgUrl);
+
 
           console.log("토큰나와라 ===> ", localStorage.getItem("token"))
 
