@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { __getMyPost, saveCategory  } from "../../redux/modules/myPageSlice";
 import Button from "../elements/Button";
+import { Image } from "../../assets";
+import noImg from "../../assets/images/common/noImg.png"
 
 
 const MyPost = () => {
@@ -18,8 +20,7 @@ const MyPost = () => {
     }, []);
 
     const { myPostList } = useSelector((state) => state.myPage);
-    console.log("제발 !!!!!! ===> ", myPostList);
-
+    
     const onClickCategory = (tab) => {
         setCategoryTab(tab);
         dispatch(saveCategory(tab));
@@ -27,7 +28,7 @@ const MyPost = () => {
 
     const { saveCategoryTab } = useSelector((state) => state.myPage);
     const {eventPost, gatherPost, askPost} = myPostList
-    
+    console.log("제발 !!!!!! ===> ", myPostList);
 
     return (
         <>
@@ -71,24 +72,26 @@ const MyPost = () => {
            
               <>
 
-             { categoryTab === "event" ? (eventPost && eventPost.map((v) => (
+             { categoryTab === "event" ? (eventPost !== undefined && eventPost.map((v) => (
                     <ListBox
                       key={v.postId}
                       onClick={() =>
                         navigate(`/eventposts/${v.postId}`)
                       }
                     >
-                      <ItemImg
+                      {/* <ItemImg
                         bgImg={
-                          v.img !== null
-                            ? v.img
-                            : "https://www.urbanbrush.net/web/wp-content/uploads/edd/2020/02/urbanbrush-20200227023608426223.jpg"
+                          v.imgUrl !== null
+                          ? v.imgUrl : <img src={noImg} alt="noImg" />                        
                         }
-                      ></ItemImg>
+                      ></ItemImg> */}
+                       <ItemImg>
+                      {  v.img !== null ? v.img : <img src={noImg} alt="noImg" /> }
+                      </ItemImg>
                       <div>
                         <div>
                           <p>{v.title}</p>
-                          <p>{v.content}</p>
+                          <p>{v.category}</p>
                           <p>
                             {v.startPeriod} - {v.endPeriod}
                           </p>
@@ -102,16 +105,18 @@ gatherPost.map(
         <ListBox
           key={v.postId}
           onClick={() =>
-            navigate(`/eventposts/${v.postId}`)
+            navigate(`/gatherposts/${v.postId}`)
           }
         >
-          <ItemImg
+          {/* <ItemImg
             bgImg={
               v.img !== null
-                ? v.img
-                : "https://www.urbanbrush.net/web/wp-content/uploads/edd/2020/02/urbanbrush-20200227023608426223.jpg"
+              ? v.img : <img src={noImg} alt="noImg" />
             }
-          ></ItemImg>
+          ></ItemImg> */}
+           <ItemImg>
+                      {  v.img !== null ? v.img : <img src={noImg} alt="noImg" /> }
+                      </ItemImg>
           <div>
             <div>
               <p>{v.title}</p>
@@ -126,21 +131,22 @@ gatherPost.map(
 
 )
 )
-:  ( askPost && askPost.map(
-(v) => (
+:  ( askPost && askPost.map((v) => (
                     <ListBox
                       key={v.postId}
                       onClick={() =>
-                        navigate(`/eventposts/${v.postId}`)
+                        navigate(`/askposts/${v.postId}`)
                       }
                     >
-                      <ItemImg
+                      {/* <ItemImg
                         bgImg={
                           v.img !== null
-                            ? v.img
-                            : "https://www.urbanbrush.net/web/wp-content/uploads/edd/2020/02/urbanbrush-20200227023608426223.jpg"
+                          ? v.img : <img src={noImg} alt="noImg" />
                         }
-                      ></ItemImg>
+                      ></ItemImg> */}
+                      <ItemImg>
+                      {  v.img !== null ? v.img : <img src={noImg} alt="noImg" /> }
+                      </ItemImg>
                       <div>
                         <div>
                           <p>{v.title}</p>
@@ -153,6 +159,7 @@ gatherPost.map(
                     </ListBox>
                   )
 )) 
+
 // if(categoryTab === "event"){
 // eventPost.map(
 // )
@@ -192,7 +199,7 @@ gatherPost.map(
                       </div>
                     </ListBox>
                   )
-                  )} */}
+                  )} */} 
               </>
           </CategoryInfoList>
         </Container>

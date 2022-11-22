@@ -12,12 +12,12 @@ const PostScrap = () => {
     // 좋아요 기능
     const dispatch = useDispatch();
     const data = useSelector((state) => state.postSlice.post);
-    console.log("안녕? =====> ", data)
+    console.log("안녕 data야=====> ", data)
     
     const [scrapState, setScrapState] = useState(false);
     const { url, postId } = useParams();
 
-    console.log( "얘는 url", data.bookmark);
+    console.log( "얘는 bookmark", data.bookmark);
     console.log("얘는 postId", postId);
 
 

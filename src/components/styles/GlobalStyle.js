@@ -13,6 +13,8 @@ const GlobalStyle = createGlobalStyle`
 &::-webkit-scrollbar {
   display: none;
 }
+}
+
 html,body{
   width:100vw;
   height:auto;
@@ -42,9 +44,8 @@ p {
   font-family: 'Pretendard';
 }
 button {
-  
 cursor: pointer;
 }
-`;
+`
 
 export default GlobalStyle;

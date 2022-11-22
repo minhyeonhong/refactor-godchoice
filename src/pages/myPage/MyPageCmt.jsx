@@ -1,11 +1,15 @@
 import React from "react";
+import Layout from "../../components/layout/Layout";
+import MyCmt from "../../components/mypage/MyCmt";
 
 const MyPageCmt = () => {
 
     return (
-        <div>
-            댓글 단 글
-        </div>
+        <>
+       <Layout>
+        <MyCmt />
+       </Layout>
+       </>
     )
 }
 

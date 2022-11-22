@@ -1,11 +1,15 @@
 import React from "react";
+import Layout from "../../components/layout/Layout";
+import MyScrap from "../../components/mypage/MyScrap";
 
 const MyPageScrap = () => {
 
     return (
-        <div>
-            마이페이지 스크랩
-        </div>
+        <>
+        <Layout>
+            <MyScrap />
+        </Layout>
+        </>
     )
 }
 

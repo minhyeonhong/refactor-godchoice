@@ -19,6 +19,7 @@ const MyPageEdit = () => {
   
     const data = {
       nickName: "",
+      address: "",
     };
 
     console.log("이건 data야!",data);
@@ -31,21 +32,15 @@ const MyPageEdit = () => {
     const [imgFile, setImgFile] = useState([]);
     const [imagePreview, setImagePreview] = useState(profileData.userImg);
   
-    // const [optionVisible, setOptionVisible] = useState(false); // alert 모달
-    // const [optionContent, setOptionContent] = useState({
-    //   modalText: "",
-    //   btnText: "",
-    //   isConfirm: false,
-    //   onClickBtn: () => {},
-    //   onClickCloseBtn: () => {},
-    // });
-  
-    // const nickName = localStorage?.getItem("nickName");
+
     const userId = localStorage.getItem("userId");
     const email = localStorage.getItem("email");
     const nickName = profileData.nickName;
+    const address = profileData.addressTag;
+
+    console.log("address나와랏", address);
     console.log("userId ===> ",userId);
-    console.log("email ===> ",email);
+    console.log("email ===> ", email);
     console.log( "profileData.userImg ===> " ,profileData.userImg)
     console.log("닉네임 ===> ", profileData.nickName)
 
@@ -69,24 +64,27 @@ const MyPageEdit = () => {
     const onSubmitHandler = async () => {
       let formData = new FormData();
       let uploadImg = img_ref.current;
+
+      const obj = {userName:inputForm.nickName, userAddress:inputForm.address}
+      console.log("넘어오니 ===> ", obj)
   
       formData.append(
-        "data",
-        new Blob([JSON.stringify(inputForm)], { type: "application/json" })
+        "user",
+        new Blob([JSON.stringify(obj)], { type: "application/json" })
       );
-      if (imgFile === []) {
-        return formData.append("userImg", null);
+      if (imgFile.length === 0) {
+        return formData.append("multipartFile", null);
       } else {
-        formData.append("userImg", uploadImg.files[0]);
+        formData.append("multipartFile", uploadImg.files[0]);
       }
   
       const data = dispatch(
-        __putMyInfo({userId: userId, formData: formData })
+        __putMyInfo( formData )
       ).unwrap();
-      if (data) {
-
-        navigate(-1, {replace: true})
-      }
+      // if (data) {
+      //   window.alert("프로필이 변경되었습니다!")
+      //   // navigate(-1, {replace: true})
+      // }
     };
   
     useEffect(() => {
@@ -149,8 +147,26 @@ const MyPageEdit = () => {
                     ? "닉네임을 입력해주세요."
                     : nickName
                   }
-                  minLength="2"
+                  minLength="1"
                   maxLength="6"
+                />
+                <Delete />
+              </div>
+              {/* <span className="MyTextCheck"></span> */}
+            </MyTextWrap>
+            <MyTextWrap>
+              <div className="MyTextAdd">관심 지역</div>
+              <div className="MyTextInputWrap">
+                <input
+                  type="text"
+                  value={inputForm.address}
+                  name="address"
+                  onChange={onChangeHandler}
+                  placeholder={
+                    address === null
+                    ? "관심 지역을 입력해주세요."
+                    : address
+                  }
                 />
                 <Delete />
               </div>
@@ -158,7 +174,7 @@ const MyPageEdit = () => {
             </MyTextWrap>
           </MyProfile>
           <MyDoneBtnWrap>
-            <MyDoneBtn type="button" onClick={onSubmitHandler}>
+            <MyDoneBtn onClick={onSubmitHandler}>
               완료
             </MyDoneBtn>
           </MyDoneBtnWrap>
