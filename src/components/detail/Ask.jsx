@@ -119,7 +119,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                             <Carousel.Item key={img.id}>
                                                 <img style={{ height: "180px" }}
                                                     className="d-block w-100"
-                                                    src={img.image}
+                                                    src={img.postImgUrl}
                                                     alt={`slide${i + 1}`}
                                                 />
                                             </Carousel.Item>
@@ -129,11 +129,11 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
                                 {modPost.askPostImgList.map((img, i) => {
                                     return (
-                                        img.imageId &&
+                                        img.postImgId &&
                                         // <button style={{ width: '60px', height: '60px', backgroundImage: `url(${imgInfo.postImgUrl})` }} ></button>
-                                        <button style={{ display: delImg.indexOf(img.imageId) > -1 ? "none" : "inline-block" }}
-                                            onClick={() => delImgHandle(img.imageId)} key={img.id}>
-                                            <img style={{ width: '60px', height: '60px' }} src={img.image} />
+                                        <button style={{ display: delImg.indexOf(img.postImgId) > -1 ? "none" : "inline-block" }}
+                                            onClick={() => delImgHandle(img.postImgId)} key={img.postImgId}>
+                                            <img style={{ width: '60px', height: '60px' }} src={img.postImgUrl} />
                                         </button>
                                     )
                                 })}
@@ -207,7 +207,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                             return (
                                                 <Carousel.Item key={img.id + i}>
                                                     <img style={{ width: '400px' }}
-                                                        src={img.image} />
+                                                        src={img.postImgUrl} />
                                                 </Carousel.Item>)
                                         })
                                     }
@@ -243,10 +243,6 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                     <PostScrap />
                 </LikeBox>
 
-                {/* 스크랩  ----- 일단 임의 위치!! 기능 확인 후 수정하기 */}
-                <LikeBox>
-                    <PostScrap />
-                </LikeBox>
             </>
     );
 };

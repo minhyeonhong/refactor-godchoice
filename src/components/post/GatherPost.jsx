@@ -119,7 +119,7 @@ const GatherPost =() => {
             if(gatherPosts.content===""){return (alert('내용을 입력하세요'))}
             if(gatherPosts.date===""){return (alert('행사시작 일자를 입력하세요'))}
             if(gatherPosts.kakaoLink===""){return (alert('연락할 카카오 링크를 입력하세요'))}
-
+            if(postAddress===""){return(alert('함께 만날 주소를 입력해주세요'))}
             // //링크 검사(행사장링크 필수 아님)
             const arr = gatherPosts.postLink.indexOf("http://"||"https://") !==-1
             if(gatherPosts.postLink!==""){
@@ -139,6 +139,7 @@ const GatherPost =() => {
               }
             
             const obj2 = {
+
                 category : gatherPosts.category,
                 date : gatherPosts.date,
                 number : counter,
@@ -272,7 +273,7 @@ const GatherPost =() => {
                             postAddress !== ""&&(
                                 <>
                                     <RegionButton>{"#"+region}</RegionButton>
-                                    <AddressInput type="text" value={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{width: "80%"}}/>
+                                    <AddressInput type="text" value={postAddress} style={{width: "80%"}} />
                                     <AddressInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler2} style={{width: "80%"}}/>
                                     <KakaoMap address={postAddress} width="328px" height="300px"/>
                                 </>)
