@@ -43,7 +43,6 @@ p {
   font-family: 'Pretendard';
 }
 button {
-  
 cursor: pointer;
 }
 `
