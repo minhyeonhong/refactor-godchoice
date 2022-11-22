@@ -3,36 +3,36 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { __getMyPost, saveCategory  } from "../../redux/modules/myPageSlice";
+import { __getMyPost, saveCategory } from "../../redux/modules/myPageSlice";
 import Button from "../elements/Button";
 import { Image } from "../../assets";
 import noImg from "../../assets/images/common/noImg.png"
 
 
 const MyPost = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-    const [categoryTab, setCategoryTab] = useState("event");
-    useEffect(() => {
-        dispatch(__getMyPost());
-        setCategoryTab(saveCategoryTab);
-    }, []);
+  const [categoryTab, setCategoryTab] = useState("event");
+  useEffect(() => {
+    dispatch(__getMyPost());
+    setCategoryTab(saveCategoryTab);
+  }, []);
 
-    const { myPostList } = useSelector((state) => state.myPage);
-    
-    const onClickCategory = (tab) => {
-        setCategoryTab(tab);
-        dispatch(saveCategory(tab));
-    };
+  const { myPostList } = useSelector((state) => state.myPage);
 
-    const { saveCategoryTab } = useSelector((state) => state.myPage);
-    const {eventPost, gatherPost, askPost} = myPostList
-    console.log("제발 !!!!!! ===> ", myPostList);
+  const onClickCategory = (tab) => {
+    setCategoryTab(tab);
+    dispatch(saveCategory(tab));
+  };
 
-    return (
-        <>
-        <CateWrap>
+  const { saveCategoryTab } = useSelector((state) => state.myPage);
+  const { eventPost, gatherPost, askPost } = myPostList
+  console.log("제발 !!!!!! ===> ", myPostList);
+
+  return (
+    <>
+      <CateWrap>
         <Container>
           <CategoryBox>
             <Button
@@ -65,87 +65,57 @@ const MyPost = () => {
             >
               질문글
             </Button>
-          
+
           </CategoryBox>
 
           <CategoryInfoList>
-           
-              <>
 
-             { categoryTab === "event" ? (eventPost !== undefined && eventPost.map((v) => (
-                    <ListBox
-                      key={v.postId}
-                      onClick={() =>
-                        navigate(`/eventposts/${v.postId}`)
-                      }
-                    >
-                      {/* <ItemImg
+            <>
+
+              {categoryTab === "event" ? (eventPost !== undefined && eventPost.map((v) => (
+                <ListBox
+                  key={v.postId}
+                  onClick={() =>
+                    navigate(`/eventposts/${v.postId}`)
+                  }
+                >
+                  {/* <ItemImg
                         bgImg={
                           v.imgUrl !== null
                           ? v.imgUrl : <img src={noImg} alt="noImg" />                        
                         }
                       ></ItemImg> */}
-                       <ItemImg>
-                      {  v.img !== null ? v.img : <img src={noImg} alt="noImg" /> }
-                      </ItemImg>
-                      <div>
-                        <div>
-                          <p>{v.title}</p>
-                          <p>{v.category}</p>
-                          <p>
-                            {v.startPeriod} - {v.endPeriod}
-                          </p>
-                        </div>
-                      </div>
-                    </ListBox>
-                  )
-)):categoryTab === "gather"?(gatherPost &&
-gatherPost.map(
-    (v) => (
-        <ListBox
-          key={v.postId}
-          onClick={() =>
-            navigate(`/gatherposts/${v.postId}`)
-          }
-        >
-          {/* <ItemImg
+                  <ItemImg>
+                    {v.img !== null ? v.img : <img src={noImg} alt="noImg" />}
+                  </ItemImg>
+                  <div>
+                    <div>
+                      <p>{v.title}</p>
+                      <p>{v.category}</p>
+                      <p>
+                        {v.startPeriod} - {v.endPeriod}
+                      </p>
+                    </div>
+                  </div>
+                </ListBox>
+              )
+              )) : categoryTab === "gather" ? (gatherPost &&
+                gatherPost.map(
+                  (v) => (
+                    <ListBox
+                      key={v.postId}
+                      onClick={() =>
+                        navigate(`/gatherposts/${v.postId}`)
+                      }
+                    >
+                      {/* <ItemImg
             bgImg={
               v.img !== null
               ? v.img : <img src={noImg} alt="noImg" />
             }
           ></ItemImg> */}
-           <ItemImg>
-                      {  v.img !== null ? v.img : <img src={noImg} alt="noImg" /> }
-                      </ItemImg>
-          <div>
-            <div>
-              <p>{v.title}</p>
-              <p>{v.content}</p>
-              <p>
-                {v.startPeriod} - {v.endPeriod}
-              </p>
-            </div>
-          </div>
-        </ListBox>
-      )
-
-)
-)
-:  ( askPost && askPost.map((v) => (
-                    <ListBox
-                      key={v.postId}
-                      onClick={() =>
-                        navigate(`/askposts/${v.postId}`)
-                      }
-                    >
-                      {/* <ItemImg
-                        bgImg={
-                          v.img !== null
-                          ? v.img : <img src={noImg} alt="noImg" />
-                        }
-                      ></ItemImg> */}
                       <ItemImg>
-                      {  v.img !== null ? v.img : <img src={noImg} alt="noImg" /> }
+                        {v.img !== null ? v.img : <img src={noImg} alt="noImg" />}
                       </ItemImg>
                       <div>
                         <div>
@@ -158,22 +128,52 @@ gatherPost.map(
                       </div>
                     </ListBox>
                   )
-)) 
 
-// if(categoryTab === "event"){
-// eventPost.map(
-// )
-// }else if(categoryTab === "gather"){
-// gatherPost.map(
-// )
-// }else{
-// askPost.map(
-// )
-// }
-}
+                )
+              )
+                : (askPost && askPost.map((v) => (
+                  <ListBox
+                    key={v.postId}
+                    onClick={() =>
+                      navigate(`/askposts/${v.postId}`)
+                    }
+                  >
+                    {/* <ItemImg
+                        bgImg={
+                          v.img !== null
+                          ? v.img : <img src={noImg} alt="noImg" />
+                        }
+                      ></ItemImg> */}
+                    <ItemImg>
+                      {v.img !== null ? v.img : <img src={noImg} alt="noImg" />}
+                    </ItemImg>
+                    <div>
+                      <div>
+                        <p>{v.title}</p>
+                        <p>{v.content}</p>
+                        <p>
+                          {v.startPeriod} - {v.endPeriod}
+                        </p>
+                      </div>
+                    </div>
+                  </ListBox>
+                )
+                ))
+
+                // if(categoryTab === "event"){
+                // eventPost.map(
+                // )
+                // }else if(categoryTab === "gather"){
+                // gatherPost.map(
+                // )
+                // }else{
+                // askPost.map(
+                // )
+                // }
+              }
 
 
-                {/* {myPostList.filter((v) => v.whatwhat === saveCategoryTab).map(
+              {/* {myPostList.filter((v) => v.whatwhat === saveCategoryTab).map(
                     (v) => (
                     <ListBox
                       key={v.postId}
@@ -199,13 +199,13 @@ gatherPost.map(
                       </div>
                     </ListBox>
                   )
-                  )} */} 
-              </>
+                  )} */}
+            </>
           </CategoryInfoList>
         </Container>
       </CateWrap>
-        </>
-    )
+    </>
+  )
 }
 
 export default MyPost;
