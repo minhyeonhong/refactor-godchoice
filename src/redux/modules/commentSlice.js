@@ -9,11 +9,16 @@ export const __insertComment = createAsyncThunk(
     "commentSlice/__insertComment",
     async (payload, thunkAPI) => {
         try {
-            const res = await commentApis.insertCommentAX(payload);
-
             console.log("__insertComment payload", payload);
+            const insertRes = await commentApis.insertCommentAX(payload)
+            console.log("insertRes", insertRes);
+            // if (insertRes.data.status !== 200) return;
+            // const getRes = await commentApis.getCommentAX({ postId: payload.postId, kind: payload.kind });
+            // console.log("getRes", getRes);
+            // if (getRes.data.status !== 200) return;
 
-            return thunkAPI.fulfillWithValue(res.data);
+            return thunkAPI.fulfillWithValue(insertRes.data);
+
         } catch (error) {
             return thunkAPI.rejectWithValue(error);
         }
@@ -35,6 +40,20 @@ export const __deleteComment = createAsyncThunk(
     }
 )
 
+/**댓글 조회 썬크 */
+export const __getComment = createAsyncThunk(
+    "commentSlice/__getComment",
+    async (payload, thunkAPI) => {
+        try {
+            console.log("__getComment payload", payload)
+            const res = await commentApis.getCommentAX(payload)
+            console.log("__getComment res", res)
+            //return thunkAPI.fulfillWithValue(res.data);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    }
+)
 
 export const commentSlice = createSlice({
     name: "commentSlice",
@@ -53,12 +72,12 @@ export const commentSlice = createSlice({
         },
         [__insertComment.fulfilled]: (state, action) => {
             state.isLoading = false;
-            console.log("__insertComment", action.payload)
-            // if (action.payload.status === 200) {
-            //     state.commentList.push(...action.payload.data.content);
-            // } else {
-            //     console.log(action.payload.msg);
-            // }
+            if (action.payload.status === 200) {
+                console.log("action.payload", action.payload);
+                state.commentList = action.payload.data;
+            } else {
+                console.log(action.payload.msg);
+            }
         },
         [__insertComment.rejected]: (state, action) => {
             state.isLoading = false;
@@ -70,14 +89,31 @@ export const commentSlice = createSlice({
         },
         [__deleteComment.fulfilled]: (state, action) => {
             state.isLoading = false;
-            console.log("__deleteComment", action.payload)
-            // if (action.payload.status === 200) {
-            //     state.commentList.push(...action.payload.data.content);
-            // } else {
-            //     console.log(action.payload.msg);
-            // }
+            if (action.payload.status === 200) {
+                console.log("__deleteComment action.payload", action.payload);
+                state.commentList = action.payload.data;
+            } else {
+                console.log(action.payload.msg);
+            }
         },
         [__deleteComment.rejected]: (state, action) => {
+            state.isLoading = false;
+            console.log(action.payload);
+        },
+        //__getComment
+        [__getComment.pending]: (state, action) => {
+            state.isLoading = true;
+        },
+        [__getComment.fulfilled]: (state, action) => {
+            state.isLoading = false;
+            console.log("__getComment", action.payload)
+            if (action.payload.status === 200) {
+                state.commentList = action.payload.data;
+            } else {
+                console.log(action.payload.msg);
+            }
+        },
+        [__getComment.rejected]: (state, action) => {
             state.isLoading = false;
             console.log(action.payload);
         },

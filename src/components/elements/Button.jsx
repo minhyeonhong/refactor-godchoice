@@ -20,6 +20,8 @@ const Button = ({
   active,
   color,
   tab,
+  backgroundColor = 'transparent',
+  padding,
 }) => {
   return (
     <StButton
@@ -40,6 +42,8 @@ const Button = ({
       active={active}
       color={color}
       tab={tab}
+      backgroundColor={backgroundColor}
+      padding={padding}
     >
       {children}
     </StButton>
@@ -61,7 +65,7 @@ const StButton = styled.button`
         font-weight: 400;
         font-size: 14px;
         color: #fff;
-        background-color: ${(props) => (props.on === "on" ?  "#6C88FF" : "#2D4FDA")};
+        background-color: ${(props) => (props.on === "on" ? "#6C88FF" : "#2D4FDA")};
         cursor: pointer;
         border-radius: 30px;
         padding: 5px 10px;
@@ -73,8 +77,12 @@ const StButton = styled.button`
       props.btnType === "svg" &&
       css`
         height: 100%;
-        background-color: transparent;
+        background-color: ${(props) => props.backgroundColor};
         border: none;
+        border-radius: 10px;
+        color :${(props) => props.color}; 
+        margin:${(props) => props.margin};
+        padding :${(props) => props.padding};
         display: flex;
       `
     );

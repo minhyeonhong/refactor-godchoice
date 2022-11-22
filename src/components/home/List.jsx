@@ -9,8 +9,13 @@ import styled from 'styled-components';
 import Loading from '../../components/common/Loading'
 
 import { BsEye } from 'react-icons/bs';
+import { useNavigate } from 'react-router-dom';
 
-const List = ({ posts, isLoading, page, setPage }) => {
+
+
+const List = ({ posts, main, isLoading, istLastPage, setPage }) => {
+
+    const navigate = useNavigate();
 
     const [ref, inView] = useInView();
 
@@ -19,9 +24,8 @@ const List = ({ posts, isLoading, page, setPage }) => {
 
     useEffect(() => {
         // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니고 마지막이 아니면 페이지+1
-        if (inView && !isLoading && posts.length > listLength) {
+        if (inView && !isLoading && !istLastPage) {
             console.log("페이지 증가");
-            setListLength(posts.length);
             setPage(prevState => prevState + 1)
         }
     }, [inView, isLoading])
@@ -37,26 +41,24 @@ const List = ({ posts, isLoading, page, setPage }) => {
                 :
                 posts.map((val, i) => {
                     return (
-                        <StCardItem key={i}>
+                        <StCardItem key={val.postId} onClick={() => { navigate(`/${main}posts/${val.postId}`) }}>
                             <StImgBox>
-                                <img />
+                                <img src={val.imgUrl} />
                             </StImgBox>
                             <StContentBox>
-                                <div className='inlineBox'>
-                                    <div className='titleBox'>제목:{val.title}</div>
-                                    <div>카테고리:{val.category}</div>
-                                    <div>내용:{val.content}</div>
-                                    <div className='dtateBox'>
-                                        <div>{val.endPeriod}</div>
-                                        <div className='lookBox'>12&nbsp;<BsEye style={{ width: '16px', height: '16px' }} /></div>
-                                    </div>
+                                <div className='titleBox'>{val.title}</div>
+                                <div>{val.category}</div>
+                                <div className='contentBox'>{val.content}</div>
+                                <div className='dtateBox'>
+                                    <div>{val.endPeriod}{val.date}</div>
+                                    <div className='lookBox'>{val.viewCount}&nbsp;<BsEye style={{ width: '16px', height: '16px' }} /></div>
                                 </div>
                             </StContentBox>
                         </StCardItem>
                     )
                 })}
             {
-                inView && isLoading && <Loading />
+                isLoading && <Loading />
             }
             {
                 posts.length > 0 && <div ref={ref} />
@@ -74,37 +76,45 @@ const StCardWrap = styled.div`
 `
 
 const StCardItem = styled.div`
-    height : 136px;
-    display : flex;
+    display: flex;
     flex-direction: row;
+    align-items: flex-start;
+    padding: 12px 16px;
+    gap: 20px;
+
+    height: 154px;
+
+    background: #FFFFFF;
 `
 
 const StImgBox = styled.div`
     img {
-        width:136px;
-        height:136px;       
+        width:130px;
+        height:130px;       
         border-radius : 20px;         
-        background-color : pink;
+        background-color : white;
+        border: 0.5px solid #F4F5F7;
     }
 `
 
 const StContentBox = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px;
+    
     width : 100%;
-    height : 136px;
-    border-radius : 20px;    
-    background-color : #E7E7E7;
-    display : flex;
-    justify-content : center;
-    align-items : center;
-    .inlineBox {
-        width: 90%;
-        height: 90%;
-        display : flex;
-        flex-direction : column;
-        justify-content : space-evenly;
+    height: 130px;
+    div {
+        width : 100%;
+        height : 25%;
     }
     .titleBox{
         font-weight : bold;
+        font-size : 20px;
+    }
+    .contentBox {
+        word-break: break-all;
     }
     .dtateBox{
         display : flex;
@@ -114,6 +124,6 @@ const StContentBox = styled.div`
     }
     .lookBox {
         display : flex;
-        align-items : center;
+        justify-content : end;
     }
 `

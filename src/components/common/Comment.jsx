@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
 import { useDispatch, useSelector } from 'react-redux';
-import { __insertComment, __deleteComment, setCommentList } from '../../redux/modules/commentSlice'
+import { __insertComment, __deleteComment, setCommentList, __getComment } from '../../redux/modules/commentSlice'
 import useInput from '../../hooks/useInput';
+
+import Button from '../elements/Button';
+import { CaretUp, CommentArrow, XBtn, ReComment } from '../../assets/index';
 
 const Comment = ({ postId, kind, commentDtoList }) => {
     const dispatch = useDispatch();
@@ -50,7 +50,6 @@ const Comment = ({ postId, kind, commentDtoList }) => {
 
     useEffect(() => {
         console.log("commentList", commentList);
-
     }, [commentList])
 
     const [openReComment, setOpenReComment] = useState([]);
@@ -62,71 +61,80 @@ const Comment = ({ postId, kind, commentDtoList }) => {
     return (
         <StCommentWrap>
             <StCommentAddBox>
-                <div>댓글</div>
+                <h5>댓글</h5>
                 <StCommentInputBox>
                     <StUserImg src={localStorage.getItem('userImgUrl')} />
-                    <input type='text' name="content" value={comment.content || ""} onChange={commentHandle} />
-                    <button onClick={() => submit(null, comment.content)}>등록</button>
+                    <div className='inputBox'>
+                        <input type='text' name="content" value={comment.content || ""} onChange={commentHandle} />
+                        <Button btnType='svg' margin='0 5px' backgroundColor='#3556E1' onClick={() => submit(null, comment.content)}><CaretUp /></Button>
+                    </div>
                 </StCommentInputBox>
             </StCommentAddBox>
             <StCommentListBox>
+                {/* 댓글 */}
                 {
                     commentList && commentList.map((item, commentIdx) => {
                         return (
                             <StCommentBox key={item.commentId}>
                                 <StComment>
-                                    <div className='commentInput'>
+                                    <div className='userBox'>
                                         <div><StUserImg src={item.userImg} /> {item.userName}</div>
-                                        <button onClick={() => { dispatch(__deleteComment({ commentId: item.commentId, kind })) }}>삭제</button>
+                                        {
+                                            Number(localStorage.getItem('userId')) === item.userId &&
+                                            <Button btnType='svg' onClick={() => { dispatch(__deleteComment({ postId, commentId: item.commentId, kind })) }}><XBtn /></Button>
+                                        }
                                     </div>
-                                    <div>{item.content}</div>
-                                    <div style={{ borderTop: `1px solid grey` }} />
-                                    <div className='commentWriteDate'>
-                                        <div>댓글 등록날짜 필요</div>
-                                        <button onClick={() => isOpenReComment(commentIdx, true)}>답글달기</button>
+                                    {/* <textarea value={item.content} readOnly /> */}
+                                    <div className='contentBox'>{item.content}</div>
+                                    <div className='dateBox'>
+                                        <div className='date'>{item.commentWriteDate}</div>
+                                        {
+                                            item.content !== '알수없음' &&
+                                            <Button btnType='svg' onClick={() => isOpenReComment(commentIdx, true)}><ReComment /></Button>
+                                        }
                                     </div>
-                                    <div style={{ display: openReComment[commentIdx] ? "inline-block" : "none" }}>
-                                        <StUserImg src={localStorage.getItem('userImgUrl')} />
-                                        <input type='text' name="content" value={reComment.content || ""} onChange={reCommentHandle} />
-                                        <button onClick={() => {
-                                            submit(commentIdx, reComment.content);
-                                            isOpenReComment(commentIdx, false);
-                                        }}>등록</button>
-                                    </div>
+
                                 </StComment>
-
-                                {/* <StReCommentBox>
-                                    <div><img src={_comment_arrow} /></div>
-                                    <div>
-                                        <div>대댓글 닉네임</div>
-                                        <div>대댓글 내용</div>
-                                        <div style={{ borderTop: `1px solid grey` }} />
-                                        <div>방금d전</div>
-                                        <button onClick={() => { alert('대댓글 삭제') }}>삭제</button>
+                                <StCommentInputBox style={{ display: openReComment[commentIdx] ? "flex" : "none" }}>
+                                    <StUserImg src={localStorage.getItem('userImgUrl')} />
+                                    <div className='inputBox'>
+                                        <input type='text' name="content" value={reComment.content || ""} onChange={reCommentHandle} />
+                                        <Button btnType='svg' margin='0 5px' backgroundColor='#3556E1' onClick={() => {
+                                            submit(item.commentId, reComment.content);
+                                            isOpenReComment(commentIdx, false);
+                                        }}><CaretUp /></Button>
                                     </div>
-                                </StReCommentBox> */}
-
-                                {item.eventPostCommentChildren.map((child) => {
-                                    return (
-                                        <StReCommentBox key={child.commentId}>
-                                            <div>_comment_arrow</div>
-                                            <div>
-                                                <div>{child.userName}</div>
-                                                <div>{child.content}</div>
-                                                <div style={{ borderTop: `1px solid grey` }} />
-                                                <div>방금d전</div>
-                                                <button onClick={() => { dispatch(__deleteComment({ commentId: child.commentId, kind })) }}>삭제</button>
-                                            </div>
-                                        </StReCommentBox>
-                                    )
-                                })}
+                                </StCommentInputBox>
+                                {/* 대댓글 */}
+                                {
+                                    item.eventPostCommentChildren.map((child) => {
+                                        return (
+                                            <StReCommentBox key={child.commentId}>
+                                                <div><CommentArrow /></div>
+                                                <StComment>
+                                                    <div className='userBox'>
+                                                        <div><StUserImg src={child.userImg} /> {child.userName}</div>
+                                                        {
+                                                            Number(localStorage.getItem('userId')) === child.userId &&
+                                                            <Button btnType='svg' onClick={() => { dispatch(__deleteComment({ postId, commentId: child.commentId, kind })) }}><XBtn /></Button>
+                                                        }
+                                                    </div>
+                                                    <div className='contentBox'>{child.content}</div>
+                                                    <div className='dateBox'>
+                                                        <div className='date'>{child.commentWriteDate}</div>
+                                                    </div>
+                                                </StComment>
+                                            </StReCommentBox>
+                                        )
+                                    })
+                                }
                             </StCommentBox>
                         )
                     })
 
                 }
             </StCommentListBox>
-        </StCommentWrap>
+        </StCommentWrap >
     );
 };
 
@@ -136,47 +144,61 @@ const StCommentWrap = styled.div`
     border-top : 1px solid grey;    
     display : flex;
     flex-direction : column;
-    gap : 5px;
 `
 const StCommentAddBox = styled.div`
     display : flex;
     flex-direction : column;
-    gap : 5px;
-    background-color : pink;
 `
 
 const StCommentListBox = styled.div`
     display:flex;
     flex-direction:column;
-    gap : 5px;
+    margin-top : 12px;
+    gap:10px;
 `
 
 const StCommentBox = styled.div`
-    background-color : pink;
+    display:flex;
+    flex-direction:column;
+    gap:5px;
 `
 
 const StReCommentBox = styled.div`
-    
+    display:flex;
+    flex-direction:row;
 `
 
 const StComment = styled.div`
+    width:100%;
     display:flex;
     flex-direction:column;
-    .commentInput {
+    border-radius : 10px;
+    background-color : #FFFFFF;
+    padding : 10px;
+    .userBox {
         display:flex;
         flex-direction:row;
         justify-content:space-between;
     }
-    .commentWriteDate{
+    .contentBox {
+        margin : 10px 0;
+        word-break: break-all;
+    }
+    .dateBox {
         display:flex;
         flex-direction:row;
         justify-content:space-between;
+    }
+    .dateBox .date {
+        font-size : 14px;        
+        display: flex;
+        align-items: end;
     }
 `
 
 const StUserImg = styled.img`
-    width: 30px;
-    height: 30px;
+    width: 36px;
+    height: 36px;
     border-radius:50%;
 `
 
@@ -187,19 +209,21 @@ const StCommentInputBox = styled.div`
     align-items: center;
     padding: 0px;
     gap: 8px;
-    input{
+    .inputBox{
         width : 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        border-radius : 10px;
+        background-color : white;
+    }
+    input{
+        width : 95%;
+        height : 40px;
         border : none;
         border-radius : 10px;
+        text-indent:5px;
     }
-
-    /* display:flex;
-        flex-direction:row;
-        input{
-        width : 50%;
-        border : none;
-        border-radius : 10px;
-    }
-    input:focus {outline: none;} */
+    input:focus {outline: none;}
         
 `

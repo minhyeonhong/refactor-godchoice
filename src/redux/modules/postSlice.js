@@ -33,18 +33,15 @@ export const __getPost = createAsyncThunk(
 
 // 스크랩
 export const __postScrap = createAsyncThunk(
-    "postSlice/__postScrap", 
+    "postSlice/__postScrap",
     async (payload, thunkAPI) => {
         try {
-            const res = await postApis.postScrapAx(payload)
-            console.log("postScrapAX res 나와랏!! ===> ", res)
-            return thunkAPI.fulfillWithValue(res.data)
-        } catch (error) {
-            console.log(error) 
-                alert(error.res.msg)
-                return thunkAPI.rejectWithValue(error)
-        }
+            const res = await postApis.postScrapAx(payload);
 
+            return thunkAPI.fulfillWithValue(res.data);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
     }
 );
 
@@ -99,21 +96,21 @@ export const __putPost = createAsyncThunk(
 export const __deletePost = createAsyncThunk(
     "posts/__deletePost",
     async (payload, thunkAPI) => {
-      // console.log(payload)
-      try {
-        postApis.deleteEventPostAx(payload)
-        .then((res) => {
-          console.log("res", res);
-          window.location.replace('/');
-      })
-  
-      } catch (error) {
-        console.log("error", error);
-        return thunkAPI.rejectWithValue(error);
-      }
+        // console.log(payload)
+        try {
+            postApis.deleteEventPostAx(payload)
+                .then((res) => {
+                    console.log("res", res);
+                    window.location.replace('/');
+                })
+
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error);
+        }
     }
-  );
-  
+);
+
 
 export const __addComment = createAsyncThunk(
     "comments/__addComment",
@@ -178,12 +175,12 @@ export const postSlice = createSlice({
     initialState: {
         posts: [],
         post: {},
-        scrap: [],
+        scrapState: null,
         searchState: {},
-        totalPages: 3,
         comments: [],
         isLoading: false,
-        isResetSearch: true
+        isResetSearch: true,
+        istLastPage: false
     },
     reducers: {
         putSearchState(state, action) {
@@ -193,7 +190,11 @@ export const postSlice = createSlice({
         putSearchStatePage(state, action) {
             state.isResetSearch = false;
             state.searchState = { ...state.searchState, page: action.payload };
-        }
+        },
+        setScrapState(state, action) {
+            state.scrapState = action.payload;
+        },
+
     },
     extraReducers: {
         //__getAllPostList
@@ -208,9 +209,10 @@ export const postSlice = createSlice({
                     state.posts = action.payload.data.content;
                 } else {
                     state.posts.push(...action.payload.data.content);
+                    if (action.payload.data.content.length !== 10) {
+                        state.istLastPage = true;
+                    }
                 }
-
-                state.totalPages = action.payload.data.totalPages;
             }
         },
         [__getAllPostList.rejected]: (state, action) => {
@@ -234,20 +236,15 @@ export const postSlice = createSlice({
 
 
         // __postScrap
-
         [__postScrap.fulfilled]: (state, action) => {
             state.isLoading = false;
             if (action.payload.status === 200) {
-                state.scrap = action.payload;
-                console.log("postScrap payload ===>" , action.payload);
-            console.log("postScrap 액션 나와라 ===> ", action);
+                state.scrapState = !state.scrapState;
             }
         },
         [__postScrap.rejected]: (state, action) => {
             state.isLoading = false;
-            state.error = action.payload;
-            // console.log("postScrap payload ===>" ,action.payload);
-            // console.log("postScrap 액션 나와라 ===> ", action);
+            console.log(action.payload);
         },
 
 
@@ -308,5 +305,5 @@ export const postSlice = createSlice({
     }
 });
 
-export const { putSearchState, putSearchStatePage } = postSlice.actions;
+export const { putSearchState, putSearchStatePage, setScrapState } = postSlice.actions;
 export default postSlice.reducer;

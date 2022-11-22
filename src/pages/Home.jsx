@@ -25,7 +25,7 @@ const Home = () => {
     };
 
     //store state
-    const { searchState, posts, totalPages, isLoading, isResetSearch } = useSelector((state) => state.postSlice)
+    const { searchState, posts, istLastPage, isLoading, isResetSearch } = useSelector((state) => state.postSlice)
     const [page, setPage] = useState(0);
 
     //검색 상태 업데이트
@@ -96,7 +96,7 @@ const Home = () => {
                         id="justify-tab-example"
                         activeKey={searchState.main}
                         onSelect={(key) => dispatch(putSearchState({ ...searchState, main: key, page: 0 }))}
-                        className="mb-3"
+                        className="tabs"
                         justify
                     >
                         <Tab eventKey="event" title="행사글" />
@@ -104,7 +104,7 @@ const Home = () => {
                         <Tab eventKey="ask" title="질문글" />
                     </Tabs>
                     {/* 리스트 */}
-                    <List posts={posts} isLoading={isLoading} page={page} setPage={setPage} />
+                    <List posts={posts} main={searchState.main} isLoading={isLoading} setPage={setPage} istLastPage={istLastPage} />
                 </StTabBox>
             </StHomeWrap>
         </Layout >
@@ -114,7 +114,7 @@ const Home = () => {
 export default Home;
 
 const StHomeWrap = styled.div`
-    background-color: #FEFCF8;
+    //background-color: #FEFCF8;
 `
 
 const StCarouselWrap = styled.div`
@@ -122,9 +122,14 @@ const StCarouselWrap = styled.div`
         width:3px;
         border-radius : 50%;
     }
+    .carousel a {
+        display: none;
+    }
 `
 const StTabBox = styled.div`
-     margin : 0 10px;
+    .tabs{
+        margin : 0 10px;
+    }
      .nav-link {
         color : #ADABA9;
         font-weight : bold;
@@ -133,21 +138,9 @@ const StTabBox = styled.div`
         color : black;
         font-weight : bold;
     }
-     /*
-    li {
-        border-bottom : 1px solid #dee2e6;
-    }
-    .nav-tabs {
-        --bs-nav-tabs-border-width: none;
-    }
-    .nav-link {
-        color : #ADABA9;
-        font-weight : bold;
-    }
     .nav-link.active {
         color : black;
         font-weight : bold;
-        border-bottom : 3px solid black;
-        border-width : 30%;
-    } */
+        border-bottom : 2px solid #3556E1;
+    } 
 `
