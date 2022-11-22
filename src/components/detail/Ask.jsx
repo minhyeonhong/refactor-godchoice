@@ -21,7 +21,7 @@ import { __putPost, __deletePost } from '../../redux/modules/postSlice3';
 
 // 스크랩
 import { __postScrap } from '../../redux/modules/postSlice';
-import PostScrap from '../post/PostScrap';
+import PostScrap from './PostScrap';
 
 const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 

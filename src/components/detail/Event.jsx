@@ -16,7 +16,7 @@ import Col from 'react-bootstrap/Col';
 
 // 스크랩
 import { __postScrap } from '../../redux/modules/postSlice';
-import PostScrap from '../post/PostScrap';
+import PostScrap from './PostScrap';
 
 
 
@@ -161,9 +161,9 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
                         <STTitle><p>{post.title}</p></STTitle>
 
-                        {/* 스크랩  ----- 일단 임의 위치!! 기능 확인 후 수정하기 */}
+                        {/* 스크랩 */}
                         <LikeBox>
-                            <PostScrap />
+                            <PostScrap bookMarkStatus={post.bookMarkStatus} />
                         </LikeBox>
 
                         <StCarouselWrap>
