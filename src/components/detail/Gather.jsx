@@ -4,6 +4,7 @@ import KakaoMap from '../common/KakaoMap';
 import Carousel from 'react-bootstrap/Carousel';
 import { FiSearch } from 'react-icons/fi'
 import imageCompression from 'browser-image-compression';
+import Form from 'react-bootstrap/Form';
 import {
     StWrap,
     StTitleBox,
@@ -13,7 +14,7 @@ import {
     StEventPlaceBox,
     StButtonBox
 } from '../styles/Detail.styled'
-import {ModalWrap, STButton, AddressBox} from '../styles/GatherDetail.styled'
+import {ModalWrap,  AddressBox} from '../styles/GatherDetail.styled'
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import SearchAddress from '../post/SearchAddress';
@@ -85,6 +86,7 @@ const Gather = ({post, postId, modPost, setmodPost, modPostHandle}) => {
             sex :  modPost.sex,
             startAge : modPost.startAge,
             title: modPost.title,
+            postState : modPost.postState,
         }
 
         console.log("obj", obj);
@@ -148,6 +150,14 @@ const Gather = ({post, postId, modPost, setmodPost, modPostHandle}) => {
     const onGatherDelete =(postId) => {
         dispatch(__deletePost(postId))
     }
+
+       const ingHandle = (e) => {
+         if (e.target.checked) {
+             setmodPost({ ...modPost, postState: "진행중" });
+             } else {
+             setmodPost({ ...modPost, postState: "마감" });
+         }
+     }
 
     return (
         Object.keys(post).length < 1 ?
@@ -273,7 +283,16 @@ const Gather = ({post, postId, modPost, setmodPost, modPostHandle}) => {
                             <input type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle}/>
                             <KakaoMap address={modPost.postAddress} width='100%' height='130px' />                                                            
                         </div><br/>
-
+                          <div>
+                                <label>{modPost.postState}</label>
+                                <Form.Check
+                                    type="switch"
+                                    id="custom-switch"
+                                    checked={modPost.postState === '진행중' ? true : false}
+                                    onChange={ingHandle}
+                                />
+                            </div> 
+                        
                         <div>
                             <button onClick={onSubmitGather}>수정완료</button>
                             <button onClick={toggleEdit}>취소</button>
@@ -284,10 +303,12 @@ const Gather = ({post, postId, modPost, setmodPost, modPostHandle}) => {
                 : 
                 (
                     <div>
+                        <STBox2>
+                            <STButton>모집글</STButton>
+                            <STButton>{post.category}</STButton>
+                            <STButton style={{color:"#424754", backgroundColor:"white", width: "208px"}}>약속날짜 | {post.date}</STButton>
+                        </STBox2>
                         <div>
-                            <button>모집글</button>
-                            <button>{post.category}</button>
-                            <button>{post.date}</button>
                             <button>{post.number}</button>
                             {/* <button>연락수단</button> */}
                             <button>{sex}</button>
@@ -330,7 +351,16 @@ const Gather = ({post, postId, modPost, setmodPost, modPostHandle}) => {
                         </div>
                     </StEventPlaceBox>
                     <KakaoMap address={post.postAddress} width='100%' height='200px' />
-
+                    <div></div>
+                    <div>
+                                <label>{post.postState}</label>
+                                <Form.Check
+                                    type="switch"
+                                    id="custom-switch"
+                                    checked={modPost.postState === '진행중' ? true : false}
+                                    onChange={ingHandle}
+                                />
+                            </div> 
                     <StButtonBox>
                         {localStorage.getItem('userId') === post.userId.toString() && 
                                 (<div>
@@ -400,5 +430,113 @@ const STUploadButton = styled.button`
     vertical-align : middle;
     height : 100%;
     border-radius: 10px;
+    border : transparent;
+`
+
+//---------------------
+
+const STIng = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px;
+    gap: 206px;
+    width: 100%;
+    height: 44px;
+`
+
+const STIngDiv = styled.p`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    vertical-align: center;
+    /* padding: 14px 16px 14px 18px; */
+    /* gap: 10px; */
+    justify-content: center;
+    width: 85px;
+    height: 44px;
+    background: #15DD95;
+    color: #FFFFFF;
+
+    /* line-height: 44px; */
+`
+const STUsername = styled.span`
+    color : #424754;
+    margin-left: 12px;
+`
+const STInput = styled.div`
+    width: 100%;
+    //height: 36px;
+    background: white;
+    border-radius: 10px;
+    font-weight: 500;
+    padding-top: 6px;
+    padding-left: 6px;
+    padding-bottom: 6px;
+`
+
+const LikeBox = styled.div`
+    width:100%;
+    height:50px;
+`
+const STButton = styled.p`
+    background: #DDE1FF;
+    border-radius: 100px;
+    height: 44px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    color :#00105C;
+`
+
+const STButton2 = styled.p`
+    background: #DDE1FF;
+    border-radius: 100px;
+    height: 44px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    color :#00105C;
+`
+
+const STBox2 =  styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 4px;
+    width: 100%;
+    height: 44px;
+    font-size: 17px;
+`
+
+const StContent = styled.textarea`
+    width: 100%;
+    height: 144px;
+    border : transparent;
+    background: #FFFFFF;
+    padding-top: 6px;
+    padding-left: 6px;
+`
+
+const STAddressButton = styled.div`
+    width: 64px;
+    height: 36px;
+    background-color: #DCE0F1;
+    border-radius: 30px;
+    text-align: center;
+    padding-top: 6px;
+`
+
+const STEditButton = styled.button`
+    width: 67px;
+    height: 40px;
+    background: #B8C4FF;
+    border-radius: 100px;
+    float: right;
+    
     border : transparent;
 `

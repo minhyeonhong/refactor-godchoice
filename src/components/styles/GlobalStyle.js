@@ -12,7 +12,7 @@ const GlobalStyle = createGlobalStyle`
   
 &::-webkit-scrollbar {
   display: none;
-}
+}}
 html,body{
   width:100vw;
   height:auto;
@@ -45,6 +45,6 @@ button {
   
 cursor: pointer;
 }
-`;
+`
 
 export default GlobalStyle;
