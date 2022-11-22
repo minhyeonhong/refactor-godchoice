@@ -64,14 +64,6 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         }
     }, [postAddress])
 
-    // const ingHandle = (e) => {
-    //     if (e.target.checked) {
-    //         setmodPost({ ...modPost, postState: "진행중" });
-    //     } else {
-    //         setmodPost({ ...modPost, postState: "종료" });
-    //     }
-    // }
-
     //이미지 업로드 훅
     const [files, fileUrls, uploadHandle] = useImgUpload(5, true, 0.5, 1000);
     //기존 프리뷰 지울 state
@@ -141,37 +133,36 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
             <StWrap>
                 {!mod ?
                     <>
-                        <br />
-                        <STIng>
-                            <STIngDiv>{post.postState}</STIngDiv>
-                        </STIng>
-                        <div>
-                            <span>행사글</span>
 
-                            <span>{post.category}</span>
-                            <span>
-                                <span>{post.startPeriod}</span>{" ~ "}
-                                <span>{post.endPeriod}</span>
-                            </span>
-                        </div>
+                        <STIng style={{ marginTop: "14px" }}>
+                            <STIngDiv>{post.postState}</STIngDiv>
+                            {/* 스크랩  ----- 일단 임의 위치!! 기능 확인 후 수정하기 */}
+                            {/* <LikeBox> */}
+                            <PostScrap bookMarkStatus={post.bookMarkStatus} />
+                            {/* </LikeBox> */}
+                        </STIng>
+                        <div style={{ marginBottom: "18px" }} />
+                        <STBox2>
+                            <STButton style={{ width: "65px" }}>행사글</STButton>
+                            <STButton style={{ width: "70px" }}>{post.category}</STButton>
+                            <STButton style={{ width: "110px" }}>{post.startPeriod}</STButton>
+                            <span style={{ paddingTop: "8px" }}>~</span>
+                            <STButton style={{ width: "110px" }}>{post.endPeriod}</STButton>
+                        </STBox2>
+                        <div style={{ marginBottom: "18px" }} />
                         <div>
                             <img src={post.userImg} style={{ width: "36px", height: "36px", borderRadius: "30px" }} />
                             <STUsername>{post.username}</STUsername>
                         </div>
-
-                        <STTitle><p>{post.title}</p></STTitle>
-
-                        {/* 스크랩 */}
-                        <LikeBox>
-                            <PostScrap bookMarkStatus={post.bookMarkStatus} />
-                        </LikeBox>
+                        <div style={{ marginBottom: "18px" }} />
+                        <STInput style={{ marginBottom: "8px" }}><p>{post.title}</p></STInput>
 
                         <StCarouselWrap>
                             <Carousel activeIndex={index} onSelect={handleSelect}>
                                 {post.postImgInfo.map((imgInfo, i) => {
                                     return (
                                         <Carousel.Item key={i}>
-                                            <img style={{ height: "180px" }}
+                                            <img style={{ width: "396px", height: "396px", borderRadius: "10px" }}
                                                 className="d-block w-100"
                                                 src={imgInfo.postImgUrl}
                                                 alt={`slide${i + 1}`}
@@ -181,29 +172,29 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 })}
                             </Carousel>
                         </StCarouselWrap>
+                        <StContent style={{ marginBottom: "18px", paddingTop: "5px" }}>{post.content}</StContent>
 
-                        <StContentBox>{post.content}</StContentBox>
-                        <StEventLinkBox>
-                            <div>행사장 링크</div>
-                            <div style={{ border: '1px solid black' }}>{post.postLink}</div>
-                        </StEventLinkBox>
-                        <StEventPlaceBox>
-                            <div>행사장소</div>
-                            <div className='address-box'>
-                                <div className='tag'>#{post.postAddress.split(' ')[0]}</div>
-                                <div className='address'>{post.postAddress}</div>
-                            </div>
-                        </StEventPlaceBox>
-                        <KakaoMap address={post.postAddress} width='100%' height='130px' />
-                        <StButtonBox>
-                            <div style={{ border: '1px solid black' }}>{post.postState}</div>
 
-                            {localStorage.getItem('userId') === post.userId.toString() &&
-                                (<div>
-                                    <button onClick={() => { onEventDelete(postId); }}>삭제</button>
-                                    <button onClick={() => { setMod(true) }}>수정</button>
-                                </div>)}
-                        </StButtonBox>
+                        <div>행사장 링크</div>
+                        <STInput style={{ marginBottom: "18px" }}>{post.postLink}</STInput>
+
+
+                        <div>행사장소</div>
+                        <div style={{ marginBottom: "8px" }}>
+                            <STAddressButton style={{ float: "left" }}>#{post.postAddress.split(' ')[0]}</STAddressButton>
+                            <STInput style={{ width: "285px", float: "right", marginLeft: "5px" }}>{post.postAddress}</STInput>
+                        </div>
+
+                        <KakaoMap address={post.postAddress} width='100%' height='144px' />
+
+                        {/* <div style={{ border: '1px solid black' }}>{post.postState}</div> */}
+
+                        {localStorage.getItem('userId') === post.userId.toString() &&
+                            (<div>
+                                <button onClick={() => { onEventDelete(postId); }}>삭제</button>
+                                <STEditButton onClick={() => { setMod(true) }}>수정</STEditButton>
+                            </div>)}
+
                     </>
                     :
 
@@ -313,19 +304,8 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                         <KakaoMap address={modPost.postAddress} width='100%' height='130px' />
                         <input type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle} />
                         <StButtonBox>
-                            {/* <div>
-                                <label>{modPost.postState}</label>
-                                <Form.Check
-                                    type="switch"
-                                    id="custom-switch"
-                                    checked={modPost.postState === '진행중' ? true : false}
-                                    onChange={ingHandle}
-                                />
-                            </div> */}
 
                             <div>
-
-
                                 <button onClick={() => setMod(false)}>취소</button>
                                 <button onClick={putPostSubmit}>수정하기</button>
                             </div>
@@ -383,7 +363,7 @@ const STIng = styled.div`
     align-items: center;
     padding: 0px;
     gap: 206px;
-    width: 396px;
+    width: 100%;
     height: 44px;
 `
 
@@ -391,40 +371,83 @@ const STIngDiv = styled.p`
     display: flex;
     flex-direction: row;
     align-items: center;
+    text-align: center;
     vertical-align: center;
-    padding: 14px 16px 14px 18px;
+    /* padding: 14px 16px 14px 18px; */
     /* gap: 10px; */
+    justify-content: center;
     width: 85px;
     height: 44px;
     background: #15DD95;
     color: #FFFFFF;
+
     /* line-height: 44px; */
 `
 const STUsername = styled.span`
     color : #424754;
     margin-left: 12px;
 `
-const STTitle = styled.div`
-    width: 396px;
-    height: 36px;
-    background: #F4F5F7;
+const STInput = styled.div`
+    width: 100%;
+    //height: 36px;
+    background: white;
     border-radius: 10px;
     font-weight: 500;
-    .p{
-        width: 372px;
-        height: 20px;
-
-        font-family: 'Pretendard Variable';
-        font-style: normal;
-        font-weight: 500;
-        font-size: 17px;
-        line-height: 20px;
-        letter-spacing: -0.017em;
-        color: #161B27;
-    }
+    padding-top: 6px;
+    padding-left: 6px;
+    padding-bottom: 6px;
 `
 
 const LikeBox = styled.div`
     width:100%;
     height:50px;
+`
+const STButton = styled.p`
+    background: #DDE1FF;
+    border-radius: 100px;
+    height: 44px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    color :#00105C;
+`
+
+const STBox2 = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 4px;
+    width: 100%;
+    height: 44px;
+    font-size: 17px;
+`
+
+const StContent = styled.textarea`
+    width: 100%;
+    height: 144px;
+    border : transparent;
+    background: #FFFFFF;
+    padding-top: 6px;
+    padding-left: 6px;
+`
+
+const STAddressButton = styled.div`
+    width: 64px;
+    height: 36px;
+    background-color: #DCE0F1;
+    border-radius: 30px;
+    text-align: center;
+    padding-top: 6px;
+`
+
+const STEditButton = styled.button`
+    width: 67px;
+    height: 40px;
+    background: #B8C4FF;
+    border-radius: 100px;
+    float: right;
+    
+    border : transparent;
 `
