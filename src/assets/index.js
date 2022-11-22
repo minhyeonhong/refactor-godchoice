@@ -25,6 +25,8 @@ import { ReactComponent as myPost } from "./icon/MyPost.svg";
 import { ReactComponent as myPage } from "./icon/MyPage.svg";
 import { ReactComponent as mypageImg } from "./icon/MypageImg.svg";
 import { ReactComponent as views } from "./icon/Views.svg";
+import { ReactComponent as xBtn } from "./icon/X.svg";
+import { ReactComponent as reComment } from "./icon/ReComment.svg";
 
 
 // login btns
@@ -60,6 +62,8 @@ export const MyPost = myPost;
 export const MyPage = myPage;
 export const MypageImg = mypageImg;
 export const Views = views;
+export const XBtn = xBtn;
+export const ReComment = reComment;
 
 // login
 export const KakaoBtn = kakaoBtn;

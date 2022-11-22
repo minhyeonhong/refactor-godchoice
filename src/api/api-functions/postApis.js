@@ -9,7 +9,7 @@ export const postApis = {
     /**행사글 상세글 수정 */
     putPostAx: (post) => hInstance.put(`${process.env.REACT_APP_API_URL}/eventposts/${post.postId}`, post.content),
     /**좋아요 */
-    postScrapAx: (payload) => hInstance.post(`likes/${payload.url}/${payload.postId}`, ""),
+    postScrapAx: (post) => hInstance.post(`likes/${post.kind}/${post.postId}`),
     /*모집글 상세글 수정*/
     putGatherPostAx: (post) => hInstance.put(`${process.env.REACT_APP_API_URL}/gatherposts/${post.postId}`, post.content),
     /*질문글 상세글 수정*/

@@ -8,7 +8,7 @@ import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 
 const Search = ({ updateSearchInfo }) => {
 
-    const tagList = ['서울', '강원도', '경기도', '충청도', '전라도', '경상도', '제주도'];
+    const tagList = ['서울', '인천', '세종', '대구', '부산', '울산', '광주', '대전', '제주도', '경기도', '강원도', '충청도', '경상도', '전라도'];
 
     //검색정보 state
     const [searchInfo, setSearchInfo, searchInfoHandle] = useInput({
@@ -41,9 +41,9 @@ const Search = ({ updateSearchInfo }) => {
         <StSearchWrap>
             <StSearchBox>
                 <button onClick={() => setSearchInfo({ ...searchInfo, search: search.search })}>
-                    <FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00' }} />
+                    <FiSearch style={{ width: '24px', height: '24px', color: '#3556E1' }} />
                 </button>
-                <input name='search' value={search.search || ""} onChange={searchHandle}
+                <input name='search' placeholder="검색어를 입력해주세요" value={search.search || ""} onChange={searchHandle}
                     onKeyPress={(e) => {
                         if (e.key === 'Enter') {
                             setSearchInfo({ ...searchInfo, search: search.search })
@@ -54,7 +54,6 @@ const Search = ({ updateSearchInfo }) => {
                 <ToggleButtonGroup type="checkbox" value={searchInfo.tag} onChange={tagHandle}>
                     {tagList.map((tag, i) => {
                         return (
-                            // <StTagBtn bgColor={'#F7DBB4'} onClick={tagHandle} value={tag} key={i}>#{tag}</StTagBtn>
                             <ToggleButton id={`tbg-btn-${i + 1}`} value={tag} key={i}>
                                 #{tag}
                             </ToggleButton>
@@ -93,14 +92,14 @@ const StSearchWrap = styled.div`
 `
 
 const StSearchBox = styled.div`
-    background: #EEEAE3;
-    box-shadow: inset 0px 2px 2px rgba(0, 0, 0, 0.1);
+    background: #E1E3EC;
     border-radius : 30px;
     display : flex;
     flex-direction : row;
     margin : 0px 10px;
     height : 36px;
     input{
+        margin-right : 20px;
         width : 100%;
         background-color : transparent;
         border : none;
@@ -108,6 +107,7 @@ const StSearchBox = styled.div`
     }
     input:focus {outline: none;}
     button{
+        margin : 0 10px;
         background-color : transparent;
         border : none;
         border-radius :  30px 0 0 30px ;
@@ -132,11 +132,12 @@ const StTagBox = styled.div`
     .btn-primary {
         font-weight : bold;
         color : black;
-        --bs-btn-bg : #F7DBB4;
-        --bs-btn-border-color :#F7DBB4; 
+        --bs-btn-color: black;
+        --bs-btn-bg : #DCE0F1;
+        --bs-btn-border-color :#DCE0F1; 
         /*  */
-        --bs-btn-active-bg : #DEC5A2;
-        --bs-btn-active-color :  black;
+        --bs-btn-active-bg : #2D4FDA;
+        --bs-btn-active-color :  white;
     }
     .btn-group > .btn:not(:last-child):not(.dropdown-toggle) {
         border : none;
@@ -157,7 +158,7 @@ const StFilterBox = styled.div`
         width: 75px;
         height: 32px;
         color : white;
-        background: #E79C00;
+        background: #2D4FDA;
         border-radius: 8px;
         border : none;
     }
@@ -174,7 +175,7 @@ const StRadioBox = styled.div`
         font-family : 'Pretendard Variable';
     }
     .form-check-input:checked {
-        background-color : #5A431F;
+        background-color : #2D4FDA;
     }
     .form-switch .form-check-input {
         width : 52px;
@@ -182,7 +183,7 @@ const StRadioBox = styled.div`
         background-image : url("data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-4 -4 8 8%27%3e%3ccircle r=%273%27 fill=%27%23fff%27/%3e%3c/svg%3e");
     }
     .form-check-input{
-        background-color : #D9D9D9;
+        background-color : #B8C4FF;
         box-shadow : none;
         border : none;
     }
