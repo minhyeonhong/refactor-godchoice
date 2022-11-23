@@ -119,7 +119,7 @@ const QuestionPost =() => {
             );
 
         dispatch(__addPost3(formData))
-
+        window.location.replace('/')
     }
 
     //주소 앞에 두글자 따기

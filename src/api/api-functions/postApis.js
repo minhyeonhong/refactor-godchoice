@@ -6,10 +6,19 @@ export const postApis = {
         `${process.env.REACT_APP_API_URL}/allposts`, { params: { ...searchInfo, tag: searchInfo.tag.join() } }),
     /**상세글 조회 */
     getPostAX: (post) => hInstance.get(`${process.env.REACT_APP_API_URL}/${post.url}/${post.postId}`),
-    /**행사글 상세글 수정 */
-    putPostAx: (post) => hInstance.put(`${process.env.REACT_APP_API_URL}/eventposts/${post.postId}`, post.content),
+   
     /**좋아요 */
     postScrapAx: (post) => hInstance.post(`likes/${post.kind}/${post.postId}`),
+    
+    // 행사글 게시글 작성
+    addEventPostAx : (post) => hInstance.post(`${process.env.REACT_APP_API_URL}/eventposts`, post),
+    // 모집글 게시글 작성
+    addGatherPostAx : (post) => hInstance.post(`${process.env.REACT_APP_API_URL}/gatherposts`, post),
+    // 질문글 게시글 작성
+    addAskPostAx : (post) => hInstance.post(`${process.env.REACT_APP_API_URL}/askposts`, post),
+        
+    /**행사글 상세글 수정 */
+    putPostAx: (post) => hInstance.put(`${process.env.REACT_APP_API_URL}/eventposts/${post.postId}`, post.content),
     /*모집글 상세글 수정*/
     putGatherPostAx: (post) => hInstance.put(`${process.env.REACT_APP_API_URL}/gatherposts/${post.postId}`, post.content),
     /*질문글 상세글 수정*/

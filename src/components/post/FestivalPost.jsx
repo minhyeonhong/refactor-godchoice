@@ -14,7 +14,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Carousel from 'react-bootstrap/Carousel';
 import Col from 'react-bootstrap/Col';
-
+import Layout from '../layout/Layout'
 
 const FestivalPost =() => {
 
@@ -130,7 +130,7 @@ const FestivalPost =() => {
                  formData.append("eventPostReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
         
              dispatch(__addPost(formData));
-             //window.location.replace("/")
+            //  window.location.replace("/")
          }
 
 
@@ -156,7 +156,7 @@ const FestivalPost =() => {
     const region = postAddress.split("")[0]+postAddress.split("")[1]
 
     return (
-          <>
+          <Layout>
             <STSelect value="행사글" style={{ width: "50%" }}>
                 <option value="행사글">행사글</option>
             </STSelect>
@@ -257,7 +257,7 @@ const FestivalPost =() => {
             <AllButton style={{background:"#B6B6B6"}} onClick={onSubmit}>작성</AllButton>
             {/*<AllButton onClick={()=>navigate(-1)}>취소</AllButton>  <AddressModal />*/}   
             
-        </>
+        </Layout>
 
     )
 }
