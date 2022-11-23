@@ -6,7 +6,7 @@ import spinerImg from '../../assets/images/common/spiner.gif'
 const Loading = (props) => {
   return (
     <Background height={props.height} position={props.position} >
-      <img src={spinerImg} alt="로딩중" width="5%" />
+      <img src={spinerImg} alt="로딩중" width={props.spinerWidth.toString()} />
       <LoadingText>잠시만 기다려 주세요.</LoadingText>
     </Background>
   );
@@ -26,9 +26,11 @@ const Background = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(5px);
 `;
 
 const LoadingText = styled.div`
-  font: 1rem 'Noto Sans KR';
+  font-weight : bold;
+  margin-top : 10px;
   text-align: center;
 `;
