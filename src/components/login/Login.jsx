@@ -2,11 +2,10 @@ import React from "react";
 import styled from "styled-components";
 import Button from "../elements/Button";
 import { GOOGLE_AUTH_URL, KAKAO_AUTH_URL, NAVER_AUTH_URL } from "../../api/login";
-// import kakao from "../../assets/logo_kakao.png";
-// import naver from "../../assets/logo_naver.png";
-// import google from "../../assets/logo_google.png";
 import { flexColumn } from "../styles/Flex";
 import { GoogleBtn, KakaoBtn, NaverBtn } from "../../assets";
+
+import logo from "../../assets/images/common/logo.png"
 
 
 
@@ -25,7 +24,7 @@ const Login = () => {
     <>
       <LoginWrap>
         <Container>
-          <Logo>LogoImg</Logo>
+          <Logo> <img src={logo} alt="logo" /> </Logo>
           {/* <Button btnType="login" onClick={() => onClickHandler("k")}>
             <div>
               <img src={kakao} alt="kakao_img" />
@@ -68,9 +67,7 @@ const Logo = styled.div`
   align-items: center;
   width: 210px;
   height: 130px;
-  margin-bottom: 100px;
-  background-size: contain;
-  background-color: #fff;
+  margin: 100px auto;
 `;
 const Container = styled.div`
   width: 100%;
@@ -81,17 +78,5 @@ const Container = styled.div`
   padding: 0 20px;
   text-align: center;
 `;
-
-// const LoginText = styled.span`
-//   font-weight: 500;
-//   font-size: 18px;
-//   line-height: 26px;
-//   /* identical to box height */
-
-//   text-align: center;
-//   letter-spacing: -0.03em;
-
-//   color: #424242;
-// `;
 
 

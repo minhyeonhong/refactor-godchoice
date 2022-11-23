@@ -1,15 +1,7 @@
 import axios from "axios";
 import { getCookie } from "../cookie/cookie";
 
-
-//헤더 없는 인스턴스
-export const nhInstance = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
-    headers: {},
-});
-
-//헤더 있는 인스턴스
-export const hInstance = axios.create({
+export const instance = axios.create({
     baseURL: process.env.REACT_APP_API_URL,
     headers: {
         "Access_Token": localStorage.getItem("token") === undefined ? "" : localStorage.getItem("token"),
@@ -18,5 +10,23 @@ export const hInstance = axios.create({
     withCredentials: true,
 });
 
+// 요청 인터셉터 추가하기
+// instance.request.use(function (config) {
+//     // 요청이 전달되기 전에 작업 수행
+//     return config;
+// }, function (error) {
+//     // 요청 오류가 있는 작업 수행
+//     return Promise.reject(error);
+// });
 
+// 응답 인터셉터 추가하기
+// instance.response.use(function (response) {
+//     // 2xx 범위에 있는 상태 코드는 이 함수를 트리거 합니다.
+//     // 응답 데이터가 있는 작업 수행
 
+//     return response;
+// }, function (error) {
+//     // 2xx 외의 범위에 있는 상태 코드는 이 함수를 트리거 합니다.
+//     // 응답 오류가 있는 작업 수행
+//     return Promise.reject(error);
+// });

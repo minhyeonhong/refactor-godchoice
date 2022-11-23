@@ -15,14 +15,7 @@ export const __addPost3 = createAsyncThunk(
     "questionPosts/__addPost3",
     async (payload, thunkAPI) => {
       try {
-        await axios
-          .post(`http://54.180.201.200/askposts`, payload, {
-            headers: {
-              enctype: "multipart/form-data",
-              Access_Token: localStorage.getItem("token"),
-
-            },
-          })
+        await postApis.addAskPostAx(payload)
           .then((response) => {
             console.log("response", response.data);
           });

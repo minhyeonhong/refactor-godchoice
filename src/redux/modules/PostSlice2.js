@@ -14,15 +14,7 @@ export const __addPost2 = createAsyncThunk(
     "gatherPosts/__addPost2",
     async (payload, thunkAPI) => {
       try {
-        await axios
-          .post(`http://54.180.201.200/gatherposts`, payload, {
-            headers: {
-              enctype: "multipart/form-data",
-              "Access_Token": localStorage.getItem("token"),
-              // RefreshToken: refreshToken, 생략 예정
-              //"Cache-Control": "no-cache",
-            },
-          })
+        await postApis.addGatherPostAx(payload)
           .then((response) => {
             console.log("response", response.data);
           });

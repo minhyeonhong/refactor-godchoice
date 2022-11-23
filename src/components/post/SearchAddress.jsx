@@ -45,7 +45,7 @@ export default SearchAddress;
 
 SearchAddress.defaultProps = {
   style: {
-    width: "700px",
-    height: "450px",
+    width: "98%",
+    height: "350px",
   },
 };
