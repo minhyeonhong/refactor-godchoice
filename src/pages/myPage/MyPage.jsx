@@ -215,18 +215,19 @@ const MyCateWrap = styled.div`
   margin-top : 30px;
   font-size : 18px;
   font-weight: 400;
-  padding : 17px 26px;
+  padding : 17px 20px;
   gap : 16px;
 
 `
 
 const CateBox = styled.div`
   ${flexColumn};
+  gap:7px;
   flex: 1;
   background: #FFFFFF;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
-  padding : 17px 26px;
+  padding : 17px 12px;
 
 
   
