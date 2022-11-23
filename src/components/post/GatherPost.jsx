@@ -13,7 +13,7 @@ import ToggleButton from 'react-bootstrap/ToggleButton';
 import Carousel from 'react-bootstrap/Carousel';
 import styled from 'styled-components';
 import {STNumber, STButton, STSelect, STSelectButton, AllButton, AllInput, AllTextarea, StSearchBox, RegionButton, AddressBox, AddressInput, ModalWrap} from '../styles/GatherDetail.styled'
-
+import Layout from '../layout/Layout'
 const GatherPost =() => {
     const dispatch = useDispatch();
     const navigate = useNavigate()
@@ -155,6 +155,7 @@ const GatherPost =() => {
             console.log(obj2)
             formData.append("gatherPostDto", new Blob([JSON.stringify(obj2)], { type: "application/json" }));
             dispatch(__addPost2(formData));
+            window.location.replace('/')
         }
     
        
@@ -178,7 +179,7 @@ const GatherPost =() => {
     const region = postAddress.split("")[0]+postAddress.split("")[1]
 
     return (
-        <>
+        <Layout>
               <STSelect value="모집글" style={{ width: "50%" }}>
                 <option value="모집글">모집글</option>
               </STSelect>
@@ -273,7 +274,7 @@ const GatherPost =() => {
                             postAddress !== ""&&(
                                 <>
                                     <RegionButton>{"#"+region}</RegionButton>
-                                    <AddressInput type="text" value={postAddress} style={{width: "80%"}} />
+                                    <AddressInput type="text" value={postAddress} style={{width: "80%"}} readOnly/>
                                     <AddressInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler2} style={{width: "80%"}}/>
                                     <KakaoMap address={postAddress} width="328px" height="300px"/>
                                 </>)
@@ -285,7 +286,7 @@ const GatherPost =() => {
                 <AllButton style={{background:"#B6B6B6"}} onClick={onSubmit2}>등록하기</AllButton>
                 {/* <AllButton onClick={()=>navigate(-1)}>취소</AllButton>      */}
             </div>
-        </>
+        </Layout>
     )
 }
 

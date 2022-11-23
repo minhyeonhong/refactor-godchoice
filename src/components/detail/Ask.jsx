@@ -18,7 +18,7 @@ import SearchAddress from '../post/SearchAddress';
 import useImgUpload from "../../hooks/useImgUpload";
 import styled from 'styled-components';
 import { __putPost, __deletePost } from '../../redux/modules/postSlice3';
-
+import Views from '../../assets/icon/Views.svg'
 // 스크랩
 import { __postScrap } from '../../redux/modules/postSlice';
 import PostScrap from './PostScrap';
@@ -102,7 +102,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         Object.keys(post).length < 1 ?
             <div>페이지 정보 없음</div>
             :
-            <>
+            <StWrap>
                 {edit ? (
 
                     <div>
@@ -197,8 +197,22 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                 )
                     :
                     (
-                        <StWrap>
-                            <StTitleBox>{post.title}</StTitleBox>
+                        <>
+                             <STIng style={{ marginTop: "14px", marginBottom: "14px" }}>
+                                <STImg style={{display:"flex"}}>
+                                    <img src={Views} style={{width: "20px",height: "20px", flex:"2"}}/>
+                                    <div style={{color : "#8B909F", flex:"8", marginLeft:"5px"}}>{post.viewCount}</div>
+                                </STImg>
+                                <PostScrap style={{}} bookMarkStatus={post.bookMarkStatus} />
+                            </STIng>
+
+                            <div  style={{ marginBottom: "14px" }}>
+                                <img src={post.userImg} style={{ width: "36px", height: "36px", borderRadius: "30px" }} />
+                                <STUsername>{post.userName}</STUsername>
+                            </div>
+
+                            <STInput style={{ marginBottom: "8px" }}>{post.title}</STInput>
+                           
                             <div>
                                 <Carousel fade>
                                     {
@@ -206,44 +220,37 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                         && post.askPostImgList.map((img, i) => {
                                             return (
                                                 <Carousel.Item key={img.id + i}>
-                                                    <img style={{ width: '400px' }}
+                                                    <img  style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
                                                         src={img.postImgUrl} />
                                                 </Carousel.Item>)
                                         })
                                     }
                                 </Carousel>
                             </div>
-                            <StContentBox>{post.content}</StContentBox>
-                            <StEventLinkBox>
-                                <div>행사장 링크</div>
-                                <input type="text" value={post.postLink || ""} />
-                            </StEventLinkBox>
-                            <StEventPlaceBox>
-                                <div>행사장소</div>
-                                <div className='address-box'>
-                                    <div className='tag'>#{post.postAddress.split(" ")[0]}</div>
-                                    <div className='address'>{post.postAddress}</div>
-                                </div>
-                            </StEventPlaceBox>
-                            <KakaoMap address={post.postAddress} width='100%' height='130px' />
 
-                            <StButtonBox>
-                                {localStorage.getItem('userId') === post.userId.toString() &&
-                                    (<div>
-                                        <button onClick={toggleEdit}>수정</button>
-                                        <button onClick={() => { onAskDelete(postId); }}>삭제</button>
-                                    </div>)}
-                            </StButtonBox>
-                            {/* <Comment /> */}
-
-                        </StWrap>
+                            <StContent style={{ marginBottom: "14px", paddingTop: "5px" }}>{post.content}</StContent>
+             
+                            <div>행사장 링크</div>
+                            <STInput style={{ marginBottom: "14px" }}>{post.postLink}</STInput>               
+                           
+                            <div>행사장소</div>
+                            <div style={{ display : "flex", marginBottom: "8px" }}>
+                                <STAddressButton style={{ flex : "2"}}>#{post.postAddress.split(' ')[0]}</STAddressButton>
+                                <STInput style={{flex:"8", marginLeft: "5px" }}>{post.postAddress}</STInput>
+                            </div>
+                           
+                            <KakaoMap address={post.postAddress} width='100%' height='144px' />
+                         
+                            {localStorage.getItem('userId') === post.userId.toString() &&
+                                (<div>
+                                    <STEditButton style={{background:"#515466"}} onClick={() => { onAskDelete(postId); }}>삭제</STEditButton>
+                                    <STEditButton onClick={toggleEdit}>수정</STEditButton>
+                                </div>)}                                           
+                        </>
                     )}
-                {/* 스크랩  ----- 일단 임의 위치!! 기능 확인 후 수정하기 */}
-                <LikeBox>
-                    <PostScrap />
-                </LikeBox>
+                     <Comment  postId={postId} kind='event' commentDtoList={post.commentDtoList}  />
 
-            </>
+            </StWrap>
     );
 };
 
@@ -274,3 +281,117 @@ const LikeBox = styled.div`
     width:100%;
     height:50px;
 `
+
+
+//---------------------
+
+const STIng = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px;
+    gap: 206px;
+    width: 100%;
+    height: 44px;
+`
+
+const STIngDiv = styled.p`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    vertical-align: center;
+    /* padding: 14px 16px 14px 18px; */
+    /* gap: 10px; */
+    justify-content: center;
+    width: 85px;
+    height: 44px;
+    background: #15DD95;
+    color: #FFFFFF;
+
+    /* line-height: 44px; */
+`
+const STUsername = styled.span`
+    color : #424754;
+    margin-left: 12px;
+`
+const STInput = styled.div`
+    width: 100%;
+    //height: 36px;
+    background: white;
+    border-radius: 10px;
+    font-weight: 500;
+    padding-top: 6px;
+    padding-left: 6px;
+    padding-bottom: 6px;
+`
+
+const STButton = styled.p`
+    background: #DDE1FF;
+    border-radius: 100px;
+    height: 44px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    color :#00105C;
+`
+
+const STButton2 = styled.p`
+    background: white;
+    border-radius: 100px;
+    height: 44px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    color: #424754; 
+`
+
+const STBox2 = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 4px;
+    width: 100%;
+    height: 44px;
+    font-size: 17px;
+`
+
+const StContent = styled.textarea`
+    width: 100%;
+    height: 144px;
+    border : transparent;
+    background: #FFFFFF;
+    padding-top: 6px;
+    padding-left: 6px;
+`
+
+const STAddressButton = styled.div`
+    width: 64px;
+    height: 36px;
+    background-color: #DCE0F1;
+    border-radius: 30px;
+    text-align: center;
+    padding-top: 6px;
+`
+
+const STEditButton = styled.button`
+    width: 67px;
+    height: 40px;
+    background: #B8C4FF;
+    border-radius: 100px;
+    float: right;
+    
+    border : transparent;
+`
+
+const STImg = styled.div`
+    display : inline-block;
+    //background-color: black;
+    position: absolute;
+    left : 94px;
+    //margin-left: 10px;
+`
+

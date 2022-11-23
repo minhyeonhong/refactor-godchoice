@@ -37,6 +37,7 @@ import { useEffect } from 'react';
 import useImgUpload from "../../hooks/useImgUpload";
 import { __deletePost, __putPost } from '../../redux/modules/postSlice';
 import { useDispatch } from 'react-redux';
+import Views from '../../assets/icon/Views.svg'
 
 const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
     const dispatch = useDispatch();
@@ -134,27 +135,32 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                 {!mod ?
                     <>
 
-                        <STIng style={{ marginTop: "14px" }}>
-                            <STIngDiv>{post.postState}</STIngDiv>
-                            {/* 스크랩  ----- 일단 임의 위치!! 기능 확인 후 수정하기 */}
-                            {/* <LikeBox> */}
-                            <PostScrap bookMarkStatus={post.bookMarkStatus} />
-                            {/* </LikeBox> */}
+                        <STIng style={{ marginTop: "14px", marginBottom: "14px" }}>
+                            {post.postState==="진행중"?
+                                (<STIngDiv>{post.postState}</STIngDiv>)
+                                    :
+                                (<STIngDiv style={{background :"#727785"}}>{post.postState}</STIngDiv>)
+                            }   
+                            <STImg style={{display:"flex", marginLeft:"16px"}}>
+                                <img src={Views} style={{width: "20px",height: "20px", flex:"2"}}/>
+                                <div style={{color : "#8B909F", flex:"8", marginLeft:"5px"}}>{post.viewCount}</div>
+                            </STImg>
+                            <PostScrap style={{position:"absolute", right :"10px"}} bookMarkStatus={post.bookMarkStatus} />
                         </STIng>
-                        <div style={{ marginBottom: "18px" }} />
-                        <STBox2>
-                            <STButton style={{ width: "65px" }}>행사글</STButton>
-                            <STButton style={{ width: "70px" }}>{post.category}</STButton>
-                            <STButton style={{ width: "110px" }}>{post.startPeriod}</STButton>
-                            <span style={{ paddingTop: "8px" }}>~</span>
-                            <STButton style={{ width: "110px" }}>{post.endPeriod}</STButton>
+
+                        <STBox2 style={{ display:"flex" }}>
+                            <STButton style={{ width: "65px", flex:"2" }}>행사글</STButton>
+                            <STButton style={{ width: "70px", flex:"2" }}>{post.category}</STButton>
+                            <STButton style={{ width: "110px" , flex:"3"}}>{post.startPeriod}</STButton>
+                            <span style={{ paddingTop: "8px"}}>~</span>
+                            <STButton style={{ width: "110px" , flex:"3"}}>{post.endPeriod}</STButton>
                         </STBox2>
-                        <div style={{ marginBottom: "18px" }} />
-                        <div>
+                     
+                        <div  style={{ marginBottom: "14px" }}>
                             <img src={post.userImg} style={{ width: "36px", height: "36px", borderRadius: "30px" }} />
                             <STUsername>{post.username}</STUsername>
                         </div>
-                        <div style={{ marginBottom: "18px" }} />
+
                         <STInput style={{ marginBottom: "8px" }}><p>{post.title}</p></STInput>
 
                         <StCarouselWrap>
@@ -162,7 +168,7 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 {post.postImgInfo.map((imgInfo, i) => {
                                     return (
                                         <Carousel.Item key={i}>
-                                            <img style={{ width: "396px", height: "396px", borderRadius: "10px" }}
+                                            <img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
                                                 className="d-block w-100"
                                                 src={imgInfo.postImgUrl}
                                                 alt={`slide${i + 1}`}
@@ -172,29 +178,26 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 })}
                             </Carousel>
                         </StCarouselWrap>
-                        <StContent style={{ marginBottom: "18px", paddingTop: "5px" }}>{post.content}</StContent>
+                        <StContent style={{ marginBottom: "14px", paddingTop: "5px" }}>{post.content}</StContent>
 
 
                         <div>행사장 링크</div>
-                        <STInput style={{ marginBottom: "18px" }}>{post.postLink}</STInput>
+                        <STInput style={{ marginBottom: "14px" }}>{post.postLink}</STInput>
 
 
                         <div>행사장소</div>
-                        <div style={{ marginBottom: "8px" }}>
-                            <STAddressButton style={{ float: "left" }}>#{post.postAddress.split(' ')[0]}</STAddressButton>
-                            <STInput style={{ width: "285px", float: "right", marginLeft: "5px" }}>{post.postAddress}</STInput>
-                        </div>
+                        <div style={{ display : "flex", marginBottom: "8px" }}>
+                                <STAddressButton style={{ flex : "2"}}>#{post.postAddress.split(' ')[0]}</STAddressButton>
+                                <STInput style={{flex:"8", marginLeft: "5px" }}>{post.postAddress}</STInput>
+                            </div>
 
                         <KakaoMap address={post.postAddress} width='100%' height='144px' />
 
-                        {/* <div style={{ border: '1px solid black' }}>{post.postState}</div> */}
-
                         {localStorage.getItem('userId') === post.userId.toString() &&
                             (<div>
-                                <button onClick={() => { onEventDelete(postId); }}>삭제</button>
+                                <STEditButton style={{background:"#515466"}} onClick={() => { onEventDelete(postId); }}>삭제</STEditButton>
                                 <STEditButton onClick={() => { setMod(true) }}>수정</STEditButton>
                             </div>)}
-
                     </>
                     :
 
@@ -380,7 +383,6 @@ const STIngDiv = styled.p`
     height: 44px;
     background: #15DD95;
     color: #FFFFFF;
-
     /* line-height: 44px; */
 `
 const STUsername = styled.span`
@@ -450,4 +452,12 @@ const STEditButton = styled.button`
     float: right;
     
     border : transparent;
+`
+
+const STImg = styled.div`
+    display : inline-block;
+    //background-color: black;
+    position: absolute;
+    left : 94px;
+    margin-left: 10px;
 `
