@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
 // Redux import
-import { __putMyInfo, __getMyInfo} from "../../redux/modules/myPageSlice";
+import { __putMyInfo, __getMyInfo } from "../../redux/modules/myPageSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Camera, Delete } from "../../assets";
@@ -14,95 +14,93 @@ import google from "../../assets/logo_google.png";
 
 
 const MyPageEdit = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-  
-    const data = {
-      nickName: "",
-    };
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-    console.log("이건 data야!",data);
-  
-    const profileData = useSelector((state) => state.myPage.userInfo);
-    console.log("프로필 데이터가 뭔데",profileData);
-    const img_ref = useRef(null);
-  
-    const [inputForm, setInputForm] = useState(data);
-    const [imgFile, setImgFile] = useState([]);
-    const [imagePreview, setImagePreview] = useState(profileData.userImg);
-  
-    // const [optionVisible, setOptionVisible] = useState(false); // alert 모달
-    // const [optionContent, setOptionContent] = useState({
-    //   modalText: "",
-    //   btnText: "",
-    //   isConfirm: false,
-    //   onClickBtn: () => {},
-    //   onClickCloseBtn: () => {},
-    // });
-  
-    // const nickName = localStorage?.getItem("nickName");
-    const userId = localStorage.getItem("userId");
-    const email = localStorage.getItem("email");
-    const nickName = profileData.nickName;
-    console.log("userId ===> ",userId);
-    console.log("email ===> ",email);
-    console.log( "profileData.userImg ===> " ,profileData.userImg)
-    console.log("닉네임 ===> ", profileData.nickName)
+  const data = {
+    nickName: "",
+    address: "",
+  };
 
-  
-    const onLoadFile = (e) => {
-      const reader = new FileReader();
-      setImgFile(...imgFile, URL.createObjectURL(e.target.files[0]));
-  
-      const prevImg = e.target.files[0];
-      reader.readAsDataURL(prevImg);
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-    };
-  
-    const onChangeHandler = (e) => {
-      const { name, value } = e.target;
-      setInputForm({ ...inputForm, [name]: value });
-    };
-  
-    const onSubmitHandler = async () => {
-      let formData = new FormData();
-      let uploadImg = img_ref.current;
-  
-      formData.append(
-        "data",
-        new Blob([JSON.stringify(inputForm)], { type: "application/json" })
-      );
-      if (imgFile === []) {
-        return formData.append("userImg", null);
-      } else {
-        formData.append("userImg", uploadImg.files[0]);
-      }
-  
-      const data = dispatch(
-        __putMyInfo({userId: userId, formData: formData })
-      ).unwrap();
-      if (data) {
+  console.log("이건 data야!", data);
 
-        navigate(-1, {replace: true})
-      }
+  const profileData = useSelector((state) => state.myPage.userInfo);
+  console.log("프로필 데이터가 뭔데", profileData);
+  const img_ref = useRef(null);
+
+  const [inputForm, setInputForm] = useState(data);
+  const [imgFile, setImgFile] = useState([]);
+  const [imagePreview, setImagePreview] = useState(profileData.userImg);
+
+
+  const userId = localStorage.getItem("userId");
+  const email = localStorage.getItem("email");
+  const nickName = profileData.nickName;
+  const address = profileData.addressTag;
+
+  console.log("address나와랏", address);
+  console.log("userId ===> ", userId);
+  console.log("email ===> ", email);
+  console.log("profileData.userImg ===> ", profileData.userImg)
+  console.log("닉네임 ===> ", profileData.nickName)
+
+
+  const onLoadFile = (e) => {
+    const reader = new FileReader();
+    setImgFile(...imgFile, URL.createObjectURL(e.target.files[0]));
+
+    const prevImg = e.target.files[0];
+    reader.readAsDataURL(prevImg);
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
     };
-  
-    useEffect(() => {
-      dispatch(__getMyInfo(userId));
-    }, [imagePreview]);
-  
-    return (
-      <>
-        <Layout>
+  };
+
+  const onChangeHandler = (e) => {
+    const { name, value } = e.target;
+    setInputForm({ ...inputForm, [name]: value });
+  };
+
+  const onSubmitHandler = async () => {
+    let formData = new FormData();
+    let uploadImg = img_ref.current;
+
+    const obj = { userName: inputForm.nickName, userAddress: inputForm.address }
+    console.log("넘어오니 ===> ", obj)
+
+    formData.append(
+      "user",
+      new Blob([JSON.stringify(obj)], { type: "application/json" })
+    );
+    if (imgFile.length === 0) {
+      return formData.append("multipartFile", null);
+    } else {
+      formData.append("multipartFile", uploadImg.files[0]);
+    }
+
+    const data = dispatch(
+      __putMyInfo(formData)
+    ).unwrap();
+    // if (data) {
+    //   window.alert("프로필이 변경되었습니다!")
+    //   // navigate(-1, {replace: true})
+    // }
+  };
+
+  useEffect(() => {
+    dispatch(__getMyInfo(userId));
+  }, [imagePreview]);
+
+  return (
+    <>
+      <Layout>
         <div>
-                <h3>프로필 수정</h3>
-            </div>
-          <MyProfile>
-            <MyImgWrap>
-              <MyImgBox>
-                {/* {imagePreview === null ? (
+          <h3>프로필 수정</h3>
+        </div>
+        <MyProfile>
+          <MyImgWrap>
+            <MyImgBox>
+              {/* {imagePreview === null ? (
                   profileData?.userImgUrl === null ? (
                     <BasicProfile />
                   ) : (
@@ -111,22 +109,22 @@ const MyPageEdit = () => {
                 ) : (
                   <img src={imagePreview} alt="" />
                 )} */}
-                <img src={imagePreview} alt="" />
-                <label htmlFor="img_UpFile">
-                  <Camera />
-                </label>
-                <input
-                  ref={img_ref}
-                  type="file"
-                  accept="image/*"
-                  id="img_UpFile"
-                  onChange={onLoadFile}
-                  style={{ display: "none" }}
-                />
-              </MyImgBox>
-            </MyImgWrap>
+              <img src={imagePreview} alt="" />
+              <label htmlFor="img_UpFile">
+                <Camera />
+              </label>
+              <input
+                ref={img_ref}
+                type="file"
+                accept="image/*"
+                id="img_UpFile"
+                onChange={onLoadFile}
+                style={{ display: "none" }}
+              />
+            </MyImgBox>
+          </MyImgWrap>
 
-            <LoginInfo>
+          <LoginInfo>
             <LoginInfoTitle>로그인 정보</LoginInfoTitle>
             <LoginInfoContent>
               {profileData.domain === 'google' ? <img src={google} alt="logoImg" /> : null}
@@ -135,42 +133,60 @@ const MyPageEdit = () => {
               {profileData.email}
             </LoginInfoContent>
           </LoginInfo>
-  
-            <MyTextWrap>
-              <div className="MyTextNick">닉네임</div>
-              <div className="MyTextInputWrap">
-                <input
-                  type="text"
-                  value={inputForm.nickName}
-                  name="nickName"
-                  onChange={onChangeHandler}
-                  placeholder={
-                    nickName === null
+
+          <MyTextWrap>
+            <div className="MyTextNick">닉네임</div>
+            <div className="MyTextInputWrap">
+              <input
+                type="text"
+                value={inputForm.nickName}
+                name="nickName"
+                onChange={onChangeHandler}
+                placeholder={
+                  nickName === null
                     ? "닉네임을 입력해주세요."
                     : nickName
-                  }
-                  minLength="2"
-                  maxLength="6"
-                />
-                <Delete />
-              </div>
-              {/* <span className="MyTextCheck"></span> */}
-            </MyTextWrap>
-          </MyProfile>
-          <MyDoneBtnWrap>
-            <MyDoneBtn type="button" onClick={onSubmitHandler}>
-              완료
-            </MyDoneBtn>
-          </MyDoneBtnWrap>
-        </Layout>
-      </>
-    );
-  };
-  
-  export default MyPageEdit;
+                }
+                minLength="1"
+                maxLength="6"
+              />
+              <Delete />
+            </div>
+            {/* <span className="MyTextCheck"></span> */}
+          </MyTextWrap>
+          <MyTextWrap>
+            <div className="MyTextAdd">관심 지역</div>
+            <div className="MyTextInputWrap">
+              <input
+                type="text"
+                value={inputForm.address}
+                name="address"
+                onChange={onChangeHandler}
+                placeholder={
+                  address === null
+                    ? "관심 지역을 입력해주세요."
+                    : address
+                }
+              />
+              <Delete />
+            </div>
+            {/* <span className="MyTextCheck"></span> */}
+          </MyTextWrap>
+        </MyProfile>
+        <MyDoneBtnWrap>
+          <MyDoneBtn onClick={onSubmitHandler}>
+            완료
+          </MyDoneBtn>
+        </MyDoneBtnWrap>
+      </Layout>
+    </>
+  );
+};
+
+export default MyPageEdit;
 
 
-  const MyProfile = styled.div`
+const MyProfile = styled.div`
   display: flex;
   flex-direction: column;
 

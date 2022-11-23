@@ -14,14 +14,6 @@ import Button from '../../components/elements/Button';
 import { flexBetween, flexEvenly, flexRow } from '../../styles/Flex';
 import { BookmarkFill, Comment, MyPost } from '../../assets';
 
-
-
-
-
-//   cookies
-// import { delCookie, getCookie } from '../../cookie/cookie';
-
-
 const MyPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -30,8 +22,8 @@ const MyPage = () => {
   const token = localStorage.getItem("token");
   // const nickName = localStorage.getItem("nickName");
   const nickName = data.nickName;
-  // const email = localStorage.setItem("email", data.email);
-  const userImgUrl = localStorage.getItem("userImgUrl");
+  const email = data.email;
+  const userImgUrl = data.userImg;
 
 
   // const userProfileImg = () => {
@@ -55,15 +47,15 @@ const MyPage = () => {
   }, [token, JSON.stringify[data]]);
 
 
-  const MyPageList = ({ listName, onClick }) => {
-    return (
-      <div>
-        <div className="listTitle" onClick={onClick}>
-          {listName}
-        </div>
-      </div>
-    );
-  };
+  // const MyPageList = ({ listName, onClick }) => {
+  //   return (
+  //     <div>
+  //       <div className="listTitle" onClick={onClick}>
+  //         {listName}
+  //       </div>
+  //     </div>
+  //   );
+  // };
 
   // 로그아웃
   const handleLogout = () => {
@@ -134,17 +126,17 @@ const MyPage = () => {
           </MyStateWrap> */}
         {/* MyStateWrap */}
         <MyCateWrap>
-          <CateBox>
+          <CateBox onClick={() => navigate("/mypagepost")}>
             <div className='title'>내가 쓴 글</div>
             <MyPost />
 
           </CateBox>
-          <CateBox >
+          <CateBox onClick={() => navigate("/mypagecomment")}>
             <div className='title'>댓글 단 글</div>
             <Comment />
 
           </CateBox>
-          <CateBox >
+          <CateBox onClick={() => navigate("/mypagescrap")}>
             <div className='title'>스크랩</div>
             <BookmarkFill />
 

@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { __getPost, __postScrap, setScrapState } from "../../redux/modules/postSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-import { HeartEmpty, HeartFull } from "../../assets";
+import { BookmarkStroke, BookmarkFill } from "../../assets/index";
 
 const PostScrap = ({ bookMarkStatus }) => {
   // 좋아요 기능
@@ -31,7 +31,7 @@ const PostScrap = ({ bookMarkStatus }) => {
   return (
     <>
       <div onClick={() => scrapHandler()}>
-        {scrapState !== null && scrapState ? <HeartFull /> : <HeartEmpty />}
+        {scrapState !== null && scrapState ? <BookmarkFill /> : <BookmarkStroke />}
       </div>
     </>
   );

@@ -11,7 +11,7 @@ import Loading from '../../components/common/Loading'
 import { BsEye } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 
-
+import { BookmarkFill } from "../../assets/index";
 
 const List = ({ posts, main, isLoading, istLastPage, setPage }) => {
 
@@ -42,8 +42,10 @@ const List = ({ posts, main, isLoading, istLastPage, setPage }) => {
                 posts.map((val, i) => {
                     return (
                         <StCardItem key={val.postId} onClick={() => { navigate(`/${main}posts/${val.postId}`) }}>
-                            <StImgBox>
-                                <img src={val.imgUrl} />
+                            <StImgBox imgUrl={val.imgUrl} >
+                                {val.bookMarkStatus &&
+                                    <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
+                                }
                             </StImgBox>
                             <StContentBox>
                                 <div className='titleBox'>{val.title}</div>
@@ -58,7 +60,7 @@ const List = ({ posts, main, isLoading, istLastPage, setPage }) => {
                     )
                 })}
             {
-                isLoading && <Loading />
+                isLoading && <Loading spinerWidth='10%' />
             }
             {
                 posts.length > 0 && <div ref={ref} />
@@ -78,32 +80,24 @@ const StCardWrap = styled.div`
 const StCardItem = styled.div`
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
     padding: 12px 16px;
-    gap: 20px;
 
     height: 154px;
-
     background: #FFFFFF;
 `
 
 const StImgBox = styled.div`
-    img {
         width:130px;
-        height:130px;       
-        border-radius : 20px;         
-        background-color : white;
+        height:130px;
+        background-size : 130px 130px;
+        background-image : url(${(props) => props.imgUrl});
+        border-radius : 20px;
         border: 0.5px solid #F4F5F7;
-    }
 `
 
 const StContentBox = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 0px;
-    
-    width : 100%;
+    flex : 2;
+    margin-left : 20px;
     height: 130px;
     div {
         width : 100%;

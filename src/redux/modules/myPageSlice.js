@@ -1,6 +1,7 @@
 import { myPageApis } from "../../api/api-functions/myPageApis";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { setCookie } from "../../cookie/cookie";
+import { Navigate } from "react-router-dom";
 
 
 
@@ -29,11 +30,16 @@ export const __putMyInfo = createAsyncThunk(
     async (payload, thunkAPI) => {
     try {
     //   const response = await myPageApis.putMyPageAX(payload)
-      const response = await myPageApis.putMyPageAX(payload.formData,
+      const response = await myPageApis.putMyPageAX(payload,
         {
-            "Content-Type":"multipart/form/data",
+            "Content-Type":"multipart/form-data",
         }
         );
+        console.log("putMyPageAX response ===> ",response)
+        
+        if (response.data.msg ==="수정이 완료되었습니다" 
+        ){alert(response.data.msg)}
+        window.location.replace("/mypage")
       return thunkAPI.fulfillWithValue(response.data.data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error)
@@ -84,7 +90,7 @@ export const __getMyPost = createAsyncThunk(
         try {
             const response = await myPageApis.getMyPostAX(payload) 
                 console.log("getMyPostAX response ===> ", response)
-                return thunkAPI.fulfillWithValue(response.data)
+                return thunkAPI.fulfillWithValue(response.data.data)
             } catch (error) {
                 console.log(error) 
                     alert(error.response.msg)
@@ -100,7 +106,7 @@ export const __getMyCmt = createAsyncThunk(
         try {
             const response = await myPageApis.getMyCmtAX(payload) 
                 console.log("getMyCmtAX response ===> ", response)
-                return thunkAPI.fulfillWithValue(response.data)
+                return thunkAPI.fulfillWithValue(response.data.data)
             } catch (error) {
                 console.log(error) 
                     alert(error.response.msg)
@@ -116,7 +122,7 @@ export const __getMyScrap = createAsyncThunk(
     "myPage/__getMyScrap", async (payload, thunkAPI) => {
         try {
             const response = await myPageApis.getMyScrapAX(payload) 
-                console.log("getMyScrapAX response ===> ", response.data)
+                console.log("getMyScrapAX response ===> ", response.data.data)
                 return thunkAPI.fulfillWithValue(response.data)
             } catch (error) {
                 console.log(error) 
@@ -132,8 +138,8 @@ const initialState = {
     userInfo:[],
     isLoading: false,
     myPostList:{},
-    myCommentList:[],
-    myScrapList:[],
+    myCommentList:{},
+    myScrapList:{},
     saveCategoryTab: 'event'
 };
 
@@ -160,13 +166,7 @@ const myPageSlice = createSlice({
             state.error = action.payload; // catch 된 error 객체를 state.error에 넣어줌
         },
 
-
-        // [__putMyInfo.pending]: (state) => {
-        //     state.isLoading = true; 
-        // },
         [__putMyInfo.fulfilled]: (state, action) => {
-            // state.isLoading = false; 
-            // state.myPage = action.payload;
             state.userInfo = action.payload;
         },
         [__putMyInfo.rejected]: (state, action) => {
@@ -194,7 +194,9 @@ const myPageSlice = createSlice({
         },
         [__getMyPost.fulfilled]: (state, action) => {
             state.isLoading = false; 
+            console.log("action.payload ===>",action.payload);
             state.myPostList = action.payload;
+            
         },
         [__getMyPost.rejected]: (state, action) => {
             state.isLoading = false; 
