@@ -122,8 +122,8 @@ export const __getMyScrap = createAsyncThunk(
     "myPage/__getMyScrap", async (payload, thunkAPI) => {
         try {
             const response = await myPageApis.getMyScrapAX(payload) 
-                console.log("getMyScrapAX response ===> ", response.data.data)
-                return thunkAPI.fulfillWithValue(response.data)
+                console.log("getMyScrapAX response ===> ", response)
+                return thunkAPI.fulfillWithValue(response.data.data)
             } catch (error) {
                 console.log(error) 
                     alert(error.response.msg)

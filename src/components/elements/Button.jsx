@@ -145,7 +145,7 @@ const StButton = styled.button`
         box-sizing: border-box;
         border: none;
         background-color: transparent;
-        border-bottom: ${({ active, name }) => (active === name ? "6px solid powderblue" : "6px solid #f2f2f2")};
+        border-bottom: ${({ active, name }) => (active === name ? "6px solid #2D4FDA" : "6px solid #f2f2f2")};
         color: ${({ active, name }) => (active === name ? "#222" : "grey")};
       `
     );
