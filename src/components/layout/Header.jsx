@@ -5,7 +5,7 @@ import { Back, Bell, MyPage } from '../../assets';
 import { Link, useNavigate } from "react-router-dom";
 import logoTop from "../../assets/images/common/logoTop.png"
 
-
+import { RiLoginBoxLine } from 'react-icons/ri';
 
 const Header = () => {
 
@@ -17,16 +17,18 @@ const Header = () => {
             {/* <Back } style={{height: "48px"}} /> */}
             <StLogoBox> <Link to="/"> <img src={logoTop} /></Link></StLogoBox>
             <StRightBox>
-                {/* <button><BsBell style={{ width: "20px", height: "20px" }} /></button>
-                {
-                    localStorage.getItem("token") === null ?
-                        <button>로그인</button>
-                        :
-                        <button><BsFillPersonFill style={{ width: "20px", height: "20px" }} /></button>
-                } */}
-                <Bell style={{height: "48px", marginRight: "15px", padding:"2px"}} />
-                <MyPage style={{height: "48px", marginRight: "5px", padding:"2px"}} onClick={() => {localStorage.getItem("token") === null ? navigate("/login") : navigate("/mypage")}}
-                />
+
+                <Bell style={{ height: "48px", marginRight: "15px", padding: "2px" }} />
+                {localStorage.getItem("token") === null ?
+                    <RiLoginBoxLine style={{ width: '32px', height: "48px", marginRight: "15px", padding: "2px", color: '#00208F' }}
+                        onClick={() => { navigate("/login") }} />
+                    :
+                    <MyPage style={{ height: "48px", marginRight: "5px", padding: "2px" }}
+                        onClick={() => { navigate("/mypage") }} />
+                }
+
+
+
 
             </StRightBox>
         </StHeaderWrap>
@@ -60,7 +62,7 @@ const StHeaderWrap = styled.div`
 //         border: 2px solid #333;
 //         border-left: 0;
 //         border-top: 0;
-        
+
 //         margin-left : 10px;
 //         transform: rotate(135deg);
 //     }

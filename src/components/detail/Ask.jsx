@@ -198,21 +198,21 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                     :
                     (
                         <>
-                             <STIng style={{ marginTop: "14px", marginBottom: "14px" }}>
-                                <STImg style={{display:"flex"}}>
-                                    <img src={Views} style={{width: "20px",height: "20px", flex:"2"}}/>
-                                    <div style={{color : "#8B909F", flex:"8", marginLeft:"5px"}}>{post.viewCount}</div>
+                            <STIng style={{ marginTop: "14px", marginBottom: "14px" }}>
+                                <STImg style={{ display: "flex" }}>
+                                    <img src={Views} style={{ width: "20px", height: "20px", flex: "2" }} />
+                                    <div style={{ color: "#8B909F", flex: "8", marginLeft: "5px" }}>{post.viewCount}</div>
                                 </STImg>
                                 <PostScrap style={{}} bookMarkStatus={post.bookMarkStatus} />
                             </STIng>
 
-                            <div  style={{ marginBottom: "14px" }}>
+                            <div style={{ marginBottom: "14px" }}>
                                 <img src={post.userImg} style={{ width: "36px", height: "36px", borderRadius: "30px" }} />
                                 <STUsername>{post.userName}</STUsername>
                             </div>
 
                             <STInput style={{ marginBottom: "8px" }}>{post.title}</STInput>
-                           
+
                             <div>
                                 <Carousel fade>
                                     {
@@ -220,7 +220,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                         && post.askPostImgList.map((img, i) => {
                                             return (
                                                 <Carousel.Item key={img.id + i}>
-                                                    <img  style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
+                                                    <img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
                                                         src={img.postImgUrl} />
                                                 </Carousel.Item>)
                                         })
@@ -229,26 +229,26 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                             </div>
 
                             <StContent style={{ marginBottom: "14px", paddingTop: "5px" }}>{post.content}</StContent>
-             
+
                             <div>행사장 링크</div>
-                            <STInput style={{ marginBottom: "14px" }}>{post.postLink}</STInput>               
-                           
+                            <STInput style={{ marginBottom: "14px" }}>{post.postLink}</STInput>
+
                             <div>행사장소</div>
-                            <div style={{ display : "flex", marginBottom: "8px" }}>
-                                <STAddressButton style={{ flex : "2"}}>#{post.postAddress.split(' ')[0]}</STAddressButton>
-                                <STInput style={{flex:"8", marginLeft: "5px" }}>{post.postAddress}</STInput>
+                            <div style={{ display: "flex", marginBottom: "8px" }}>
+                                <STAddressButton style={{ flex: "2" }}>#{post.postAddress.split(' ')[0]}</STAddressButton>
+                                <STInput style={{ flex: "8", marginLeft: "5px" }}>{post.postAddress}</STInput>
                             </div>
-                           
+
                             <KakaoMap address={post.postAddress} width='100%' height='144px' />
-                         
+
                             {localStorage.getItem('userId') === post.userId.toString() &&
                                 (<div>
-                                    <STEditButton style={{background:"#515466"}} onClick={() => { onAskDelete(postId); }}>삭제</STEditButton>
+                                    <STEditButton style={{ background: "#515466" }} onClick={() => { onAskDelete(postId); }}>삭제</STEditButton>
                                     <STEditButton onClick={toggleEdit}>수정</STEditButton>
-                                </div>)}                                           
+                                </div>)}
                         </>
                     )}
-                     <Comment  postId={postId} kind='event' commentDtoList={post.commentDtoList}  />
+                <Comment postId={postId} kind='ask' commentDtoList={post.commentDtoList} />
 
             </StWrap>
     );

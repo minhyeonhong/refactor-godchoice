@@ -47,6 +47,10 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         setIndex(selectedIndex);
     };
 
+    useEffect(() => {
+        console.log("event post", post);
+    }, [post])
+
     //상세글 수정하기 상태
     const [mod, setMod] = useState(false);
 

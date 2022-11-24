@@ -103,7 +103,54 @@ const Comment = ({ postId, kind, commentDtoList }) => {
                                 </StCommentInputBox>
                                 {/* 대댓글 */}
                                 {
+                                    kind === 'event' &&
                                     item.eventPostCommentChildren.map((child) => {
+                                        return (
+                                            <StReCommentBox key={child.commentId}>
+                                                <div><CommentArrow /></div>
+                                                <StComment>
+                                                    <div className='userBox'>
+                                                        <div><StUserImg src={child.userImg} /> {child.userName}</div>
+                                                        {
+                                                            Number(localStorage.getItem('userId')) === child.userId &&
+                                                            <Button btnType='svg' onClick={() => { dispatch(__deleteComment({ postId, commentId: child.commentId, kind })) }}><XBtn /></Button>
+                                                        }
+                                                    </div>
+                                                    <div className='contentBox'>{child.content}</div>
+                                                    <div className='dateBox'>
+                                                        <div className='date'>{child.commentWriteDate}</div>
+                                                    </div>
+                                                </StComment>
+                                            </StReCommentBox>
+                                        )
+                                    })
+                                }
+                                {
+                                    kind === 'gather' &&
+                                    item.gatherPostCommentChildren.map((child) => {
+                                        return (
+                                            <StReCommentBox key={child.commentId}>
+                                                <div><CommentArrow /></div>
+                                                <StComment>
+                                                    <div className='userBox'>
+                                                        <div><StUserImg src={child.userImg} /> {child.userName}</div>
+                                                        {
+                                                            Number(localStorage.getItem('userId')) === child.userId &&
+                                                            <Button btnType='svg' onClick={() => { dispatch(__deleteComment({ postId, commentId: child.commentId, kind })) }}><XBtn /></Button>
+                                                        }
+                                                    </div>
+                                                    <div className='contentBox'>{child.content}</div>
+                                                    <div className='dateBox'>
+                                                        <div className='date'>{child.commentWriteDate}</div>
+                                                    </div>
+                                                </StComment>
+                                            </StReCommentBox>
+                                        )
+                                    })
+                                }
+                                {
+                                    kind === 'ask' &&
+                                    item.askPostCommentChildren.map((child) => {
                                         return (
                                             <StReCommentBox key={child.commentId}>
                                                 <div><CommentArrow /></div>

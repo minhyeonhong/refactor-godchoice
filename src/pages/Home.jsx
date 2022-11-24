@@ -106,7 +106,7 @@ const Home = () => {
                 </StCarouselWrap>
 
                 {/* 검색 */}
-                <Search updateSearchInfo={updateSearchInfo} />
+                <Search updateSearchInfo={updateSearchInfo} searchState={searchState} />
 
                 {/* 리스트 */}
                 <StTabBox>

@@ -166,8 +166,12 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         }
     }
 
+
+    useEffect(() => {
+        console.log("gather post", post);
+    }, [post])
     //성별에 맞는 svg 
-    const sexSvg = sex==="남"? GenderMale: (sex==="여" ? GenderFemale: GenderIntersex )
+    const sexSvg = sex === "남" ? GenderMale : (sex === "여" ? GenderFemale : GenderIntersex)
 
     return (
         Object.keys(post).length < 1 ?
@@ -194,7 +198,7 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 <AllInput type="text" defaultValue={modPost.startAge} name="startAge" onChange={modPostHandle} /> ~ {''}
                                 <AllInput type="text" defaultValue={modPost.endAge} name="endAge" onChange={modPostHandle} />
 
-                                <STSelect name="category" defaultValue={modPost.sex} onChange={modPostHandle}>
+                                <STSelect name="sex" defaultValue={modPost.sex} onChange={modPostHandle}>
                                     <option value="NF">성비무관</option>
                                     <option value="M">남</option>
                                     <option value="W">여</option>
@@ -314,38 +318,38 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                         (
                             <>
                                 <STIng style={{ marginTop: "14px", marginBottom: "14px" }}>
-                                    {post.postState==="진행중"?
-                                        (<STIngDiv>{post.postState}</STIngDiv>):
-                                        (<STIngDiv style={{background :"#727785"}}>{post.postState}</STIngDiv>)
+                                    {post.postState === "진행중" ?
+                                        (<STIngDiv>{post.postState}</STIngDiv>) :
+                                        (<STIngDiv style={{ background: "#727785" }}>{post.postState}</STIngDiv>)
                                     }
 
-                                    <STImg style={{display:"flex", marginLeft:"16px"}}>
-                                        <img src={Views} style={{width: "20px",height: "20px", flex:"2"}}/>
-                                        <div style={{color : "#8B909F", flex:"8", marginLeft:"5px"}}>{post.viewCount}</div>
+                                    <STImg style={{ display: "flex", marginLeft: "16px" }}>
+                                        <img src={Views} style={{ width: "20px", height: "20px", flex: "2" }} />
+                                        <div style={{ color: "#8B909F", flex: "8", marginLeft: "5px" }}>{post.viewCount}</div>
                                     </STImg>
 
-                                    <PostScrap style={{position:"absolute", right :"10px"}} bookMarkStatus={post.bookMarkStatus} />
+                                    <PostScrap style={{ position: "absolute", right: "10px" }} bookMarkStatus={post.bookMarkStatus} />
                                 </STIng>
 
-                                <STBox2 style={{marginBottom: "14px", display:"flex"}}>
-                                    <STButton style={{ width: "70px", flex:"2"}}>모집글</STButton>
-                                    <STButton style={{ width: "70px", flex:"2" }}>{post.category}</STButton>
-                                    <STButton2 style={{ color: "#424754", backgroundColor: "white", width: "208px", flex:"4" }}>약속날짜 | {post.date}</STButton2>
+                                <STBox2 style={{ marginBottom: "14px", display: "flex" }}>
+                                    <STButton style={{ width: "70px", flex: "2" }}>모집글</STButton>
+                                    <STButton style={{ width: "70px", flex: "2" }}>{post.category}</STButton>
+                                    <STButton2 style={{ color: "#424754", backgroundColor: "white", width: "208px", flex: "4" }}>약속날짜 | {post.date}</STButton2>
                                 </STBox2>
-                                <STBox2 style={{marginBottom: "14px", display:"flex"}}>
-                                    <STButton2 style={{width: "159px", flex:"2"}}>모집인원 | {post.number}명</STButton2>
-                                    <STButton2 style={{width: "67px", flex:"1"}}><img src={sexSvg} /></STButton2>
-                                    <STButton2 style={{width: "162px", flex:"2"}}>나이대 | {post.startAge}~{post.endAge}</STButton2>
+                                <STBox2 style={{ marginBottom: "14px", display: "flex" }}>
+                                    <STButton2 style={{ width: "159px", flex: "2" }}>모집인원 | {post.number}명</STButton2>
+                                    <STButton2 style={{ width: "67px", flex: "1" }}><img src={sexSvg} /></STButton2>
+                                    <STButton2 style={{ width: "162px", flex: "2" }}>나이대 | {post.startAge}~{post.endAge}</STButton2>
                                 </STBox2>
                                 <STInput style={{ marginBottom: "8px" }}>{post.title}</STInput>
-                                
+
                                 <Carousel fade>
                                     {
                                         post.postImgInfo
                                         && post.postImgInfo.map((img, i) => {
                                             return (
                                                 <Carousel.Item key={img.id + i}>
-                                                    <img style={{  width: "100%", height: "396px", objectFit: "contain"}}
+                                                    <img style={{ width: "100%", height: "396px", objectFit: "contain" }}
                                                         src={img.postImgUrl} />
                                                 </Carousel.Item>)
                                         })
@@ -358,28 +362,28 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 <STInput style={{ marginBottom: "14px" }}>{post.kakaoLink}</STInput>
 
                                 <div>행사장 링크</div>
-                                <STInput style={{ marginBottom: "14px" }}>{post.postLink}</STInput>                      
-                                
+                                <STInput style={{ marginBottom: "14px" }}>{post.postLink}</STInput>
+
                                 <div>행사장소</div>
-                                <div style={{ marginBottom: "8px", display:"flex"}}>
-                                    <STAddressButton style={{flex:"1"}}>#{post.postAddress.split(' ')[0]}</STAddressButton>
-                                    <STInput style={{  marginLeft: "5px", flex:"4"}}>{post.postAddress}</STInput>
+                                <div style={{ marginBottom: "8px", display: "flex" }}>
+                                    <STAddressButton style={{ flex: "1" }}>#{post.postAddress.split(' ')[0]}</STAddressButton>
+                                    <STInput style={{ marginLeft: "5px", flex: "4" }}>{post.postAddress}</STInput>
                                 </div>
-                                <KakaoMap address={post.postAddress} width='100%' height='144px'/>
-                          
-                            
-                                    {localStorage.getItem('userId') === post.userId.toString() &&
-                                        (<div style={{float:"right"}}>
-                                            <STEditButton onClick={toggleEdit}>수정</STEditButton>
-                                            <STEditButton style={{background:"#515466"}} onClick={() => { onGatherDelete(postId); }}>삭제</STEditButton>
-                                        </div>)}
+                                <KakaoMap address={post.postAddress} width='100%' height='144px' />
+
+
+                                {localStorage.getItem('userId') === post.userId.toString() &&
+                                    (<div style={{ float: "right" }}>
+                                        <STEditButton onClick={toggleEdit}>수정</STEditButton>
+                                        <STEditButton style={{ background: "#515466" }} onClick={() => { onGatherDelete(postId); }}>삭제</STEditButton>
+                                    </div>)}
 
                             </>
                         )
                 }
 
 
-                {/* <Comment /> */}
+                <Comment postId={postId} kind='gather' commentDtoList={post.commentDtoList} />
 
             </StWrap>
     );
