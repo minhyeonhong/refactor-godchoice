@@ -9,10 +9,11 @@ import {__addPost3 } from "../../redux/modules/postSlice3"
 import Carousel from 'react-bootstrap/Carousel';
 import styled from 'styled-components';
 import { FiSearch } from 'react-icons/fi'
+import noImg from '../../assets/images/common/noImg.png'
 
 const QuestionPost =() => {
 
-    const navigate = useNavigate()
+
     const dispatch = useDispatch();
 
     // 주소 API 팝업창 상태 관리
@@ -47,6 +48,9 @@ const QuestionPost =() => {
     const onChangeImage = (e) => {
         const files = e.currentTarget.files;
   
+        setImgFile([])
+        setImgUrl([])
+        
         if ([...files].length > 5) {
           alert('이미지는 최대 3개까지 업로드가 가능합니다.');
           return;
@@ -96,6 +100,7 @@ const QuestionPost =() => {
                 }
             }  
 
+          
         const formData = new FormData();
 
         if (imgFile.length > 0) {
@@ -117,62 +122,64 @@ const QuestionPost =() => {
             "askPostRequestDto",
             new Blob([JSON.stringify(obj3)], { type: "application/json" })
             );
-
+        console.log(obj3)
         dispatch(__addPost3(formData))
-        window.location.replace('/')
+        // window.location.replace('/')
     }
 
     //주소 앞에 두글자 따기
     const region = postAddress.split("")[0]+postAddress.split("")[1]
 
-    
-
     return(
-        <div>
+        <div style={{paddingLeft:"10px", paddingRight:"10px"}}>
             <Layout>
-                <div>
-                    <label>글 작성</label><br/>
-                    <AllInput type="text" placeholder="제목" name="title" onChange={onChangeHandler}
-                    style={{width : "100%"}}/>
-                </div>
+        
+                <h4 style={{textAlign:"center", marginTop:"18px", marginBottom:"18px"}}>질문글</h4>
+              
+                <STInput type="text" placeholder="제목" name="title" onChange={onChangeHandler}
+                    style={{width : "100%", marginBottom:"18px"}}/>
 
-                <div><br/>
-                    <button onClick={()=> { imgRef.current.click()}}> 업로드 버튼</button><br/>
-                        <label htmlFor="imgFile">
-                            <input
-                                style={{ display: "none" }}
-                                type="file"
-                                id="imgFile"
-                                onChange={onChangeImage}
-                                accept="image/*"
-                                ref={imgRef}
-                                name="imgFile"
-                                multiple/>
-                                    
-                            <Carousel fade>
-                                {
-                                    imgUrl.map((img) => {
-                                        return (
-                                            <Carousel.Item key={img.id}>            
-                                                <img style={{width:'550px'}} src={img ? img : ""} />  
-                                            </Carousel.Item>)
-                                    })
-                                }
-                            </Carousel>
+                {imgUrl.length===0&&<img src={noImg} style={{width : "100%"}} onClick={()=> { imgRef.current.click()}}/>}
+                <div>
+                    <label htmlFor="imgFile">
+                        <input
+                            style={{ display: "none" }}
+                            type="file"
+                            id="imgFile"
+                            onChange={onChangeImage}
+                            accept="image/*"
+                            ref={imgRef}
+                            name="imgFile"
+                            multiple/>
+
                         </label>
                 </div >
+                
+                <Carousel>
+                    {imgUrl&&imgUrl.map((img, index) => {
+                        return (
+                            <Carousel.Item  key={img.id}>
+                                <button>    
+                                    <img src={img} style={{ width:'396px', height:"396px",objectFit: "contain" }} onClick={()=> { imgRef.current.click()}} />
+                                </button>
+                            </Carousel.Item>
+                            )
+                        })
+                    }
+                </Carousel>
 
                 <AllTextarea type="text" placeholder="소개글" name="content" onChange={onChangeHandler} style={{width : "100%", height: "200px"}}/>
                 
-                <div>
+                <div style={{marginBottom:"14px"}}>
                     <label>행사장 링크</label>
-                    <AllInput type="text" placeholder="링크" name="postLink" onChange={onChangeHandler} style={{width : "100%"}}/>
+                    <STInput type="text" placeholder="링크" name="postLink" onChange={onChangeHandler} style={{width : "100%"}}/>
                 </div>
             
                 {/*주소 부분 */}
                 <div>
+                    <label>행사장 장소</label>
                     <StSearchBox onClick={popupPostCode}>
-                        <button ><FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00' }}/></button>
+                        <button><FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00', marginLeft:"10px", marginRight:"10px" }}/>주소검색</button>
                     </StSearchBox>
                 
                     {isPopupOpen && (
@@ -184,15 +191,18 @@ const QuestionPost =() => {
                 <AddressBox >
                         {
                             postAddress !== ""&&(
-                                <>
-                                    <RegionButton>{"#"+region}</RegionButton>
-                                    <AddressInput type="text" value={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{width: "80%"}}/>
+                               <div>
+                               <div style={{display:"flex"}}>
+                                    <RegionButton style={{flex:"1", marginRight:"5px"}}>{"#"+region}</RegionButton>
+                                    <AddressInput type="text" value={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{width: "80%", flex:"4"}}/>
+                                    </div>
                                     <AddressInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{width: "80%"}}/>
                                     <KakaoMap address={postAddress} width="328px" height="300px"/>
-                                </>)
+                                
+                                </div>)
                         }
                 </AddressBox >                                            
-            </div><br/>
+            </div>
     
             <div>
                 <AllButton style={{background:"#B6B6B6"}} onClick={onSubmit}>작성</AllButton>
@@ -231,9 +241,8 @@ const AddressBox = styled.div`
 const AddressInput = styled.input`
     border-radius: 5px;
     margin-bottom: 5px;
-    border: transparent;
-    background-color: #F4F4F4;
-    float : right;
+    background-color: white;
+    /* float : right; */
 `
 const AllButton = styled.button`
     width : 100%;
@@ -251,7 +260,7 @@ const AllInput = styled.input`
 
 const AllTextarea = styled.textarea`
     border-radius: 10px;
-    border: 1px solid #C8C9CA;
+    border: transparent;
 `
 
 const ModalWrap = styled.div`
@@ -268,3 +277,22 @@ const ModalWrap = styled.div`
   padding: 0 15px;
   box-sizing: border-box;
 `;
+//------------------------------------
+
+const STInput = styled.input`
+    width: 100%;
+    height: 36px;
+    background: white;
+    border-radius: 10px;
+    font-weight: 500;
+    padding-top: 6px;
+    padding-left: 6px;
+    padding-bottom: 6px;
+    border:transparent;
+`
+const StCarouselWrap = styled.div`
+    .carousel-indicators [data-bs-target]{
+        width:3px;
+        border-radius : 50%;
+    }
+`

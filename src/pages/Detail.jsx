@@ -29,7 +29,6 @@ const Detail = () => {
 
     useEffect(() => {
         if (Object.keys(post).length > 0) {
-            console.log("post", post);
             setmodPost(post);
         }
     }, [post])
@@ -37,7 +36,7 @@ const Detail = () => {
     return (
         <Layout>
             {url === 'eventposts' && <Event post={post} postId={postId} modPost={modPost} setmodPost={setmodPost} modPostHandle={modPostHandle} />}
-            {url === 'gatherposts' && <Gather post={post} postId={postId} modPost={modPost} setmodPost={setmodPost} modPostHandle={modPostHandle}/>}
+            {url === 'gatherposts' && <Gather post={post} postId={postId} modPost={modPost} setmodPost={setmodPost} modPostHandle={modPostHandle} />}
             {url === 'askposts' && <Ask post={post} postId={postId} modPost={modPost} setmodPost={setmodPost} modPostHandle={modPostHandle} />}
         </Layout>
     );

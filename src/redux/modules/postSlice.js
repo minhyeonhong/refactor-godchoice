@@ -3,12 +3,52 @@ import axios from "axios";
 import { postApis } from "../../api/api-functions/postApis"
 import { getCookie } from "../../cookie/cookie";
 
+//관리자글 조회
+export const __getAdminPost = createAsyncThunk(
+    "posts/__getAdminPost",
+    async (payload, thunkAPI) => {
+        try {
+            const res = await postApis.getAdminPostAX();
+
+            return thunkAPI.fulfillWithValue(res.data);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error);
+        }
+    });
+
+//관리자글 작성
+export const __addAdminPost = createAsyncThunk(
+    "posts/__addAdminPost",
+    async (payload, thunkAPI) => {
+        try {
+            console.log("__addAdminPost payload", payload);
+            postApis.addAdminPostAX(payload)
+                .then((response) => {
+                    console.log("response", response.data);
+                });
+        } catch (error) {
+            console.log("error", error);
+        }
+    });
+
+//관리자글 삭제
+export const __delAdminPost = createAsyncThunk(
+    "posts/__delAdminPost",
+    async (payload, thunkAPI) => {
+        try {
+            postApis.deleteAdminPostAX(payload)
+                .then((response) => {
+                    console.log("response", response.data);
+                });
+        } catch (error) {
+            console.log("error", error);
+        }
+    });
 
 export const __getAllPostList = createAsyncThunk(
     "postSlice/__getAllPostList",
     async (payload, thunkAPI) => {
         try {
-            console.log("payload", payload)
             const res = await postApis.searchPostAX(payload);
 
             return thunkAPI.fulfillWithValue(res.data);
@@ -61,6 +101,8 @@ export const __addPost = createAsyncThunk(
         }
     });
 
+
+
 export const __putPost = createAsyncThunk(
     "posts/__putPost",
     async (payload, thunkAPI) => {
@@ -107,6 +149,7 @@ export const __deletePost = createAsyncThunk(
 export const postSlice = createSlice({
     name: "postSlice",
     initialState: {
+        adminPosts: [],
         posts: [],
         post: {},
         scrapState: null,
@@ -117,27 +160,42 @@ export const postSlice = createSlice({
         istLastPage: false
     },
     reducers: {
+        //검생 상태
         putSearchState(state, action) {
             state.isResetSearch = true;
             state.searchState = { ...state.searchState, ...action.payload };
         },
+        //페이지 상태
         putSearchStatePage(state, action) {
             state.isResetSearch = false;
             state.searchState = { ...state.searchState, page: action.payload };
         },
+        //스크랩 상태
         setScrapState(state, action) {
             state.scrapState = action.payload;
         },
 
     },
     extraReducers: {
+        //__getAdminPost
+        [__getAdminPost.pending]: (state, action) => {
+            state.isLoading = true;
+        },
+        [__getAdminPost.fulfilled]: (state, action) => {
+            state.isLoading = false;
+            if (action.payload.status === 200) {
+                state.adminPosts = action.payload.data;
+            }
+        },
+        [__getAdminPost.rejected]: (state, action) => {
+            state.isLoading = false;
+            console.log(action.payload);
+        },
         //__getAllPostList
         [__getAllPostList.pending]: (state, action) => {
             state.isLoading = true;
         },
         [__getAllPostList.fulfilled]: (state, action) => {
-            state.isLoading = false;
-            console.log("action.payload", action.payload)
             if (action.payload.status === 200) {
                 if (state.isResetSearch) {
                     state.posts = action.payload.data.content;
@@ -148,6 +206,7 @@ export const postSlice = createSlice({
                     }
                 }
             }
+            state.isLoading = false;
         },
         [__getAllPostList.rejected]: (state, action) => {
             state.isLoading = false;
