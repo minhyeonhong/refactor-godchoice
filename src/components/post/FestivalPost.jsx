@@ -157,7 +157,10 @@ const FestivalPost =() => {
 
     return (
           <Layout>
-            <STSelect value="행사글" style={{ width: "50%" }}>
+            <FestivalWrap>
+                <SelectWrap>
+                    <SelTop>
+            <STSelect value="행사글" style={{ width: "50%" }} disabled>
                 <option value="행사글">행사글</option>
             </STSelect>
 
@@ -169,22 +172,31 @@ const FestivalPost =() => {
                 <option value="공연">공연</option>
                 <option value="기타">기타</option>
             </STSelect>
-
+            </SelTop>
+            {/* SelTop */}
+            
+            <SelBottom>
             <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridCity">
-                    <Form.Label>행사시작</Form.Label>
-                        <Form.Control type="date" name="startPeriod" onChange={onChangeHandler} min={today2}/>
+                    {/* <Form.Label>행사시작</Form.Label> */}
+                        <Form.Control type="date" name="startPeriod" onChange={onChangeHandler} min={today2} className="dateform"
+                       />
                 </Form.Group>
+                {/* <span>~</span> */}
                 <Form.Group as={Col} controlId="formGridCity">
-                    <Form.Label>행사마감</Form.Label>
-                        <Form.Control type="date" name="endPeriod" onChange={onChangeHandler}  min={today3}/>
+                    {/* <Form.Label>행사마감</Form.Label> */}
+                        <Form.Control   type="date" name="endPeriod" onChange={onChangeHandler}  min={today3} className="dateform" />
                 </Form.Group>
             </Row>
+            </SelBottom>
+            {/* SelBottom */}
 
-            <Hr/>
+            </SelectWrap>
+            {/* SelectWrap */}
+            
                 <Form.Group className="mb-3" controlId="formGridAddress1">
-                    <Form.Label>글 작성</Form.Label>
-                    <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler} />
+                    <Form.Label style={{fontSize : "18px"}} >글 작성</Form.Label>
+                    <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler} style={{width:"100%", height: "48px", border:"2px solid #B8C4FF"}} />
                 </Form.Group>
 
             <div><br/>
@@ -222,8 +234,7 @@ const FestivalPost =() => {
                             multiple/>
                     </label>
             </div >
-            <AllTextarea type="text" placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" name="content" onChange={onChangeHandler} maxLength={2500} style={{height : '200px', width: "100%"}}/>
-            <Hr/>
+            <AllTextarea type="text" placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" name="content" onChange={onChangeHandler} maxLength={2500} style={{height : '200px', width: "100%",border : "2px solid #B8C4FF" }}/>
 
             <Form.Group className="mb-3" controlId="formGridAddress1">
                 <Form.Label>행사장 링크</Form.Label>
@@ -233,7 +244,7 @@ const FestivalPost =() => {
             {/* 주소 부분 */}
             <div>
                 <StSearchBox onClick={popupPostCode}>
-                    <button ><FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00' }}/></button>
+                    <button ><FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00', border : "2px solid #B8C4FF", backgroundColor: "#fff"}}/></button>
                 </StSearchBox>
 
                 {isPopupOpen && (
@@ -247,7 +258,7 @@ const FestivalPost =() => {
                             postAddress !== ""&&(
                                 <>
                                     <RegionButton>{"#"+region}</RegionButton>
-                                    <AddressInput type="text" value={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{width: "80%"}}/>
+                                    <AddressInput type="text" value={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{width: "90%"}}/>
                                     <AddressInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{width: "80%"}}/>
                                     <KakaoMap address={postAddress} width="328px" height="300px"/>
                                 </>)
@@ -256,7 +267,7 @@ const FestivalPost =() => {
             </div><br/>
             <AllButton style={{background:"#B6B6B6"}} onClick={onSubmit}>작성</AllButton>
             {/*<AllButton onClick={()=>navigate(-1)}>취소</AllButton>  <AddressModal />*/}   
-            
+            </FestivalWrap>
         </Layout>
 
     )
@@ -264,14 +275,55 @@ const FestivalPost =() => {
 
 export default FestivalPost;
 
-const Hr = styled.hr`
-    background-color : #F4F4F4;
-    margin : 10px 5px 5px 5px;
+const FestivalWrap = styled.div`
+    padding: 20px 10px;
+`
+const SelectWrap = styled.div`
+width: 100%;
+height: auto;
+
+`
+
+const SelTop = styled.div`
+    display: flex;
+    gap : 15px;
+    margin-bottom : 10px;
+`
+
+const SelBottom = styled.div`
+    .mb-3 {
+    display: flex;
+    justify-content : space-between;
+     --bs-gutter-x : 0;
+     gap : 15px;
+    .dateform {
+        border-radius : 30px;
+        height : 48px;
+        flex : 1;
+        border: 2px solid #B8C4FF;
+    }
+
+
+}
+`
+// const SelBottom = styled.div`
+//     float: left;
+// `
+
+const STSelect = styled.select`
+    height : 48px;
+    font-size: 16px;
+    background-color: #FFF;
+    border-radius: 30px;
+    padding:12px 16px;
+    border: 2px solid #B8C4FF;
+    flex : 1;
 `
 
 const StSearchBox = styled.div`
     background: #EEEAE3;
     box-shadow: inset 0px 2px 2px rgba(0, 0, 0, 0.1);
+    border: 2px solid #B8C4FF;
     border-radius : 30px;
     display : flex;
     flex-direction : row;
@@ -330,15 +382,6 @@ const STUploadButton = styled.button`
     height : 100%;
     border-radius: 10px;
     border : transparent;
-`
-const STSelect = styled.select`
-    font-size: 14px;
-    background-color: #F4F4F4;
-    width : 48%;
-    border-radius: 10px;
-    border : transparent;
-    padding:5px;
-    height : 32px;
 `
 //modal
 const ModalWrap = styled.div`
