@@ -9,12 +9,17 @@ export const STNumber = styled.div`
     height : 32px;
 `
 export const STButton = styled.button`
-    background-color: transparent;
-    color : #5E5E5E;
-    vertical-align : middle;
-    height : 100%;
-    border-color: transparent;
-    font-size: 14px;
+    background-color: #E1E3EC;
+    font-size: 20px;
+    border-radius: 20px;
+    border:transparent;
+    /* vertical-align: middle; */
+    height : 30px;
+    position : absolute;
+    transform: translateY(-50%);
+    top : 50%;
+    padding-left: 10px;
+    padding-right : 10px;
 `
 export const STSelect = styled.select`
     font-size: 14px;
@@ -26,7 +31,7 @@ export const STSelect = styled.select`
     height : 32px;
 `
 export const STSelectButton = styled.div`
-    margin-left: 5px;
+    margin-right: 8px;
 `
 
 export const AllButton = styled.button`
@@ -79,7 +84,7 @@ export const AddressInput = styled.input`
     float : right;
 `
 export const ModalWrap = styled.div`
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -91,4 +96,5 @@ export const ModalWrap = styled.div`
   z-index: 999;
   padding: 0 15px;
   box-sizing: border-box;
+
 `;
