@@ -130,85 +130,87 @@ const QuestionPost = () => {
     const region = postAddress.split("")[0] + postAddress.split("")[1]
 
     return (
-        <div style={{ paddingLeft: "10px", paddingRight: "10px" }}>
-            <Layout>
-
-                <h4 style={{ textAlign: "center", marginTop: "18px", marginBottom: "18px" }}>질문글</h4>
-
-                <STInput type="text" placeholder="제목" name="title" onChange={onChangeHandler}
-                    style={{ width: "100%", marginBottom: "18px" }} />
-
-                {imgUrl.length === 0 && <img src={noImg} style={{ width: "100%" }} onClick={() => { imgRef.current.click() }} />}
-                <div>
-                    <label htmlFor="imgFile">
-                        <input
-                            style={{ display: "none" }}
-                            type="file"
-                            id="imgFile"
-                            onChange={onChangeImage}
-                            accept="image/*"
-                            ref={imgRef}
-                            name="imgFile"
-                            multiple />
-
-                    </label>
-                </div >
-
-                <Carousel>
-                    {imgUrl && imgUrl.map((img, index) => {
-                        return (
-                            <Carousel.Item key={img.id}>
-                                <button style={{ width: "100%" }}>
-                                    <img src={img} style={{ width: '396px', height: "396px", objectFit: "contain" }} onClick={() => { imgRef.current.click() }} />
-                                </button>
-                            </Carousel.Item>
-                        )
-                    })
-                    }
-                </Carousel>
-
-                <AllTextarea type="text" placeholder="소개글" name="content" onChange={onChangeHandler} style={{ width: "100%", height: "200px" }} />
-
-                <div style={{ marginBottom: "14px" }}>
-                    <label>행사장 링크</label>
-                    <STInput type="text" placeholder="링크" name="postLink" onChange={onChangeHandler} style={{ width: "100%" }} />
-                </div>
-
-                {/*주소 부분 */}
-                <div>
-                    <label>행사장 장소</label>
-                    <StSearchBox onClick={popupPostCode}>
-                        <button><FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00', marginLeft: "10px", marginRight: "10px" }} />주소검색</button>
-                    </StSearchBox>
-
-                    {isPopupOpen && (
-                        <ModalWrap>
+        <>
+            {isPopupOpen && (
+                        <ModalWrap onClick={popupPostCode}>
                             <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
                         </ModalWrap>
                     )}
 
+            <Layout>
+                <div style={{marginLeft:"10px", marginRight:"10px"}}>
+                    <h4 style={{ textAlign: "center", marginTop: "18px", marginBottom: "18px" }}>질문글</h4>
+
+                    <STInput type="text" placeholder="제목" name="title" onChange={onChangeHandler}
+                        style={{ width: "100%", marginBottom: "18px" }} />
+
+                    {imgUrl.length === 0 && <img src={noImg} style={{ width: "100%" }} onClick={() => { imgRef.current.click() }} />}
+                    <div>
+                        <label htmlFor="imgFile">
+                            <input
+                                style={{ display: "none" }}
+                                type="file"
+                                id="imgFile"
+                                onChange={onChangeImage}
+                                accept="image/*"
+                                ref={imgRef}
+                                name="imgFile"
+                                multiple />
+
+                        </label>
+                    </div >
+
+                    <Carousel>
+                        {imgUrl && imgUrl.map((img, index) => {
+                            return (
+                                <Carousel.Item key={img.id}>
+                                    <button style={{ width: "100%" }}>
+                                        <img src={img} style={{ width: '396px', height: "396px", objectFit: "contain" }} onClick={() => { imgRef.current.click() }} />
+                                    </button>
+                                </Carousel.Item>
+                            )
+                        })
+                        }
+                    </Carousel>
+
+                    <AllTextarea type="text" placeholder="소개글" name="content" onChange={onChangeHandler} style={{ width: "100%", height: "200px" }} />
+
+                    <div style={{ marginBottom: "14px" }}>
+                        <label>행사장 링크</label>
+                        <STInput type="text" placeholder="링크" name="postLink" onChange={onChangeHandler} style={{ width: "100%" }} />
+                    </div>
+
+                   
+                </div>
+                
+                  {/*주소 부분 */}
+                <div style={{marginLeft:"10px"}}>
+                    <StSearchBox onClick={popupPostCode} style={{background:"#E1E3EC"}}>
+                        <button style={{color:"#8B909F"}}><FiSearch style={{ width: '20px', height: '20px',color: '#424754', marginLeft: "10px", marginRight: "10px" }} />주소검색</button>
+                    </StSearchBox>
+                        
                     <AddressBox >
                         {
                             postAddress !== "" && (
                                 <div>
-                                    <div style={{ display: "flex" }}>
-                                        <RegionButton style={{ flex: "1", marginRight: "5px" }}>{"#" + region}</RegionButton>
-                                        <AddressInput type="text" value={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{ width: "80%", flex: "4" }} />
+                                    <div style={{ display: "flex", marginBottom:"10px" }}>
+                                        <STAddressButton style={{marginRight:"10px", flex:"2"}}>{"#" + region}</STAddressButton>
+                                        <STInput3 type="text" defaultvalue={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{ flex:"8"}}>{postAddress}</STInput3>
                                     </div>
-                                    <AddressInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{ width: "80%" }} />
-                                    <KakaoMap address={postAddress} width="328px" height="300px" />
+                                        <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{ width: "80%", float:"right" }} />
+                                        <KakaoMap address={postAddress} width="328px" height="300px" />
 
                                 </div>)
                         }
                     </AddressBox >
-                </div>
+                </div> 
 
                 <div>
-                    <AllButton style={{ background: "#B6B6B6" }} onClick={onSubmit}>작성</AllButton>
-                    {/*<AllButton onClick={()=>navigate(-1)}>취소</AllButton> */}
+                    <AllButton style={{background:"#3556E1", color:"white"}} onClick={onSubmit}>작성</AllButton>
                 </div>
             </Layout>
-        </div>
+            
+        </>
     )
 }
 
@@ -260,10 +262,12 @@ const AllInput = styled.input`
 const AllTextarea = styled.textarea`
     border-radius: 10px;
     border: transparent;
+    padding-left: 10px;
+    padding-top: 10px;
 `
 
 const ModalWrap = styled.div`
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -278,6 +282,41 @@ const ModalWrap = styled.div`
 `;
 //------------------------------------
 
+// const STInput = styled.input`
+//     width: 100%;
+//     height: 36px;
+//     background: white;
+//     border-radius: 10px;
+//     font-weight: 500;
+//     padding-top: 6px;
+//     padding-left: 6px;
+//     padding-bottom: 6px;
+//     border:transparent;
+// `
+const StCarouselWrap = styled.div`
+    .carousel-indicators [data-bs-target]{
+        width:3px;
+        border-radius : 50%;
+    }
+`
+const STAddressButton = styled.div`
+    width: 64px;
+    height: 36px;
+    background-color: #DCE0F1;
+    border-radius: 30px;
+    text-align: center;
+    padding-top: 6px;
+`
+const STInput3 = styled.div`
+    width: 100%;
+    /* height: 36px; */
+    background: white;
+    border-radius: 10px;
+    font-weight: 500;
+    padding-top: 6px;
+    padding-left: 6px;
+    border : transparent;
+`
 const STInput = styled.input`
     width: 100%;
     height: 36px;
@@ -288,10 +327,4 @@ const STInput = styled.input`
     padding-left: 6px;
     padding-bottom: 6px;
     border:transparent;
-`
-const StCarouselWrap = styled.div`
-    .carousel-indicators [data-bs-target]{
-        width:3px;
-        border-radius : 50%;
-    }
 `
