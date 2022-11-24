@@ -80,21 +80,21 @@ const MyPost = () => {
                     navigate(`/eventposts/${v.postId}`)
                   }
                 >
-                   <ItemImg bgImg={v.postImgUrl}>
-                          <PostScrap bookMarkStatus={v.bookMarkStatus} />
-                        </ItemImg>
-                        <ItemContainer>
-                          <ItemTop>
-                            <p style={{fontWeight:500, fontSize:"20px"}}>{v.title}</p>
-                            <p>{v.category}</p>
-                            <p>{v.content}</p>
-                          </ItemTop>
-                          <ItemBottom>
-                            <p>~ {v.endPeriod}</p>
-                            <p> <Views style={{height:"19px"}} /> {v.viewCount}</p>
-                          </ItemBottom>
-                        </ItemContainer>
-                      </ListBox>
+                  <ItemImg bgImg={v.imgUrl}>
+                    <PostScrap bookMarkStatus={v.bookMarkStatus} />
+                  </ItemImg>
+                  <ItemContainer>
+                    <ItemTop>
+                      <p style={{ fontWeight: 500, fontSize: "20px" }}>{v.title}</p>
+                      <p>{v.category}</p>
+                      <p>{v.content}</p>
+                    </ItemTop>
+                    <ItemBottom>
+                      <p>~ {v.endPeriod}</p>
+                      <p> <Views style={{ height: "19px" }} /> {v.viewCount}</p>
+                    </ItemBottom>
+                  </ItemContainer>
+                </ListBox>
               )
               )) : categoryTab === "gather" ? (gatherPost &&
                 gatherPost.map(
@@ -105,21 +105,21 @@ const MyPost = () => {
                         navigate(`/gatherposts/${v.postId}`)
                       }
                     >
-                       <ItemImg bgImg={v.postImgUrl}>
-                          <PostScrap bookMarkStatus={v.bookMarkStatus} />
-                        </ItemImg>
-                        <ItemContainer>
-                          <ItemTop>
-                            <p style={{fontWeight:500, fontSize:"20px"}}>{v.title}</p>
-                            <p>{v.category}</p>
-                            <p>{v.content}</p>
-                          </ItemTop>
-                          <ItemBottom>
-                            <p>~ {v.endPeriod}</p>
-                            <p> <Views style={{height:"19px"}} /> {v.viewCount}</p>
-                          </ItemBottom>
-                        </ItemContainer>
-                      </ListBox>
+                      <ItemImg bgImg={v.imgUrl}>
+                        <PostScrap bookMarkStatus={v.bookMarkStatus} />
+                      </ItemImg>
+                      <ItemContainer>
+                        <ItemTop>
+                          <p style={{ fontWeight: 500, fontSize: "20px" }}>{v.title}</p>
+                          <p>{v.category}</p>
+                          <p>{v.content}</p>
+                        </ItemTop>
+                        <ItemBottom>
+                          <p>~ {v.endPeriod}</p>
+                          <p> <Views style={{ height: "19px" }} /> {v.viewCount}</p>
+                        </ItemBottom>
+                      </ItemContainer>
+                    </ListBox>
                   )
 
                 )
@@ -131,21 +131,21 @@ const MyPost = () => {
                       navigate(`/askposts/${v.postId}`)
                     }
                   >
-                     <ItemImg bgImg={v.postImgUrl}>
-                          <PostScrap bookMarkStatus={v.bookMarkStatus} />
-                        </ItemImg>
-                        <ItemContainer>
-                          <ItemTop style={{marginBottom:"20px"}} >
-                            <p style={{fontWeight:500, fontSize:"20px"}}>{v.title}</p>
-                            <p>{v.category}</p>
-                            <p>{v.content}</p>
-                          </ItemTop>
-                          <ItemBottom>
-                            <p>{v.endPeriod}</p>
-                            <p> <Views style={{height:"19px"}} /> {v.viewCount}</p>
-                          </ItemBottom>
-                        </ItemContainer>
-                      </ListBox>
+                    <ItemImg bgImg={v.imgUrl}>
+                      <PostScrap bookMarkStatus={v.bookMarkStatus} />
+                    </ItemImg>
+                    <ItemContainer>
+                      <ItemTop style={{ marginBottom: "20px" }} >
+                        <p style={{ fontWeight: 500, fontSize: "20px" }}>{v.title}</p>
+                        <p>{v.category}</p>
+                        <p>{v.content}</p>
+                      </ItemTop>
+                      <ItemBottom>
+                        <p>{v.endPeriod}</p>
+                        <p> <Views style={{ height: "19px" }} /> {v.viewCount}</p>
+                      </ItemBottom>
+                    </ItemContainer>
+                  </ListBox>
                 )
                 ))
 

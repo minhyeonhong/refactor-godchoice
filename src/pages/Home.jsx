@@ -18,15 +18,10 @@ import noImg from '../assets/images/common/noImg.jpg'
 
 import { useDispatch, useSelector } from "react-redux";
 import {
-
-
     putSearchState,
-
     putSearchStatePage,
     __getAllPostList,
-
     __postList,
-   ,
     __getAdminPost
 } from "../redux/modules/postSlice";
 import { useMemo } from 'react';
