@@ -1,17 +1,17 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Layout from '../layout/Layout';
 import SearchAddress from './SearchAddress';
 import KakaoMap from '../common/KakaoMap'
 import { useDispatch } from 'react-redux';
 import imageCompression from 'browser-image-compression';
 import { useNavigate } from 'react-router-dom';
-import {__addPost3 } from "../../redux/modules/postSlice3"
+import { __addPost3 } from "../../redux/modules/postSlice3"
 import Carousel from 'react-bootstrap/Carousel';
 import styled from 'styled-components';
 import { FiSearch } from 'react-icons/fi'
 import noImg from '../../assets/images/common/noImg.png'
 
-const QuestionPost =() => {
+const QuestionPost = () => {
 
 
     const dispatch = useDispatch();
@@ -19,27 +19,27 @@ const QuestionPost =() => {
     // 주소 API 팝업창 상태 관리
     const [postAddress, setPostAddress] = useState("")
     const [isPopupOpen, setIsPopupOpen] = useState(false)
- 
+
     const popupPostCode = () => {
         setIsPopupOpen(!isPopupOpen)
     }
 
     //내용 onChange
     const [question, setQuestion] = useState({
-        title :"",
-        content : "",
-        postLink : "",
-        detailAddress : ""
+        title: "",
+        content: "",
+        postLink: "",
+        detailAddress: ""
     })
 
-    const onChangeHandler =(e) => {
-        const {value, name} = e.target;
+    const onChangeHandler = (e) => {
+        const { value, name } = e.target;
         setQuestion({
             ...question,
-            [name] : value
+            [name]: value
         })
     }
-    
+
     //1.이미지 업로드 부분
     const [imgFile, setImgFile] = useState([]);
     const [imgUrl, setImgUrl] = useState([]);
@@ -47,99 +47,98 @@ const QuestionPost =() => {
 
     const onChangeImage = (e) => {
         const files = e.currentTarget.files;
-  
+
         setImgFile([])
         setImgUrl([])
-        
+
         if ([...files].length > 5) {
-          alert('이미지는 최대 3개까지 업로드가 가능합니다.');
-          return;
+            alert('이미지는 최대 3개까지 업로드가 가능합니다.');
+            return;
         }
-  
+
         //선택한 이미지 파일 반복문 돌리기
         [...files].forEach(file => {
-  
-          //이미지 압축 지정 
-          const options = {
-            maxSizeMB: 0.5,
-            maxWidthOrHeight: 220,
-            useWebWorker: true,
-          };
-  
-          //압축 관련 내용
-          imageCompression(file, options)
-            .then((res) => {
-  
-              //이미지를 담기 : type에서 "image/*"을 하면 나오지 X split을 이용
-              setImgFile(imgs => [...imgs, new File([res], res.name, { type: "image/" + res.name.split(".")[1] })]);
-              const reader = new FileReader(); 
-  
-              reader.onload = () => {
-                setImgUrl(imgUrl => [...imgUrl, reader.result]);
-              };
-              reader.readAsDataURL(res); 
-            })
-            .catch((error) => {
-              console.log("파일 압축 실패", error);
-            })
+
+            //이미지 압축 지정 
+            const options = {
+                maxSizeMB: 0.5,
+                maxWidthOrHeight: 1000,
+                useWebWorker: true,
+            };
+
+            //압축 관련 내용
+            imageCompression(file, options)
+                .then((res) => {
+
+                    //이미지를 담기 : type에서 "image/*"을 하면 나오지 X split을 이용
+                    setImgFile(imgs => [...imgs, new File([res], res.name, { type: "image/" + res.name.split(".")[1] })]);
+                    const reader = new FileReader();
+
+                    reader.onload = () => {
+                        setImgUrl(imgUrl => [...imgUrl, reader.result]);
+                    };
+                    reader.readAsDataURL(res);
+                })
+                .catch((error) => {
+                    console.log("파일 압축 실패", error);
+                })
         });
-  
-      }
 
-      const onSubmit = () => {
+    }
 
-          // //모집인원, 카테고리, 성비관련, 행사시작, 연령대, 제목, 내용, 카카오링크
-          if(question.title===""){return (alert('제목을 입력하세요'))}
-          if(question.content===""){return (alert('내용을 입력하세요'))}
+    const onSubmit = () => {
 
-            //행사장 링크(필수 아님)
-            const arr = question.postLink.indexOf("http://"||"https://") !==-1
-            if(question.postLink!==""){
-                if(arr===false){
-                    return(alert('http:// 또는 https://가 포함된 링크를 입력해주세요'))
-                }
-            }  
+        // //모집인원, 카테고리, 성비관련, 행사시작, 연령대, 제목, 내용, 카카오링크
+        if (question.title === "") { return (alert('제목을 입력하세요')) }
+        if (question.content === "") { return (alert('내용을 입력하세요')) }
 
-          
+        //행사장 링크(필수 아님)
+        const arr = question.postLink.indexOf("http://" || "https://") !== -1
+        if (question.postLink !== "") {
+            if (arr === false) {
+                return (alert('http:// 또는 https://가 포함된 링크를 입력해주세요'))
+            }
+        }
+
+
         const formData = new FormData();
 
         if (imgFile.length > 0) {
             imgFile.forEach((file) => {
-              formData.append("multipartFile", file);
+                formData.append("multipartFile", file);
             })
-          } else {
+        } else {
             formData.append("multipartFile", null);
-          }
-           
+        }
+
         const obj3 = {
-            title : question.title,
-            content : question.content,
-            postLink : question.postLink,
-            postAddress : postAddress+question.detailAddress,
+            title: question.title,
+            content: question.content,
+            postLink: question.postLink,
+            postAddress: postAddress + question.detailAddress,
         }
 
         formData.append(
             "askPostRequestDto",
             new Blob([JSON.stringify(obj3)], { type: "application/json" })
-            );
+        );
         console.log(obj3)
-        dispatch(__addPost3(formData))
-        // window.location.replace('/')
+        dispatch(__addPost3(formData));
     }
 
     //주소 앞에 두글자 따기
-    const region = postAddress.split("")[0]+postAddress.split("")[1]
+    const region = postAddress.split("")[0] + postAddress.split("")[1]
 
-    return(
-        <div style={{paddingLeft:"10px", paddingRight:"10px"}}>
+    return (
+        <div style={{ paddingLeft: "10px", paddingRight: "10px" }}>
             <Layout>
-        
-                <h4 style={{textAlign:"center", marginTop:"18px", marginBottom:"18px"}}>질문글</h4>
-              
-                <STInput type="text" placeholder="제목" name="title" onChange={onChangeHandler}
-                    style={{width : "100%", marginBottom:"18px"}}/>
 
-                {imgUrl.length===0&&<img src={noImg} style={{width : "100%"}} onClick={()=> { imgRef.current.click()}}/>}
+                <h4 style={{ textAlign: "center", marginTop: "18px", marginBottom: "18px" }}>질문글</h4>
+
+                <STInput type="text" placeholder="제목" name="title" onChange={onChangeHandler}
+                    style={{ width: "100%", marginBottom: "18px" }} />
+
+                {imgUrl.length === 0 && <img src={noImg} style={{ width: "100%" }} onClick={() => { imgRef.current.click() }} />}
                 <div>
                     <label htmlFor="imgFile">
                         <input
@@ -150,64 +149,64 @@ const QuestionPost =() => {
                             accept="image/*"
                             ref={imgRef}
                             name="imgFile"
-                            multiple/>
+                            multiple />
 
-                        </label>
+                    </label>
                 </div >
-                
+
                 <Carousel>
-                    {imgUrl&&imgUrl.map((img, index) => {
+                    {imgUrl && imgUrl.map((img, index) => {
                         return (
-                            <Carousel.Item  key={img.id}>
-                                <button>    
-                                    <img src={img} style={{ width:'396px', height:"396px",objectFit: "contain" }} onClick={()=> { imgRef.current.click()}} />
+                            <Carousel.Item key={img.id}>
+                                <button style={{ width: "100%" }}>
+                                    <img src={img} style={{ width: '396px', height: "396px", objectFit: "contain" }} onClick={() => { imgRef.current.click() }} />
                                 </button>
                             </Carousel.Item>
-                            )
-                        })
+                        )
+                    })
                     }
                 </Carousel>
 
-                <AllTextarea type="text" placeholder="소개글" name="content" onChange={onChangeHandler} style={{width : "100%", height: "200px"}}/>
-                
-                <div style={{marginBottom:"14px"}}>
+                <AllTextarea type="text" placeholder="소개글" name="content" onChange={onChangeHandler} style={{ width: "100%", height: "200px" }} />
+
+                <div style={{ marginBottom: "14px" }}>
                     <label>행사장 링크</label>
-                    <STInput type="text" placeholder="링크" name="postLink" onChange={onChangeHandler} style={{width : "100%"}}/>
+                    <STInput type="text" placeholder="링크" name="postLink" onChange={onChangeHandler} style={{ width: "100%" }} />
                 </div>
-            
+
                 {/*주소 부분 */}
                 <div>
                     <label>행사장 장소</label>
                     <StSearchBox onClick={popupPostCode}>
-                        <button><FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00', marginLeft:"10px", marginRight:"10px" }}/>주소검색</button>
+                        <button><FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00', marginLeft: "10px", marginRight: "10px" }} />주소검색</button>
                     </StSearchBox>
-                
+
                     {isPopupOpen && (
-                                <ModalWrap>
-                                        <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode}/>  
-                                </ModalWrap>
-                          )}
-                
-                <AddressBox >
+                        <ModalWrap>
+                            <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
+                        </ModalWrap>
+                    )}
+
+                    <AddressBox >
                         {
-                            postAddress !== ""&&(
-                               <div>
-                               <div style={{display:"flex"}}>
-                                    <RegionButton style={{flex:"1", marginRight:"5px"}}>{"#"+region}</RegionButton>
-                                    <AddressInput type="text" value={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{width: "80%", flex:"4"}}/>
+                            postAddress !== "" && (
+                                <div>
+                                    <div style={{ display: "flex" }}>
+                                        <RegionButton style={{ flex: "1", marginRight: "5px" }}>{"#" + region}</RegionButton>
+                                        <AddressInput type="text" value={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{ width: "80%", flex: "4" }} />
                                     </div>
-                                    <AddressInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{width: "80%"}}/>
-                                    <KakaoMap address={postAddress} width="328px" height="300px"/>
-                                
+                                    <AddressInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{ width: "80%" }} />
+                                    <KakaoMap address={postAddress} width="328px" height="300px" />
+
                                 </div>)
                         }
-                </AddressBox >                                            
-            </div>
-    
-            <div>
-                <AllButton style={{background:"#B6B6B6"}} onClick={onSubmit}>작성</AllButton>
-                {/*<AllButton onClick={()=>navigate(-1)}>취소</AllButton> */}    
-            </div>
+                    </AddressBox >
+                </div>
+
+                <div>
+                    <AllButton style={{ background: "#B6B6B6" }} onClick={onSubmit}>작성</AllButton>
+                    {/*<AllButton onClick={()=>navigate(-1)}>취소</AllButton> */}
+                </div>
             </Layout>
         </div>
     )
