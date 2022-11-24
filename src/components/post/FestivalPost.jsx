@@ -1,5 +1,5 @@
-import React, {useState, useRef} from 'react';
-import { __addPost} from '../../redux/modules/postSlice';
+import React, { useState, useRef } from 'react';
+import { __addPost, __addAdminPost } from '../../redux/modules/postSlice';
 import imageCompression from 'browser-image-compression';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -15,129 +15,145 @@ import Row from 'react-bootstrap/Row';
 import Carousel from 'react-bootstrap/Carousel';
 import Col from 'react-bootstrap/Col';
 import Layout from '../layout/Layout'
+import { useEffect } from 'react';
 
-const FestivalPost =() => {
+const FestivalPost = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate()
 
-     //주소 API useState
-     const [postAddress, setPostAddress] = useState("")
+    //주소 API useState
+    const [postAddress, setPostAddress] = useState("")
 
-     //1.이미지 업로드 부분
-     const [imgFile, setImgFile] = useState([]);
-     const [imgUrl, setImgUrl] = useState([]);
-     const imgRef = useRef();
- 
-     const onChangeImage = (e) => {
-         const files = e.currentTarget.files;
-   
-         if ([...files].length > 5) {
-           alert('이미지는 최대 5개까지 업로드가 가능합니다.');
-           return;
-         }
-   
-         //선택한 이미지 파일 반복문 돌리기
-         [...files].forEach(file => {
-   
-           //이미지 압축 지정 
-           const options = {
-             maxSizeMB: 0.5,
-             maxWidthOrHeight: 220,
-             useWebWorker: true,
-           };
-   
-           //압축 관련 내용
-           imageCompression(file, options)
-             .then((res) => {
-   
-               setImgFile(imgs => [...imgs, new File([res], res.name, { type: "image/" + res.name.split(".")[1] })]);
-               const reader = new FileReader(); 
-   
-               reader.onload = () => {
-                 setImgUrl(imgUrl => [...imgUrl, reader.result]);
-               };
-               reader.readAsDataURL(res); 
-             })
-             .catch((error) => {
-               console.log("파일 압축 실패", error);
-             })
-         });
-       }
- 
-       
-     //2-1 게시글 작성 - 행사글
-         
-         const [festival, setFestival] = useState({
-             category : "",
-             startPeriod : "",
-             endPeriod : "",
-             title : "",
-             content : "",
-             postLink : "",
-             detailAddress: "" //상세 주소를 보내주기 위함
-         })
- 
-         const onChangeHandler =(e) => {
-             const {value, name} = e.target;
-             setFestival({
-                 ...festival,
-                 [name] : value
-             })
-         }
+    //1.이미지 업로드 부분
+    const [imgFile, setImgFile] = useState([]);
+    const [imgUrl, setImgUrl] = useState([]);
+    const imgRef = useRef();
+
+    const onChangeImage = (e) => {
+        const files = e.currentTarget.files;
+
+        if ([...files].length > 5) {
+            alert('이미지는 최대 5개까지 업로드가 가능합니다.');
+            return;
+        }
+
+        //선택한 이미지 파일 반복문 돌리기
+        [...files].forEach(file => {
+
+            //이미지 압축 지정 
+            const options = {
+                maxSizeMB: 0.5,
+                maxWidthOrHeight: 220,
+                useWebWorker: true,
+            };
+
+            //압축 관련 내용
+            imageCompression(file, options)
+                .then((res) => {
+
+                    setImgFile(imgs => [...imgs, new File([res], res.name, { type: "image/" + res.name.split(".")[1] })]);
+                    const reader = new FileReader();
+
+                    reader.onload = () => {
+                        setImgUrl(imgUrl => [...imgUrl, reader.result]);
+                    };
+                    reader.readAsDataURL(res);
+                })
+                .catch((error) => {
+                    console.log("파일 압축 실패", error);
+                })
+        });
+    }
 
 
-         const onSubmit = () => {
+    //2-1 게시글 작성 - 행사글
 
+    const [festival, setFestival] = useState({
+        category: "",
+        startPeriod: "",
+        endPeriod: "",
+        title: "",
+        content: "",
+        postLink: "",
+        detailAddress: "" //상세 주소를 보내주기 위함
+    })
+
+    const onChangeHandler = (e) => {
+        const { value, name } = e.target;
+        setFestival({
+            ...festival,
+            [name]: value
+        })
+    }
+
+
+    const onSubmit = () => {
+
+
+
+
+        const formData = new FormData();
+
+        if (imgFile.length > 0) {
+            imgFile.forEach((file) => {
+                formData.append("multipartFile", file);
+            })
+            // formData.append("multipartFile", imgFile)
+        } else {
+            formData.append("multipartFile", null);
+        }
+
+        const obj = {
+            category: festival.category,
+            startPeriod: festival.startPeriod,
+            endPeriod: festival.endPeriod,
+            title: festival.title,
+            content: festival.content,
+
+            postAddress: postAddress + festival.detailAddress, //상세 주소 내용 추가
+            postLink: festival.postLink,
+        }
+
+
+        const adminObj = {
+            title: festival.title,
+            postLink: festival.postLink,
+        }
+
+
+        if (isAdmin) {
+            formData.append("adminPostReqDto", new Blob([JSON.stringify(adminObj)], { type: "application/json" }));
+            dispatch(__addAdminPost(formData));
+        } else {
             //카테고리, 행사시작, 행사마감, 글작성, content 검사
-            if(festival.category===""){return (alert('카테고리를 입력하세요'))}
-            if(festival.startPeriod===""){return (alert('행사시작 일자를 입력하세요'))}
-            if(festival.endPeriod===""){return (alert('행사마감 일자를 입력하세요'))}
-            if(festival.title===""){return (alert('제목을 입력하세요'))}
-            if(festival.content===""){return (alert('내용을 입력하세요'))}
+            if (festival.category === "") { return (alert('카테고리를 입력하세요')) }
+            if (festival.startPeriod === "") { return (alert('행사시작 일자를 입력하세요')) }
+            if (festival.endPeriod === "") { return (alert('행사마감 일자를 입력하세요')) }
+            if (festival.title === "") { return (alert('제목을 입력하세요')) }
+            if (festival.content === "") { return (alert('내용을 입력하세요')) }
 
             //링크 검사
-            const arr = festival.postLink.indexOf("http://"||"https://") !==-1
-            if(festival.postLink!==""){
-                if(arr===false){
-                    return(alert('http:// 또는 https://가 포함된 링크를 입력해주세요'))
+            const arr = festival.postLink.indexOf("http://" || "https://") !== -1
+            if (festival.postLink !== "") {
+                if (arr === false) {
+                    return (alert('http:// 또는 https://가 포함된 링크를 입력해주세요'))
                 }
             }
-        
-            
-             const formData = new FormData();
- 
-             if (imgFile.length > 0) {
-                 imgFile.forEach((file) => {
-                   formData.append("multipartFile", file);
-                 })
-                // formData.append("multipartFile", imgFile)
-               } else {
-                 formData.append("multipartFile", null);
-               }
-                
-             const obj = {
-                 category : festival.category,
-                 startPeriod : festival.startPeriod,
-                 endPeriod : festival.endPeriod,
-                 title:festival.title,
-                 content:festival.content,
-                 
-                 postAddress: postAddress+festival.detailAddress, //상세 주소 내용 추가
-                 postLink : festival.postLink,
-                 }
-                 console.log(obj)
-                 formData.append("eventPostReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
-        
-             dispatch(__addPost(formData));
-            //  window.location.replace("/")
-         }
+            console.log("obj", obj)
+            formData.append("eventPostReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
+            dispatch(__addPost(formData));
+        }
 
 
-    
+        //  window.location.replace("/")
+    }
+
+
+
     // 주소 API 팝업창 상태 관리
     const [isPopupOpen, setIsPopupOpen] = useState(false)
- 
+
     const popupPostCode = () => {
         setIsPopupOpen(!isPopupOpen)
     }
@@ -146,22 +162,36 @@ const FestivalPost =() => {
     //날짜 제한
     const today = new Date();
     const day = today.getDate();
-    const month = today.getMonth()+1;
+    const month = today.getMonth() + 1;
     const year = today.getFullYear()
 
-    const today2= year + '-' + month + '-' + day;
-    const today3=festival.startPeriod
-    
+    const today2 = year + '-' + month + '-' + day;
+    const today3 = festival.startPeriod
+
     //주소 앞에 두글자 따기
-    const region = postAddress.split("")[0]+postAddress.split("")[1]
+    const region = postAddress.split("")[0] + postAddress.split("")[1]
+
+
+    const [isAdmin, setIsAdmin] = useState(false);
+    const adminPostHandle = (e) => {
+        if (e.target.checked) {
+            setIsAdmin(true);
+        } else {
+            setIsAdmin(false);
+        }
+    }
+
+    useEffect(() => {
+        console.log("isAdmin", isAdmin);
+    }, [isAdmin])
 
     return (
-          <Layout>
+        <Layout>
             <STSelect value="행사글" style={{ width: "50%" }}>
                 <option value="행사글">행사글</option>
             </STSelect>
 
-            <STSelect style={{width :"50%"}} name="category" onChange={onChangeHandler}>
+            <STSelect style={{ width: "50%" }} name="category" onChange={onChangeHandler}>
                 <option>카테고리</option>
                 <option value="마라톤">마라톤</option>
                 <option value="페스티벌">페스티벌</option>
@@ -173,57 +203,57 @@ const FestivalPost =() => {
             <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridCity">
                     <Form.Label>행사시작</Form.Label>
-                        <Form.Control type="date" name="startPeriod" onChange={onChangeHandler} min={today2}/>
+                    <Form.Control type="date" name="startPeriod" onChange={onChangeHandler} min={today2} />
                 </Form.Group>
                 <Form.Group as={Col} controlId="formGridCity">
                     <Form.Label>행사마감</Form.Label>
-                        <Form.Control type="date" name="endPeriod" onChange={onChangeHandler}  min={today3}/>
+                    <Form.Control type="date" name="endPeriod" onChange={onChangeHandler} min={today3} />
                 </Form.Group>
             </Row>
 
-            <Hr/>
-                <Form.Group className="mb-3" controlId="formGridAddress1">
-                    <Form.Label>글 작성</Form.Label>
-                    <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler} />
-                </Form.Group>
+            <Hr />
+            <Form.Group className="mb-3" controlId="formGridAddress1">
+                <Form.Label>글 작성</Form.Label>
+                <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler} />
+            </Form.Group>
 
-            <div><br/>
+            <div><br />
                 {
-                    imgUrl.length ===0? 
-                    (
-                    <STPicture style={{width : "192px", height :"192px", float : "left"}}>
-                        <Img src={pictureAdd} />
-                    </STPicture>
-                    ) : 
-                    ( 
-                        <Carousel fade>
-                            {
-                                imgUrl.map((img) => {
-                                    return (
-                                        <Carousel.Item key={img.id}>            
-                                            <img style={{width:'550px'}} src={img} />  
-                                        </Carousel.Item>)
-                                })
-                            }
-                        </Carousel>
-                    )
+                    imgUrl.length === 0 ?
+                        (
+                            <STPicture style={{ width: "192px", height: "192px", float: "left" }}>
+                                <Img src={pictureAdd} />
+                            </STPicture>
+                        ) :
+                        (
+                            <Carousel fade>
+                                {
+                                    imgUrl.map((img) => {
+                                        return (
+                                            <Carousel.Item key={img.id}>
+                                                <img style={{ width: '550px' }} src={img} />
+                                            </Carousel.Item>)
+                                    })
+                                }
+                            </Carousel>
+                        )
                 }
-                <STUploadButton onClick={()=> { imgRef.current.click()}}>+</STUploadButton><br/>
+                <STUploadButton onClick={() => { imgRef.current.click() }}>+</STUploadButton><br />
 
-                    <label htmlFor="imgFile">
-                        <input
-                            style={{ display: "none" }}
-                            type="file"
-                            id="imgFile"
-                            onChange={onChangeImage}
-                            accept="image/*"
-                            ref={imgRef}
-                            name="imgFile"
-                            multiple/>
-                    </label>
+                <label htmlFor="imgFile">
+                    <input
+                        style={{ display: "none" }}
+                        type="file"
+                        id="imgFile"
+                        onChange={onChangeImage}
+                        accept="image/*"
+                        ref={imgRef}
+                        name="imgFile"
+                        multiple />
+                </label>
             </div >
-            <AllTextarea type="text" placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" name="content" onChange={onChangeHandler} maxLength={2500} style={{height : '200px', width: "100%"}}/>
-            <Hr/>
+            <AllTextarea type="text" placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" name="content" onChange={onChangeHandler} maxLength={2500} style={{ height: '200px', width: "100%" }} />
+            <Hr />
 
             <Form.Group className="mb-3" controlId="formGridAddress1">
                 <Form.Label>행사장 링크</Form.Label>
@@ -233,30 +263,34 @@ const FestivalPost =() => {
             {/* 주소 부분 */}
             <div>
                 <StSearchBox onClick={popupPostCode}>
-                    <button ><FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00' }}/></button>
+                    <button ><FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00' }} /></button>
                 </StSearchBox>
 
                 {isPopupOpen && (
-                                <ModalWrap>
-                                        <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode}/>  
-                                </ModalWrap>
-                          )}
-                
+                    <ModalWrap>
+                        <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
+                    </ModalWrap>
+                )}
+
                 <AddressBox >
-                        {
-                            postAddress !== ""&&(
-                                <>
-                                    <RegionButton>{"#"+region}</RegionButton>
-                                    <AddressInput type="text" value={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{width: "80%"}}/>
-                                    <AddressInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{width: "80%"}}/>
-                                    <KakaoMap address={postAddress} width="328px" height="300px"/>
-                                </>)
-                        }
-                </AddressBox >                                            
-            </div><br/>
-            <AllButton style={{background:"#B6B6B6"}} onClick={onSubmit}>작성</AllButton>
-            {/*<AllButton onClick={()=>navigate(-1)}>취소</AllButton>  <AddressModal />*/}   
-            
+                    {
+                        postAddress !== "" && (
+                            <>
+                                <RegionButton>{"#" + region}</RegionButton>
+                                <AddressInput type="text" value={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{ width: "80%" }} />
+                                <AddressInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{ width: "80%" }} />
+                                <KakaoMap address={postAddress} width="328px" height="300px" />
+                            </>)
+                    }
+                </AddressBox >
+            </div><br />
+            {
+                localStorage.getItem('role') === 'ADMIN' &&
+                <div><input type='checkbox' onChange={adminPostHandle} />관리자글</div>
+            }
+            <AllButton style={{ background: "#B6B6B6" }} onClick={onSubmit}>작성</AllButton>
+            {/*<AllButton onClick={()=>navigate(-1)}>취소</AllButton>  <AddressModal />*/}
+
         </Layout>
 
     )

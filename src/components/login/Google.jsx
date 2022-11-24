@@ -31,18 +31,18 @@ const Login = () => {
   let code = new URL(window.location.href).searchParams.get("code");
   const getGoogleToken = async () => {
     try {
-      axios.get(`http://52.79.184.114/member/signup/google?code=${code}`)
+      axios.get(`${process.env.REACT_APP_API_URL}/member/signup/google?code=${code}`)
         .then((res) => {
           console.log("넘어온 값", res); // 토큰이 넘어올 것임
           const Access_Token = res.headers.access_token;
           const resData = res.data.data;
 
-        localStorage.setItem("token", Access_Token);
+          localStorage.setItem("token", Access_Token);
 
-        localStorage.setItem("role", resData.role);
-        localStorage.setItem("userAddressTag", resData.userAddressTag);
-        localStorage.setItem("userId", resData.userId);
-        localStorage.setItem("userImgUrl", resData.userImgUrl);
+          localStorage.setItem("role", resData.role);
+          localStorage.setItem("userAddressTag", resData.userAddressTag);
+          localStorage.setItem("userId", resData.userId);
+          localStorage.setItem("userImgUrl", resData.userImgUrl);
 
 
           console.log("토큰나와라 ===> ", localStorage.getItem("token"))

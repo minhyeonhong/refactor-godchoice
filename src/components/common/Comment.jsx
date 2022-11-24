@@ -44,13 +44,9 @@ const Comment = ({ postId, kind, commentDtoList }) => {
             return
         }
 
-        console.log("obj", obj);
+        //console.log("obj", obj);
         dispatch(__insertComment(obj));
     }
-
-    useEffect(() => {
-        console.log("commentList", commentList);
-    }, [commentList])
 
     const [openReComment, setOpenReComment] = useState([]);
     const isOpenReComment = (idx, onOff) => {

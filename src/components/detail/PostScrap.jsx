@@ -24,10 +24,6 @@ const PostScrap = ({ bookMarkStatus }) => {
     }
   }, [bookMarkStatus])
 
-  useEffect(() => {
-    console.log("scrapState", scrapState);
-  }, [scrapState])
-
   return (
     <>
       <div onClick={() => scrapHandler()}>

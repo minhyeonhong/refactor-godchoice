@@ -17,6 +17,7 @@ export const postApis = {
     // 질문글 게시글 작성
     addAskPostAx: (post) => instance.post(`${process.env.REACT_APP_API_URL}/askposts`, post),
 
+
     /**행사글 상세글 수정 */
     putPostAx: (post) => instance.put(`${process.env.REACT_APP_API_URL}/eventposts/${post.postId}`, post.content),
     /*모집글 상세글 수정*/
@@ -30,4 +31,13 @@ export const postApis = {
     deleteGatherPostAx: (id) => instance.delete(`${process.env.REACT_APP_API_URL}/gatherposts/${Number(id)}`),
     /* 행사글 상세글 삭제*/
     deleteAskPostAx: (id) => instance.delete(`${process.env.REACT_APP_API_URL}/askposts/${id}`),
+
+    /**관리자글 조회 */
+    getAdminPostAX: (post) => instance.get(`${process.env.REACT_APP_API_URL}/getadminpost`),
+    /**관리자글 작성 */
+    addAdminPostAX: (post) => instance.post(`${process.env.REACT_APP_API_URL}/adminpost`, post),
+    /* 관리자글 삭제*/
+    deleteAdminPostAX: (id) => instance.delete(`${process.env.REACT_APP_API_URL}/adminpost/${id}`),
+
+
 }

@@ -41,7 +41,7 @@ const List = ({ posts, main, isLoading, istLastPage, setPage }) => {
                 :
                 posts.map((val, i) => {
                     return (
-                        <StCardItem key={val.postId} onClick={() => { navigate(`/${main}posts/${val.postId}`) }}>
+                        <StCardItem key={i} onClick={() => { navigate(`/${main}posts/${val.postId}`) }}>
                             <StImgBox imgUrl={val.imgUrl} >
                                 {val.bookMarkStatus &&
                                     <BookmarkFill style={{ margin: '4px 0 0 4px' }} />

@@ -88,7 +88,7 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         }
 
         const detail = modPost.detailAddress === undefined ? "" : modPost.detailAddress
-        console.log(delImg.join())
+        //        console.log(delImg.join())
 
 
         const obj = {
@@ -103,7 +103,7 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
             postAddress: modPost.postAddress + detail
         }
 
-        console.log("obj", obj);
+        //console.log("obj", obj);
         //폼 데이터에 글작성 데이터 넣기
         formData.append("eventPostPutReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
 
@@ -136,27 +136,27 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                     <>
 
                         <STIng style={{ marginTop: "14px", marginBottom: "14px" }}>
-                            {post.postState==="진행중"?
+                            {post.postState === "진행중" ?
                                 (<STIngDiv>{post.postState}</STIngDiv>)
-                                    :
-                                (<STIngDiv style={{background :"#727785"}}>{post.postState}</STIngDiv>)
-                            }   
-                            <STImg style={{display:"flex", marginLeft:"16px"}}>
-                                <img src={Views} style={{width: "20px",height: "20px", flex:"2"}}/>
-                                <div style={{color : "#8B909F", flex:"8", marginLeft:"5px"}}>{post.viewCount}</div>
+                                :
+                                (<STIngDiv style={{ background: "#727785" }}>{post.postState}</STIngDiv>)
+                            }
+                            <STImg style={{ display: "flex", marginLeft: "16px" }}>
+                                <img src={Views} style={{ width: "20px", height: "20px", flex: "2" }} />
+                                <div style={{ color: "#8B909F", flex: "8", marginLeft: "5px" }}>{post.viewCount}</div>
                             </STImg>
-                            <PostScrap style={{position:"absolute", right :"10px"}} bookMarkStatus={post.bookMarkStatus} />
+                            <PostScrap style={{ position: "absolute", right: "10px" }} bookMarkStatus={post.bookMarkStatus} />
                         </STIng>
 
-                        <STBox2 style={{ display:"flex" }}>
-                            <STButton style={{ width: "65px", flex:"2" }}>행사글</STButton>
-                            <STButton style={{ width: "70px", flex:"2" }}>{post.category}</STButton>
-                            <STButton style={{ width: "110px" , flex:"3"}}>{post.startPeriod}</STButton>
-                            <span style={{ paddingTop: "8px"}}>~</span>
-                            <STButton style={{ width: "110px" , flex:"3"}}>{post.endPeriod}</STButton>
+                        <STBox2 style={{ display: "flex" }}>
+                            <STButton style={{ width: "65px", flex: "2" }}>행사글</STButton>
+                            <STButton style={{ width: "70px", flex: "2" }}>{post.category}</STButton>
+                            <STButton style={{ width: "110px", flex: "3" }}>{post.startPeriod}</STButton>
+                            <span style={{ paddingTop: "8px" }}>~</span>
+                            <STButton style={{ width: "110px", flex: "3" }}>{post.endPeriod}</STButton>
                         </STBox2>
-                     
-                        <div  style={{ marginBottom: "14px" }}>
+
+                        <div style={{ marginBottom: "14px" }}>
                             <img src={post.userImg} style={{ width: "36px", height: "36px", borderRadius: "30px" }} />
                             <STUsername>{post.username}</STUsername>
                         </div>
@@ -165,20 +165,22 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
                         <StCarouselWrap>
                             <Carousel activeIndex={index} onSelect={handleSelect}>
-                                {post.postImgInfo.map((imgInfo, i) => {
-                                    return (
-                                        <Carousel.Item key={i}>
-                                            <img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
-                                                className="d-block w-100"
-                                                src={imgInfo.postImgUrl}
-                                                alt={`slide${i + 1}`}
-                                            />
-                                        </Carousel.Item>
-                                    )
-                                })}
+                                {
+                                    post.postImgInfo !== undefined &&
+                                    post.postImgInfo.map((imgInfo, i) => {
+                                        return (
+                                            <Carousel.Item key={i}>
+                                                <img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
+                                                    className="d-block w-100"
+                                                    src={imgInfo.postImgUrl}
+                                                    alt={`slide${i + 1}`}
+                                                />
+                                            </Carousel.Item>
+                                        )
+                                    })}
                             </Carousel>
                         </StCarouselWrap>
-                        <StContent style={{ marginBottom: "14px", paddingTop: "5px" }}>{post.content}</StContent>
+                        <StContent type='text' style={{ marginBottom: "14px", paddingTop: "5px" }} value={post.content || ""} readOnly />
 
 
                         <div>행사장 링크</div>
@@ -186,16 +188,16 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
 
                         <div>행사장소</div>
-                        <div style={{ display : "flex", marginBottom: "8px" }}>
-                                <STAddressButton style={{ flex : "2"}}>#{post.postAddress.split(' ')[0]}</STAddressButton>
-                                <STInput style={{flex:"8", marginLeft: "5px" }}>{post.postAddress}</STInput>
-                            </div>
+                        <div style={{ display: "flex", marginBottom: "8px" }}>
+                            <STAddressButton style={{ flex: "2" }}>#{post.postAddress.split(' ')[0]}</STAddressButton>
+                            <STInput style={{ flex: "8", marginLeft: "5px" }}>{post.postAddress}</STInput>
+                        </div>
 
                         <KakaoMap address={post.postAddress} width='100%' height='144px' />
 
                         {localStorage.getItem('userId') === post.userId.toString() &&
                             (<div>
-                                <STEditButton style={{background:"#515466"}} onClick={() => { onEventDelete(postId); }}>삭제</STEditButton>
+                                <STEditButton style={{ background: "#515466" }} onClick={() => { onEventDelete(postId); }}>삭제</STEditButton>
                                 <STEditButton onClick={() => { setMod(true) }}>수정</STEditButton>
                             </div>)}
                     </>

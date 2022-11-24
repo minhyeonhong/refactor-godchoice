@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 // Redux import
 import { __getMyInfo } from '../../redux/modules/myPageSlice';
+import { __delAdminPost } from '../../redux/modules/postSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 // Component import 
@@ -18,13 +19,12 @@ const MyPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const data = useSelector((state) => state.myPage.userInfo);
-  console.log("data ===> ", data)
+  console.log("data ===> ", data.adminPage)
   const token = localStorage.getItem("token");
   // const nickName = localStorage.getItem("nickName");
   const nickName = data.nickName;
   const email = data.email;
   const userImgUrl = data.userImg;
-
 
   // const userProfileImg = () => {
   //   if (nickName === null) {
@@ -143,7 +143,19 @@ const MyPage = () => {
           </CateBox>
         </MyCateWrap>
         {/* MyCateWrap */}
-
+        <div>
+          {
+            data.adminPage !== undefined &&
+            data.adminPage.map((post) => {
+              return (
+                <div key={post.id}>
+                  {post.title}
+                  <button onClick={() => { dispatch(__delAdminPost(post.id)) }}>삭제</button>
+                </div>
+              )
+            })
+          }
+        </div>
 
 
       </MyPageWrap >
