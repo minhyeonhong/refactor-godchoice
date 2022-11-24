@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import Form from 'react-bootstrap/Form';
 import { FiSearch } from 'react-icons/fi';
@@ -6,7 +6,7 @@ import useInput from '../../hooks/useInput';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 
-const Search = ({ updateSearchInfo }) => {
+const Search = ({ updateSearchInfo, searchState }) => {
 
     const tagList = ['서울', '인천', '세종', '대구', '부산', '울산', '광주', '대전', '제주도', '경기도', '강원도', '충청도', '경상도', '전라도'];
 
@@ -25,7 +25,7 @@ const Search = ({ updateSearchInfo }) => {
         if (e.target.checked) {
             setSearchInfo({ ...searchInfo, progress: "진행중" });
         } else {
-            setSearchInfo({ ...searchInfo, progress: "종료" });
+            setSearchInfo({ ...searchInfo, progress: "마감" });
         }
     }
     //태그 핸들
@@ -36,6 +36,13 @@ const Search = ({ updateSearchInfo }) => {
     useEffect(() => {
         updateSearchInfo(searchInfo);
     }, [searchInfo])
+
+    //검색어로 검색후 검색어를 지웠을때 처리
+    useMemo(() => {
+        if (search.search === "") {
+            setSearchInfo({ ...searchInfo, search: search.search });
+        }
+    }, [search.search])
 
     return (
         <StSearchWrap>
@@ -52,13 +59,14 @@ const Search = ({ updateSearchInfo }) => {
             </StSearchBox>
             <StTagBox>
                 <ToggleButtonGroup type="checkbox" value={searchInfo.tag} onChange={tagHandle}>
-                    {tagList.map((tag, i) => {
-                        return (
-                            <ToggleButton id={`tbg-btn-${i + 1}`} value={tag} key={i}>
-                                #{tag}
-                            </ToggleButton>
-                        )
-                    })}
+                    {searchState.main !== 'ask' &&
+                        tagList.map((tag, i) => {
+                            return (
+                                <ToggleButton id={`tbg-btn-${i + 1}`} value={tag} key={i}>
+                                    #{tag}
+                                </ToggleButton>
+                            )
+                        })}
                 </ToggleButtonGroup>
             </StTagBox>
             <StFilterBox>
@@ -69,13 +77,17 @@ const Search = ({ updateSearchInfo }) => {
                     </select>
                 </div>
                 <StRadioBox>
-                    <Form.Check
-                        type="switch"
-                        id="custom-switch"
-                        checked={searchInfo.progress === '진행중' ? true : false}
-                        onChange={stateHandle}
-                    />
-                    <label>{searchInfo.progress}</label>
+                    {searchState.main !== 'ask' &&
+                        <>
+                            <Form.Check
+                                type="switch"
+                                id="custom-switch"
+                                checked={searchInfo.progress === '진행중' ? true : false}
+                                onChange={stateHandle}
+                            />
+                            <label>{searchInfo.progress}</label>
+                        </>
+                    }
                 </StRadioBox>
             </StFilterBox>
         </StSearchWrap>
