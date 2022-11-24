@@ -145,7 +145,8 @@ const MyPage = () => {
         {/* MyCateWrap */}
         <div>
           {
-            data.adminPage !== undefined &&
+            data.adminPage !== undefined && 
+            data.adminPage !== null &&
             data.adminPage.map((post) => {
               return (
                 <div key={post.id}>

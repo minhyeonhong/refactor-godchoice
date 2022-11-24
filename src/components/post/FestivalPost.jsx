@@ -16,6 +16,7 @@ import Carousel from 'react-bootstrap/Carousel';
 import Col from 'react-bootstrap/Col';
 import Layout from '../layout/Layout'
 import { useEffect } from 'react';
+import noImg from '../../assets/images/common/noImg.png'
 
 const FestivalPost = () => {
 
@@ -224,33 +225,42 @@ const FestivalPost = () => {
                 </SelectWrap>
                 {/* SelectWrap */}
 
-                <Form.Group className="mb-3" controlId="formGridAddress1">
-                    <Form.Label style={{ fontSize: "18px" }} >글 작성</Form.Label>
-                    <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler} style={{ width: "100%", height: "48px", border: "2px solid #B8C4FF" }} />
+                <Form.Group className="mb-3" controlId="formGridAddress1" style={{height:"auto"}}>
+                    <Form.Label style={{ fontSize: "18px" }} > 글 작성</Form.Label>
+                    <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler} style={{ width: "100%", height: "48px", border: "none", margin: "0 0 10px 0" }} />
                 </Form.Group>
 
-                <div><br />
-                    {
-                        imgUrl.length === 0 ?
-                            (
-                                <STPicture style={{ width: "192px", height: "192px", float: "left" }}>
-                                    <Img src={pictureAdd} />
-                                </STPicture>
-                            ) :
-                            (
-                                <Carousel fade>
-                                    {
-                                        imgUrl.map((img) => {
-                                            return (
-                                                <Carousel.Item key={img.id}>
-                                                    <img style={{ width: '550px' }} src={img} />
-                                                </Carousel.Item>)
-                                        })
-                                    }
-                                </Carousel>
-                            )
+                <div style={{ height:"356px" , margin:"10px 0"}} >
+                {imgUrl.length === 0 && <img src={noImg} style={{ width: "100%" }} onClick={() => { imgRef.current.click() }} />}
+                <div>
+                    <label htmlFor="imgFile">
+                        <input
+                            style={{ display: "none" }}
+                            type="file"
+                            id="imgFile"
+                            onChange={onChangeImage}
+                            accept="image/*"
+                            ref={imgRef}
+                            name="imgFile"
+                            multiple />
+
+                    </label>
+                </div >
+
+                <Carousel>
+                    {imgUrl && imgUrl.map((img, index) => {
+                        return (
+                            <Carousel.Item key={img.id}>
+                                <button style={{ width: "100%" }}>
+                                    <img src={img} style={{ width: '396px', height: "396px", objectFit: "contain" }} onClick={() => { imgRef.current.click() }} />
+                                </button>
+                            </Carousel.Item>
+                        )
+                    })
                     }
-                    <STUploadButton onClick={() => { imgRef.current.click() }}>+</STUploadButton><br />
+                </Carousel>
+                            
+                    {/* <STUploadButton onClick={() => { imgRef.current.click() }}>+</STUploadButton><br /> */}
 
                     <label htmlFor="imgFile">
                         <input
@@ -264,17 +274,17 @@ const FestivalPost = () => {
                             multiple />
                     </label>
                 </div >
-                <AllTextarea type="text" placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" name="content" onChange={onChangeHandler} maxLength={2500} style={{ height: '200px', width: "100%", border: "2px solid #B8C4FF" }} />
+                <AllTextarea type="text" placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" name="content" onChange={onChangeHandler} maxLength={2500} style={{ height: '200px', width: "100%", border: "none", padding: "10px", margin:"0 0 10px 0" }} />
 
                 <Form.Group className="mb-3" controlId="formGridAddress1">
-                    <Form.Label>행사장 링크</Form.Label>
-                    <Form.Control type="text" placeholder="링크" name="postLink" onChange={onChangeHandler} />
+                    <Form.Label style={{fontSize:"18px"}} >행사장 링크</Form.Label>
+                    <Form.Control type="text" placeholder="링크" name="postLink" onChange={onChangeHandler}  style={{ width: "100%", height: "48px", border: "none", margin: "0 0 10px 0" }} />
                 </Form.Group>
 
                 {/* 주소 부분 */}
                 <div>
                     <StSearchBox onClick={popupPostCode}>
-                        <button ><FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00', border: "2px solid #B8C4FF", backgroundColor: "#fff" }} /></button>
+                        <button ><FiSearch style={{ width: '100%', height: '20px', color: '#FFAE00'}} /></button>
                     </StSearchBox>
 
                     {isPopupOpen && (
@@ -334,15 +344,12 @@ const SelBottom = styled.div`
         border-radius : 30px;
         height : 48px;
         flex : 1;
-        border: 2px solid #B8C4FF;
+        border: none;
     }
 
 
 }
 `
-// const SelBottom = styled.div`
-//     float: left;
-// `
 
 const STSelect = styled.select`
     height : 48px;
@@ -350,19 +357,20 @@ const STSelect = styled.select`
     background-color: #FFF;
     border-radius: 30px;
     padding:12px 16px;
-    border: 2px solid #B8C4FF;
+    border: none;
     flex : 1;
 `
 
 const StSearchBox = styled.div`
     background: #EEEAE3;
     box-shadow: inset 0px 2px 2px rgba(0, 0, 0, 0.1);
-    border: 2px solid #B8C4FF;
+    border: none;
     border-radius : 30px;
     display : flex;
     flex-direction : row;
-    margin : 0px 10px;
+    margin : 10px 0;
     height : 36px;
+    padding: 0 10px;
     button{
         background-color : transparent;
         border : none;
