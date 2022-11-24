@@ -12,8 +12,11 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Carousel from 'react-bootstrap/Carousel';
 import styled from 'styled-components';
-import {STNumber, STButton, STSelect, STSelectButton, AllButton, AllInput, AllTextarea, StSearchBox, RegionButton, AddressBox, AddressInput, ModalWrap} from '../styles/GatherDetail.styled'
+import {STNumber, STButton, STSelect, STSelectButton, AllButton, AllInput, StSearchBox, RegionButton, AddressBox, AddressInput, ModalWrap} from '../styles/GatherDetail.styled'
 import Layout from '../layout/Layout'
+import noImg from '../../assets/images/common/noImg.png'
+
+
 const GatherPost =() => {
     const dispatch = useDispatch();
     const navigate = useNavigate()
@@ -152,7 +155,7 @@ const GatherPost =() => {
                 postLink : gatherPosts.postLink,
                 postAddress : postAddress+gatherPosts.detailAddress,
             }
-            console.log(obj2)
+            // console.log(obj2)
             formData.append("gatherPostDto", new Blob([JSON.stringify(obj2)], { type: "application/json" }));
             dispatch(__addPost2(formData));
             window.location.replace('/')
@@ -219,13 +222,16 @@ const GatherPost =() => {
             <AllInput type="date" name="date" onChange={onChangeHandler2} min={today2} style={{width : "48%"}}/>
             <AllInput type="text" placeholder='나이' name="startAge" style={{width: "60px"}} onChange={onChangeHandler2}/> ~ {''}
             <AllInput type="text" placeholder='나이' name="endAge" style={{width: "60px"}} onChange={onChangeHandler2}/>
-            <br/>
-                
-            <label>글 작성</label><br/>
-            <AllInput type="text" placeholder="제목" name="title" onChange={onChangeHandler2} style={{width : "100%"}}/>
-          
-            <div><br/>
-                <button onClick={()=> { imgRef.current.click()}}> 업로드 버튼</button><br/>
+           
+            <div style={{marginBottom:"14px"}}>
+                <label>글 작성</label><br/>
+                <STInput type="text" placeholder="제목" name="title" onChange={onChangeHandler2} style={{width : "100%"}}/>
+            </div>
+
+            {imgUrl.length===0&&<img src={noImg} style={{width : "100%"}} onClick={()=> { imgRef.current.click()}}/>}
+            
+            <div >
+                {/* <button onClick={()=> { imgRef.current.click()}}> 업로드 버튼</button><br/> */}
                     <label htmlFor="imgFile">
                         <input
                             style={{ display: "none" }}
@@ -239,28 +245,31 @@ const GatherPost =() => {
                      
                         <Carousel>
                             {
-                                imgUrl.map((img) => {
+                                imgUrl&&imgUrl.map((img) => {
                                     return (
                                         <Carousel.Item key={img.id}>            
-                                            <img style={{width:'550px'}} src={img ? img : ""} />  
+                                            <img style={{width:'100%', height:"396px",objectFit: "contain" }} onClick={()=> { imgRef.current.click()}} src={img} />  
                                         </Carousel.Item>
                                     )})
                             }
-                        </Carousel>                        
+                        </Carousel>                       
                     </label>
             </div >
 
-            <AllTextarea type="text" placeholder="소개글" name="content" onChange={onChangeHandler2} style={{height : '200px'}}/>
+            <AllTextarea type="text" placeholder="소개글" name="content" onChange={onChangeHandler2} style={{width : "100%", height: "200px", marginBottom:"14px"}}/>
 
-            <br/><label>카카오 링크</label><br/>
-            <AllInput type="text" placeholder="링크" name="kakaoLink" onChange={onChangeHandler2} style={{width : "100%"}}/>
+            <div style={{marginBottom:"14px"}}>
+                <label>카카오 링크</label><br/>
+                <STInput type="text" placeholder="링크" name="kakaoLink" onChange={onChangeHandler2} style={{width : "100%"}}/>
+            </div>
 
-            <br/><label>행사장 링크</label><br/>
-            <AllInput type="text" placeholder="링크" name="postLink" onChange={onChangeHandler2} style={{width : "100%"}}/>
-
+            <div style={{marginBottom:"14px"}}>
+                <label>행사장 링크</label><br/>
+                <STInput type="text" placeholder="링크" name="postLink" onChange={onChangeHandler2} style={{width : "100%"}}/>
+            </div>
             <div>
                 <StSearchBox onClick={popupPostCode}>
-                    <button ><FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00' }}/></button>
+                    <button><FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00', marginLeft:"10px", marginRight:"10px" }}/>주소검색</button>
                 </StSearchBox>
 
                 {isPopupOpen && (
@@ -293,9 +302,25 @@ const GatherPost =() => {
 export default GatherPost;
 
 const STSelectButton2 = styled(ToggleButton)`
-    background-color: #F4F4F4;
+    background-color: white;
     color : #AEAEAE;
-    border : transparent;
+    border : 1px solid #B8C4FF;
     height : 32px;
     font-size: 14px;
+    border-radius: 30px;
+`
+const STInput = styled.input`
+    width: 100%;
+    height: 36px;
+    background: white;
+    border-radius: 10px;
+    font-weight: 500;
+    padding-top: 6px;
+    padding-left: 6px;
+    padding-bottom: 6px;
+    border:transparent;
+`
+const AllTextarea = styled.textarea`
+    border-radius: 10px;
+    border: transparent;
 `
