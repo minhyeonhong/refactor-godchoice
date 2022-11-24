@@ -1,26 +1,34 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 
-import Layout from '../components/layout/Layout';
-import List from '../components/home/List'
-import Search from '../components/home/Search'
-import Loading from '../components/common/Loading'
-import Carousel from 'react-bootstrap/Carousel';
-import styled from 'styled-components';
-import useInput from '../hooks/useInput';
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-import AddPostButton from '../components/home/AddPostButton'
-import { getCookie } from '../cookie/cookie';
+import Layout from "../components/layout/Layout";
+import List from "../components/home/List";
+import Search from "../components/home/Search";
+import Loading from "../components/common/Loading";
+import Carousel from "react-bootstrap/Carousel";
+import styled from "styled-components";
+import useInput from "../hooks/useInput";
+import Tab from "react-bootstrap/Tab";
+import Tabs from "react-bootstrap/Tabs";
+import TopButton from "../components/elements/TopButton";
+import ScrollToTop from "../components/elements/ScrollToTop";
+// import AddPostButton from '../components/home/AddPostButton'
+// import { useLocation } from "react-router-dom";
+import WritingToggle from "../components/elements/WritingToggle";
 import noImg from '../assets/images/common/noImg.jpg'
 
 import { useDispatch, useSelector } from "react-redux";
 import {
+
+
     putSearchState,
+
     putSearchStatePage,
     __getAllPostList,
+
     __postList,
+   ,
     __getAdminPost
-} from '../redux/modules/postSlice';
+} from "../redux/modules/postSlice";
 import { useMemo } from 'react';
 
 const Home = () => {
@@ -33,7 +41,7 @@ const Home = () => {
     };
 
     //store state
-    const { adminPosts, searchState, posts, istLastPage, isLoading, isResetSearch } = useSelector((state) => state.postSlice)
+    const { adminPosts, searchState, posts, istLastPage, isLoading, isResetSearch } = useSelector((state) => state.postSlice);
     const [page, setPage] = useState(0);
 
     //배너 가져오기
@@ -45,7 +53,7 @@ const Home = () => {
     const updateSearchInfo = (searchInfo) => {
         dispatch(putSearchState({ main: searchState.main === undefined ? 'event' : searchState.main, ...searchInfo }));
     }
-
+    const [modalOn, setModalOn] = useState(false);
     //페이지 업데이트
     useMemo(() => {
         dispatch(putSearchStatePage(page));
@@ -54,14 +62,21 @@ const Home = () => {
     //리스트 불러오기
     useEffect(() => {
         if (Object.keys(searchState).length > 0) {
+            console.log("isResetSearch", isResetSearch);
             dispatch(__getAllPostList(searchState));
         }
     }, [searchState])
 
-
     return (
         <Layout>
-            <AddPostButton />
+            {/* <AddPostButton /> */}
+            <ScrollToTop />
+
+            {modalOn && <WritingToggle modalOn={modalOn} setModalOn={setModalOn} />}
+            {/* <Routes>
+  {background && <Route exact path={"/chat"} element={<ChatRoom />} />}
+</Routes> */}
+            <TopButton modalOn={modalOn} setModalOn={setModalOn} />
             <StHomeWrap>
                 {/* 슬라이드 */}
                 <StCarouselWrap>
@@ -92,15 +107,13 @@ const Home = () => {
                                     </Carousel.Item>
                                 )
                             })}
-
-
                     </Carousel>
                 </StCarouselWrap>
 
                 {/* 검색 */}
                 <Search updateSearchInfo={updateSearchInfo} />
 
-                {/* 탭 */}
+                {/* 리스트 */}
                 <StTabBox>
                     <Tabs
                         defaultActiveKey="event"
@@ -116,6 +129,7 @@ const Home = () => {
                     </Tabs>
                     {/* 리스트 */}
                     <List posts={posts} main={searchState.main} isLoading={isLoading} setPage={setPage} istLastPage={istLastPage} />
+                    <Deletes />
                 </StTabBox>
             </StHomeWrap>
         </Layout >
@@ -124,34 +138,38 @@ const Home = () => {
 
 export default Home;
 
-const StHomeWrap = styled.div`
-    //background-color: #FEFCF8;
+const Deletes = styled.div`
+width: 100%;
 `
 
+const StHomeWrap = styled.div`
+  //background-color: #FEFCF8;
+`;
+
 const StCarouselWrap = styled.div`
-    .carousel-indicators [data-bs-target]{
-        width:3px;
-        border-radius : 50%;
-    }
-    .carousel a {
-        display: none;
-    }
-`
+  .carousel-indicators [data-bs-target] {
+    width: 3px;
+    border-radius: 50%;
+  }
+  .carousel a {
+    display: none;
+  }
+`;
 const StTabBox = styled.div`
-    .tabs{
-        margin : 0 10px;
-    }
-     .nav-link {
-        color : #ADABA9;
-        font-weight : bold;
-    }
-    .nav-link.active {
-        color : black;
-        font-weight : bold;
-    }
-    .nav-link.active {
-        color : black;
-        font-weight : bold;
-        border-bottom : 2px solid #3556E1;
-    } 
-`
+  .tabs {
+    margin: 0 10px;
+  }
+  .nav-link {
+    color: #adaba9;
+    font-weight: bold;
+  }
+  .nav-link.active {
+    color: black;
+    font-weight: bold;
+  }
+  .nav-link.active {
+    color: black;
+    font-weight: bold;
+    border-bottom: 2px solid #3556e1;
+  }
+`;

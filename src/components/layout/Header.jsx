@@ -3,7 +3,7 @@ import styled from 'styled-components';
 // import { BsFillPersonFill, BsBell } from 'react-icons/bs'
 import { Back, Bell, MyPage } from '../../assets';
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../../assets/images/common/logo.png"
+import logoTop from "../../assets/images/common/logoTop.png"
 
 
 
@@ -15,7 +15,7 @@ const Header = () => {
         <StHeaderWrap>
             {/* <StBackBox><button className='arrow-left' onClick={() => { window.history.back() }} /></StBackBox> */}
             {/* <Back } style={{height: "48px"}} /> */}
-            <StLogoBox> <Link to="/"> <img src={logo} /></Link></StLogoBox>
+            <StLogoBox> <Link to="/"> <img src={logoTop} /></Link></StLogoBox>
             <StRightBox>
                 {/* <button><BsBell style={{ width: "20px", height: "20px" }} /></button>
                 {
@@ -70,12 +70,11 @@ const StHeaderWrap = styled.div`
 const StLogoBox = styled.p`
     position: fixed;
     top : 0;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
     img {
         widht: 100%;
         height: 48px;
-        padding : 3px;
+        padding : 6px;
     }
 
 `
