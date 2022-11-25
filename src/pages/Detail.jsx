@@ -11,11 +11,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { __getPost } from '../redux/modules/postSlice';
 
 import useInput from "../hooks/useInput";
+import PageState from '../components/common/PageState';
 
 const Detail = () => {
     const { url, postId } = useParams();
     const dispatch = useDispatch();
-    const { post } = useSelector((state) => state.postSlice);
+    const { post, isLoading } = useSelector((state) => state.postSlice);
 
 
     //업데이트 인풋
@@ -35,6 +36,13 @@ const Detail = () => {
 
     return (
         <Layout>
+            <PageState
+                display={isLoading ? 'flex' : 'none'}
+                state='loading' imgWidth='25%' height='100vh'
+                text='잠시만 기다려 주세요.' />
+            <PageState display={Object.keys(post).length > 0 ? 'none' : 'flex'}
+                flexDirection='column' state='notFound' imgWidth='25%' height='100vh'
+                text='해당 페이지를 찾을 수 없습니다.' />
             {url === 'eventposts' && <Event post={post} postId={postId} modPost={modPost} setmodPost={setmodPost} modPostHandle={modPostHandle} />}
             {url === 'gatherposts' && <Gather post={post} postId={postId} modPost={modPost} setmodPost={setmodPost} modPostHandle={modPostHandle} />}
             {url === 'askposts' && <Ask post={post} postId={postId} modPost={modPost} setmodPost={setmodPost} modPostHandle={modPostHandle} />}

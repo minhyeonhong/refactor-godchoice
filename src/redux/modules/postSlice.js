@@ -196,6 +196,7 @@ export const postSlice = createSlice({
             state.isLoading = true;
         },
         [__getAllPostList.fulfilled]: (state, action) => {
+            state.isLoading = false;
             if (action.payload.status === 200) {
                 if (state.isResetSearch) {
                     state.posts = action.payload.data.content;
@@ -206,7 +207,6 @@ export const postSlice = createSlice({
                     }
                 }
             }
-            state.isLoading = false;
         },
         [__getAllPostList.rejected]: (state, action) => {
             state.isLoading = false;

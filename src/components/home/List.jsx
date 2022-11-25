@@ -12,6 +12,7 @@ import { BsEye } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 
 import { BookmarkFill } from "../../assets/index";
+import PageState from '../common/PageState';
 
 const List = ({ posts, main, isLoading, istLastPage, setPage }) => {
 
@@ -37,7 +38,8 @@ const List = ({ posts, main, isLoading, istLastPage, setPage }) => {
     return (
         <StCardWrap>
             {Object.keys(posts).length < 1 ?
-                <div>콘텐츠 없음</div>
+                <PageState display='flex' state='notFound' imgWidth='25%' height='60vh'
+                    text='리스트가 존재하지 않습니다.' />
                 :
                 posts.map((val, i) => {
                     return (
@@ -59,9 +61,14 @@ const List = ({ posts, main, isLoading, istLastPage, setPage }) => {
                         </StCardItem>
                     )
                 })}
-            {
-                isLoading && <Loading spinerWidth='10%' />
-            }
+            <PageState
+                display={posts.length > 0 && isLoading ? 'flex' : 'none'}
+                state='notFound'
+                imgWidth='25%'
+                height=''
+                flexDirection='row'
+                text='검색중...' />
+
             {
                 posts.length > 0 && <div ref={ref} />
             }
