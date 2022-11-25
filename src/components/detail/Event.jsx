@@ -294,26 +294,33 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
 
                         <div>행사장소</div>
-                        <button onClick={popupPostCode}>
+                        <StSearchBox style={{ background: "#E1E3EC" }} onClick={popupPostCode}>
+                            <button style={{ color: "#8B909F" }}><FiSearch style={{ width: '20px', height: '20px', color: '#424754', marginLeft: "10px", marginRight: "10px" }} />주소검색</button>
+                        </StSearchBox>
+
+                        {/* <button onClick={popupPostCode}>
                             <FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00' }} />
-                        </button>
+                        </button> */}
                         {isAddressModal && (
-                            <ModalWrap>
+                            <ModalWrap onClick={popupPostCode}>
                                 <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
                             </ModalWrap>
                         )}
-                        <div className='address-box'>
-                            <div className='tag'>#{modPost.postAddress.split(' ')[0]}</div>
-                            <div className='address'>{modPost.postAddress}</div>
+                        <div style={{ display: "flex", marginTop: "14px" }}>
+                            <STAddressDiv >#{modPost.postAddress.split(' ')[0]}</STAddressDiv>
+                            <STInput >{modPost.postAddress}</STInput>
                         </div>
+                        {
+                            modPost.postAddress !== post.postAddress && <STInput3 style={{ float: "right", width: "79%", height: "40px", marginTop: "10px" }} type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle} />
+                        }
 
                         <KakaoMap address={modPost.postAddress} width='100%' height='130px' />
-                        <input type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle} />
+                        {/* <input type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle} /> */}
 
 
                         <div >
                             <STEditButton style={{ background: "#515466" }} onClick={() => setMod(false)}>취소</STEditButton>
-                            <STEditButton onClick={putPostSubmit}>수정하기</STEditButton>
+                            <STEditButton onClick={putPostSubmit}>수정완료</STEditButton>
                         </div>
 
 
@@ -509,3 +516,36 @@ const STContentTextarea = styled.textarea`
     padding-left: 10px;
     padding-top:10px;
 `
+const StSearchBox = styled.div`
+    background: #EEEAE3;
+    box-shadow: inset 0px 2px 2px rgba(0, 0, 0, 0.1);
+    border-radius : 30px;
+    display : flex;
+    flex-direction : row;
+    margin : 0px 10px;
+    height : 36px;
+    button{
+        background-color : transparent;
+        border : none;
+        border-radius :  30px 0 0 30px ; 
+    }
+ `
+const STAddressDiv = styled.div`
+ width: 64px;
+ height: 36px;
+ background-color: #DCE0F1;
+ border-radius: 30px;
+ text-align: center;
+ padding-top: 6px;
+`
+const STInput3 = styled.input`
+    width: 100%;
+    height: 36px;
+    background: white;
+    border-radius: 10px;
+    font-weight: 500;
+    padding-top: 6px;
+    padding-left: 6px;
+    padding-bottom: 6px;
+    border:transparent;
+    `

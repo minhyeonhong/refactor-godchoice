@@ -19,6 +19,7 @@ import useImgUpload from "../../hooks/useImgUpload";
 import styled from 'styled-components';
 import { __putPost, __deletePost } from '../../redux/modules/postSlice3';
 import Views from '../../assets/icon/Views.svg'
+import { FiSearch } from 'react-icons/fi';
 // 스크랩
 import { __postScrap } from '../../redux/modules/postSlice';
 import PostScrap from './PostScrap';
@@ -53,7 +54,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
             formData.append("multipartFile", null);
         }
 
-        const detail = modPost.detailAddress === undefined ? "" : modPost.detailAddress
+        const detail = detailAddress === undefined ? "" : detailAddress
 
 
         const obj = {
@@ -63,7 +64,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
             postLink: modPost.postLink,
             postAddress: modPost.postAddress + detail
         }
-
+        console.log(detailAddress)
         console.log("obj", obj);
         //폼 데이터에 글작성 데이터 넣기
         formData.append("askPostPutRequestDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
@@ -97,6 +98,9 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
     const onAskDelete = (postId) => {
         dispatch(__deletePost(postId))
     }
+
+    const [detailAddress, setDetailAddress] = useState()
+
 
     return (
         Object.keys(post).length < 1 ?
@@ -172,21 +176,28 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
                         <div>
 
-                            <div>행사장소<button onClick={popupPostCode}> 주소 검색하기</button></div>
+                            <div>행사장소</div>
+                            <StSearchBox style={{ background: "#E1E3EC" }} onClick={popupPostCode}>
+                                <button style={{ color: "#8B909F" }}><FiSearch style={{ width: '20px', height: '20px', color: '#424754', marginLeft: "10px", marginRight: "10px" }} />주소검색</button>
+                            </StSearchBox>
+                            {/*<button onClick={popupPostCode}> 주소 검색하기</button>*/}
                             {isPopupOpen && (
                                 <ModalWrap onClick={popupPostCode}>
                                     <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
                                 </ModalWrap>
                             )}
-                            <div className='address-box'>
-                                <div className='tag'>#{modPost.postAddress && modPost.postAddress.split(' ')[0]}</div>
-                                <div className='address'>{modPost.postAddress}</div>
+                            <div style={{ display: "flex", marginTop: "14px" }}>
+                                <STAddressDiv style={{ flex: "1" }}>#{modPost.postAddress && modPost.postAddress.split(' ')[0]}</STAddressDiv>
+                                <STInput style={{ flex: "4", marginLeft: "10px" }}>{modPost.postAddress}</STInput>
                             </div>
 
+                            {
+                                modPost.postAddress !== post.postAddress && <STInput3 style={{ float: "right", width: "79%", height: "40px", marginTop: "10px" }} type="text" placeholder='상세주소' name={detailAddress} onChange={(e) => setDetailAddress(e.target.value)} />
+                            }
 
-                            <input type="text" placeholder='상세주소' value={modPost.detailAddress} onChange={modPostHandle} />
+
                             <KakaoMap address={modPost.postAddress} width='100%' height='130px' />
-                        </div><br />
+                        </div>
                         <div>
                             <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={onSubmitAsk}> 수정완료</STEditButton>
                             <STEditButton onClick={toggleEdit}>취소</STEditButton>
@@ -248,7 +259,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                     )}
                 <Comment postId={postId} kind='ask' commentDtoList={post.commentDtoList} />
 
-            </StWrap>
+            </StWrap >
     );
 };
 
@@ -412,4 +423,27 @@ const AllTextarea = styled.textarea`
     background-color: white;
     padding-left: 10px;
     padding-top:10px;
+`
+const StSearchBox = styled.div`
+    background: #EEEAE3;
+    box-shadow: inset 0px 2px 2px rgba(0, 0, 0, 0.1);
+    border-radius : 30px;
+    display : flex;
+    flex-direction : row;
+    margin : 0px 10px;
+    height : 36px;
+    button{
+        background-color : transparent;
+        border : none;
+        border-radius :  30px 0 0 30px ; 
+    }
+`
+
+const STAddressDiv = styled.div`
+    width: 64px;
+    height: 36px;
+    background-color: #DCE0F1;
+    border-radius: 30px;
+    text-align: center;
+    padding-top: 6px;
 `
