@@ -93,7 +93,7 @@ export const __addPost = createAsyncThunk(
         try {
             await postApis.addEventPostAx(payload)
                 .then((response) => {
-                    console.log("response", response.data);
+                    if (response.data.status === 200) window.location.replace(`/eventposts/${response.data.data.postId}`);
                 });
         } catch (error) {
             console.log("error", error);

@@ -190,80 +190,80 @@ const FestivalPost = () => {
 
     return (
         <>
-        {isPopupOpen && (
-            <ModalWrap onClick={popupPostCode}>
-                <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
-            </ModalWrap>
-        )}
-        <Layout>
-            <FestivalWrap>
-                        {/* <STSelect value="행사글" style={{ width: "50%" }} disabled>
+            {isPopupOpen && (
+                <ModalWrap onClick={popupPostCode}>
+                    <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
+                </ModalWrap>
+            )}
+            <Layout>
+                <FestivalWrap>
+                    {/* <STSelect value="행사글" style={{ width: "50%" }} disabled>
                             <option value="행사글">행사글</option>
                         </STSelect> */}
-                        <h4 style={{ textAlign: "center", marginTop: "8px", marginBottom: "18px" }}>행사글</h4>
+                    <h4 style={{ textAlign: "center", marginTop: "8px", marginBottom: "18px" }}>행사글</h4>
 
 
-                <Form.Group className="mb-3" controlId="formGridAddress1" style={{height:"auto"}}>
-                    <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler} style={{ width: "100%", height: "48px", border: "none", margin: "0 0 10px 0" }} />
-                </Form.Group>
+                    <Form.Group className="mb-3" controlId="formGridAddress1" style={{ height: "auto" }}>
+                        <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler} style={{ width: "100%", height: "48px", border: "none", margin: "0 0 10px 0" }} />
+                    </Form.Group>
 
-                {/* <div style={{margin:"10px 0", height: "336px"}} > */}
-                {imgUrl.length === 0 && <img src={noImg} style={{ width: "100%", marginBottom: "14px" }} onClick={() => { imgRef.current.click() }} />}
-                <div style={{position:"absolute"}} >
-                    <label htmlFor="imgFile">
-                        <input
-                            style={{ display: "none" }}
-                            type="file"
-                            id="imgFile"
-                            onChange={onChangeImage}
-                            accept="image/*"
-                            ref={imgRef}
-                            name="imgFile"
-                            multiple />
+                    {/* <div style={{margin:"10px 0", height: "336px"}} > */}
+                    {imgUrl.length === 0 && <img src={noImg} style={{ width: "100%", marginBottom: "14px" }} onClick={() => { imgRef.current.click() }} />}
+                    <div style={{ position: "absolute" }} >
+                        <label htmlFor="imgFile">
+                            <input
+                                style={{ display: "none" }}
+                                type="file"
+                                id="imgFile"
+                                onChange={onChangeImage}
+                                accept="image/*"
+                                ref={imgRef}
+                                name="imgFile"
+                                multiple />
 
-                    </label>
-                {/* </div > */}
+                        </label>
+                        {/* </div > */}
 
-                <Carousel>
-                    {imgUrl && imgUrl.map((img, index) => {
-                        return (
-                            <Carousel.Item key={img.id}>
-                                <button style={{ width: "100%" }}>
-                                    <img src={img} style={{ width: '396px', height: "auto", objectFit: "contain" }} onClick={() => { imgRef.current.click() }} />
-                                </button>
-                            </Carousel.Item>
-                        )
-                    })
-                    }
-                </Carousel>
-                            
-                    {/* <STUploadButton onClick={() => { imgRef.current.click() }}>+</STUploadButton><br /> */}
+                        <Carousel>
+                            {imgUrl && imgUrl.map((img, index) => {
+                                return (
+                                    <Carousel.Item key={img.id}>
+                                        <button style={{ width: "100%" }}>
+                                            <img src={img} style={{ width: '396px', height: "auto", objectFit: "contain" }} onClick={() => { imgRef.current.click() }} />
+                                        </button>
+                                    </Carousel.Item>
+                                )
+                            })
+                            }
+                        </Carousel>
 
-                    <label htmlFor="imgFile">
-                        <input
-                            style={{ display: "none" }}
-                            type="file"
-                            id="imgFile"
-                            onChange={onChangeImage}
-                            accept="image/*"
-                            ref={imgRef}
-                            name="imgFile"
-                            multiple />
-                    </label>
-                </div >
+                        {/* <STUploadButton onClick={() => { imgRef.current.click() }}>+</STUploadButton><br /> */}
 
-                <AllTextarea type="text" placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" name="content" onChange={onChangeHandler} maxLength={2500} style={{ height: '200px', width: "100%", border: "none", padding: "10px", margin:"0", marginBottom:"14px" }} />
+                        <label htmlFor="imgFile">
+                            <input
+                                style={{ display: "none" }}
+                                type="file"
+                                id="imgFile"
+                                onChange={onChangeImage}
+                                accept="image/*"
+                                ref={imgRef}
+                                name="imgFile"
+                                multiple />
+                        </label>
+                    </div >
 
-                <STSelect style={{ width: "100%", marginBottom:"10px", padding: "10px" }} name="category" onChange={onChangeHandler}>
-                            <option>카테고리</option>
-                            <option value="마라톤">마라톤</option>
-                            <option value="페스티벌">페스티벌</option>
-                            <option value="전시회">전시회</option>
-                            <option value="공연">공연</option>
-                            <option value="기타">기타</option>
-                        </STSelect>
+                    <AllTextarea type="text" placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" name="content" onChange={onChangeHandler} maxLength={2500} style={{ height: '200px', width: "100%", border: "none", padding: "10px", margin: "0", marginBottom: "14px" }} />
 
-                <SelBottom>
+                    <STSelect style={{ width: "100%", marginBottom: "10px", padding: "10px" }} name="category" onChange={onChangeHandler}>
+                        <option>카테고리</option>
+                        <option value="마라톤">마라톤</option>
+                        <option value="페스티벌">페스티벌</option>
+                        <option value="전시회">전시회</option>
+                        <option value="공연">공연</option>
+                        <option value="기타">기타</option>
+                    </STSelect>
+
+                    <SelBottom>
                         <Row className="mb-3">
                             <Form.Group as={Col} controlId="formGridCity">
                                 <Form.Label>행사시작</Form.Label>
@@ -280,45 +280,45 @@ const FestivalPost = () => {
                     {/* SelBottom */}
 
 
-                <Form.Group className="mb-3" controlId="formGridAddress1">
-                    <Form.Label>행사장 링크</Form.Label>
-                    <Form.Control type="text" placeholder="링크" name="postLink" onChange={onChangeHandler}  style={{ width: "100%", height: "48px", border: "none", margin: "0 0 10px 0" }} />
-                </Form.Group>
+                    <Form.Group className="mb-3" controlId="formGridAddress1">
+                        <Form.Label>행사장 링크</Form.Label>
+                        <Form.Control type="text" placeholder="링크" name="postLink" onChange={onChangeHandler} style={{ width: "100%", height: "48px", border: "none", margin: "0 0 10px 0" }} />
+                    </Form.Group>
 
-                {/* 주소 부분 */}
-                <div>
-                    <StSearchBox style={{ background: "#E1E3EC", height: "40px" }} onClick={popupPostCode}>
-                        <button style={{ color: "#8B909F" }}><FiSearch style={{ width: '20px', height: '40px', color: '#424754',  marginRight: "10px" }} /></button>
-                    </StSearchBox>
+                    {/* 주소 부분 */}
+                    <div>
+                        <StSearchBox style={{ background: "#E1E3EC", height: "40px" }} onClick={popupPostCode}>
+                            <button style={{ color: "#8B909F" }}><FiSearch style={{ width: '20px', height: '40px', color: '#424754', marginRight: "10px" }} /></button>
+                        </StSearchBox>
 
-                    {isPopupOpen && (
-                        <ModalWrap>
-                            <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
-                        </ModalWrap>
-                    )}
+                        {isPopupOpen && (
+                            <ModalWrap>
+                                <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
+                            </ModalWrap>
+                        )}
 
-<AddressBox >
-                        {
-                            postAddress !== "" && (
-                                <>
-                                    <div style={{ display: "flex", marginBottom: "10px" }}>
-                                        <STAddressButton style={{ marginRight: "10px", flex: "2" }}>{"#" + region}</STAddressButton>
-                                        <STInput3 type="text" value={postAddress} style={{ flex: "8" }} readOnly>{postAddress}</STInput3>
-                                    </div>
-                                    <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{ width: "80%", marginBottom: "10px", float: "right" }} />
-                                    <KakaoMap address={postAddress} width="328px" height="300px" />
-                                </>)
-                        }
-                    </AddressBox >
-                </div><br />
-                {
-                    localStorage.getItem('role') === 'ADMIN' &&
-                    <div><input type='checkbox' onChange={adminPostHandle} />관리자글</div>
-                }
-                <AllButton style={{ background: "#3556E1", color: "white" , borderRadius:"10px" }} onClick={onSubmit}>작성</AllButton>
-                {/*<AllButton onClick={()=>navigate(-1)}>취소</AllButton>  <AddressModal />*/}
-            </FestivalWrap>
-        </Layout>
+                        <AddressBox >
+                            {
+                                postAddress !== "" && (
+                                    <>
+                                        <div style={{ display: "flex", marginBottom: "10px" }}>
+                                            <STAddressButton style={{ marginRight: "10px", flex: "2" }}>{"#" + region}</STAddressButton>
+                                            <STInput3 type="text" value={postAddress} style={{ flex: "8" }} readOnly>{postAddress}</STInput3>
+                                        </div>
+                                        <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{ width: "80%", marginBottom: "10px", float: "right" }} />
+                                        <KakaoMap address={postAddress} width="328px" height="300px" />
+                                    </>)
+                            }
+                        </AddressBox >
+                    </div><br />
+                    {
+                        localStorage.getItem('role') === 'ADMIN' &&
+                        <div><input type='checkbox' onChange={adminPostHandle} />관리자글</div>
+                    }
+                    <AllButton style={{ background: "#3556E1", color: "white", borderRadius: "10px" }} onClick={onSubmit}>작성</AllButton>
+                    {/*<AllButton onClick={()=>navigate(-1)}>취소</AllButton>  <AddressModal />*/}
+                </FestivalWrap>
+            </Layout>
         </>
 
     )
@@ -367,7 +367,7 @@ const STSelect = styled.select`
     padding:12px 16px;
     border: none;
     option {
-       padding 0 10px ;
+       padding: 0 10px ;
     }
 `
 

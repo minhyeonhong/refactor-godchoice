@@ -17,7 +17,7 @@ export const __addPost3 = createAsyncThunk(
     try {
       postApis.addAskPostAx(payload)
         .then((response) => {
-          if (response.data.status === 200) window.location.replace('/');
+          if (response.data.status === 200) window.location.replace(`/askposts/${response.data.data.postId}`);
         }).catch((error) => {
           console.log(error);
         })
