@@ -12,6 +12,7 @@ export const __getMyInfo = createAsyncThunk(
         try {
             const response = await myPageApis.getMyPageAX(payload)
             if (response.data.status === 200) {
+                localStorage.setItem('userAddressTag', response.data.data.addressTag);
                 return thunkAPI.fulfillWithValue(response.data.data);
             }
         } catch (error) {

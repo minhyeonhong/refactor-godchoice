@@ -34,6 +34,14 @@ const Detail = () => {
         }
     }, [post])
 
+    useEffect(() => {
+        if (localStorage.getItem('token') === null || localStorage.getItem('token') === 'null' ||
+            localStorage.getItem('token') === undefined || localStorage.getItem('token') === '') {
+            alert('로그인 해주세요.');
+            window.location.replace('/login');
+        }
+    }, [])
+
     return (
         <Layout>
             <PageState
