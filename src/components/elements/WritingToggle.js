@@ -4,17 +4,28 @@ import styled from "styled-components";
 import X from "../../assets/images/common/X.png";
 
 
-const WritingToggle = ({modalOn, setModalOn}) => {
+const WritingToggle = ({ modalOn, setModalOn }) => {
     const navigate = useNavigate();
+
+    const writePost = (url) => {
+        if (localStorage.getItem('token') === null || localStorage.getItem('token') === 'null' ||
+            localStorage.getItem('token') === undefined || localStorage.getItem('token') === '') {
+            alert('로그인 해주세요.');
+            window.location.replace('/login');
+        } else {
+            navigate(url)
+        }
+    }
+
     return (
-<WritingToggleWrap>
-    <img src={X} onClick={()=> {setModalOn(!modalOn)}}  />
-    
-        <Cate onClick={()=>navigate("/festivalpost")} style={{marginTop:"17px"}}>행사글</Cate>
-        <Cate onClick={()=>navigate("/gatherpost")}>모집글</Cate>
-        <Cate onClick={()=>navigate("/questionpost")}>질문글</Cate>
-</WritingToggleWrap>
-)
+        <WritingToggleWrap>
+            <img src={X} onClick={() => { setModalOn(!modalOn) }} />
+
+            <Cate onClick={() => writePost("/festivalpost")} style={{ marginTop: "17px" }}>행사글</Cate>
+            <Cate onClick={() => writePost("/gatherpost")}>모집글</Cate>
+            <Cate onClick={() => writePost("/questionpost")}>질문글</Cate>
+        </WritingToggleWrap>
+    )
 };
 
 export default WritingToggle;
