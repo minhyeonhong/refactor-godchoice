@@ -14,7 +14,7 @@ import {
     StEventPlaceBox,
     StButtonBox
 } from '../styles/Detail.styled'
-import { ModalWrap, AddressBox } from '../styles/GatherDetail.styled'
+import { ModalWrap } from '../styles/GatherDetail.styled'
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import SearchAddress from '../post/SearchAddress';
@@ -204,29 +204,17 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                             <option value="M">남</option>
                                             <option value="W">여</option>
                                         </STSelect>
-                                        <STNumber style={{ width: "33%", dispaly: "flex" }}>
-                                            <button style={{ flex: "1" }} onClick={handleAdd}>+</button>
+                                        <STDiv style={{ width: "33%", textAlign: "center", display: "flex" }}>
+                                            <STCountButton style={{ flex: "0.7" }} onClick={handleAdd}>+</STCountButton>
                                             <div style={{ flex: "1" }}>{counter}</div>
-                                            <button style={{ flex: "1" }} onClick={handleminus}>-</button>
-                                        </STNumber>
+                                            <STCountButton style={{ flex: "0.7", right: "0px" }} onClick={handleminus}>-</STCountButton>
+                                        </STDiv>
+
                                     </SelBottom>
                                     <SelBottom>
 
                                     </SelBottom>
                                 </SelectWrap>
-                                {/* <button>모집글</button> */}
-
-
-                                {/* 
-                             
-                                <AllInput type="text" defaultValue={modPost.startAge} name="startAge" onChange={modPostHandle} /> ~ {''}
-                                <AllInput type="text" defaultValue={modPost.endAge} name="endAge" onChange={modPostHandle} />
-
-                                <STSelect name="sex" defaultValue={modPost.sex} onChange={modPostHandle}>
-                                    <option value="NF">성비무관</option>
-                                    <option value="M">남</option>
-                                    <option value="W">여</option>
-                                </STSelect> */}
 
                                 <STInput3 style={{ marginBottom: "14px" }} type="text" placeholder="제목" name="title" defaultValue={modPost.title || ""} onChange={modPostHandle} />
 
@@ -294,19 +282,25 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 </div>
 
                                 <div>
-                                    <div>행사장소<br /><button onClick={popupPostCode}> 주소 검색하기</button></div>
+                                    <div>행사장소</div>
+                                    <StSearchBox style={{ background: "#E1E3EC" }} onClick={popupPostCode}>
+                                        <button style={{ color: "#8B909F" }}><FiSearch style={{ width: '20px', height: '20px', color: '#424754', marginLeft: "10px", marginRight: "10px" }} />주소검색</button>
+                                    </StSearchBox>
 
                                     {isPopupOpen && (
-                                        <ModalWrap>
+                                        <ModalWrap onClick={popupPostCode}>
                                             <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
                                         </ModalWrap>
                                     )}
-                                    <div className='address-box'>
-                                        <div className='tag'>#{modPost.postAddress.split(' ')[0]}</div>
-                                        <div className='address'>{modPost.postAddress}</div>
+                                    <div style={{ display: "flex", marginTop: "14px" }}>
+                                        <STAddressDiv>#{modPost.postAddress.split(' ')[0]}</STAddressDiv>
+                                        <STInput style={{ marginLeft: "10px" }}>{modPost.postAddress}</STInput>
                                     </div>
 
-                                    <input type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle} />
+                                    {
+                                        modPost.postAddress !== post.postAddress && <STInput3 style={{ float: "right", width: "83%", height: "40px", marginTop: "10px" }} type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle} />
+                                    }
+
                                     <KakaoMap address={modPost.postAddress} width='100%' height='130px' />
                                 </div><br />
                                 <div>
@@ -649,4 +643,51 @@ const StRadioBox = styled.div`
         box-shadow : none;
         border : none;
     }
+`
+
+const StSearchBox = styled.div`
+    background: #EEEAE3;
+    box-shadow: inset 0px 2px 2px rgba(0, 0, 0, 0.1);
+    border-radius : 30px;
+    display : flex;
+    flex-direction : row;
+    margin : 0px 10px;
+    height : 36px;
+    button{
+        background-color : transparent;
+        border : none;
+        border-radius :  30px 0 0 30px ; 
+    }
+ `
+const STAddressDiv = styled.div`
+ width: 64px;
+ height: 36px;
+ background-color: #DCE0F1;
+ border-radius: 30px;
+ text-align: center;
+ padding-top: 6px;
+`
+const STDiv = styled.div`
+    height : 40px;
+    font-size: 14px;
+    background-color: #FFF;
+    border-radius: 10px;
+    /* padding:12px 16px; */
+    border: transparent;
+    position: relative;
+    line-height: 40px; 
+    /* flex : 1; */
+`
+const STCountButton = styled.button`
+    background-color: #E1E3EC;
+    font-size: 20px;
+    border-radius: 20px;
+    border:transparent;
+    /* vertical-align: middle; */
+    height : 30px;
+    position : absolute;
+    transform: translateY(-50%);
+    top : 50%;
+    padding-left: 10px;
+    padding-right : 10px;
 `
