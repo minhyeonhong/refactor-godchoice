@@ -2,8 +2,6 @@ import { throttle } from "lodash";
 import { useState } from "react";
 import { useEffect } from "react";
 import styled from "styled-components";
-// import arrowIcon from "../static/image/arrowIcon.png";
-// import commentIcon from "../static/image/commentIcon.png";
 import writing from "../../assets/images/common/writing.png";
 import topBtn from "../../assets/images/common/topBtn.png";
 import writingToggle from "./WritingToggle";
@@ -36,17 +34,10 @@ const TopButton = ({ modalOn, setModalOn }) => {
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         src={topBtn}
         width={"40px"}
-        // height={"40px"}
-        // hvScale={"scale(1.3)"}
-        // rotate={"rotate(-90deg)"}
       />
       <StyledTopBtnImg
         src={writing}
         padding={"6px 6px 10px 6px"}
-        // width={"28px"}
-        // height={"28px"}
-        // scale={"scaleX(-1)"}
-        // hvScale={"scaleX(-1.3) scaleY(1.3)"}
         onClick={() => {
           setModalOn(!modalOn);
         }}
@@ -59,16 +50,10 @@ const TopButton = ({ modalOn, setModalOn }) => {
         src={topBtn}
         width={"0px"}
         height={"40px"}
-        // hvScale={"scale(1.3)"}
-        // rotate={"rotate(-90deg)"}
       />
       <StyledTopBtnImg
         src={writing}
         padding={"6px 6px 10px 6px"}
-        // width={"28px"}
-        // height={"28px"}
-        // scale={"scaleX(-1)"}
-        // hvScale={"scaleX(-1.3) scaleY(1.3)"}
         onClick={() => {
           setModalOn(!modalOn);
         }}
@@ -93,7 +78,7 @@ const StyledTopBtn = styled.button`
   border: none;
   border-radius: 50px;
 
-  background-color: #000;
+  background-color: gray;
   opacity: 50%;
   box-shadow: 0px 0px 5px gray;
 
