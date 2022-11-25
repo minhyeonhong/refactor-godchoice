@@ -341,12 +341,15 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                         (<STIngDiv style={{ background: "#727785" }}>{post.postState}</STIngDiv>)
                                     }
 
-                                    <STImg style={{ display: "flex", marginLeft: "16px" }}>
-                                        <img src={Views} style={{ width: "20px", height: "20px", flex: "2" }} />
-                                        <div style={{ color: "#8B909F", flex: "8", marginLeft: "5px" }}>{post.viewCount}</div>
+                                    <STImg >
+                                        <div style={{ color: "#8B909F", flex: "8", marginLeft: "5px" }}>
+                                            <img src={Views} style={{ width: "20px", height: "20px", flex: "2" }} />
+                                            {post.viewCount}
+                                        </div>
+                                        <PostScrap style={{ position: "absolute", right: "10px" }} bookMarkStatus={post.bookMarkStatus} />
                                     </STImg>
 
-                                    <PostScrap style={{ position: "absolute", right: "10px" }} bookMarkStatus={post.bookMarkStatus} />
+
                                 </STIng>
 
                                 <STBox2 style={{ marginBottom: "14px", display: "flex" }}>
@@ -375,7 +378,7 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                         }
                                     </Carousel>
                                 </div>
-                                <StContent style={{ marginBottom: "14px", paddingTop: "5px" }}>{post.content}</StContent>
+                                <StContent style={{ marginBottom: "14px", paddingTop: "5px" }} value={post.content || ""} readOnly />
 
                                 <div>카카오 링크</div>
                                 <STInput style={{ marginBottom: "14px" }}>{post.kakaoLink}</STInput>
@@ -514,6 +517,7 @@ const STInput = styled.div`
     padding-top: 6px;
     padding-left: 6px;
     padding-bottom: 6px;
+    word-break: break-all;
 `
 
 const LikeBox = styled.div`
@@ -581,7 +585,9 @@ const STEditButton = styled.button`
     border : transparent;
 `
 const STImg = styled.div`
-    display : inline-block;
+    width : 94%;
+    display : flex;
+    justify-content : space-between;
     //background-color: black;
     position: absolute;
     left : 94px;

@@ -160,6 +160,7 @@ const StTagBox = styled.div`
     .btn-group > :not(.btn-check:first-child) + .btn {
         border : none;
         border-radius :  50px ;
+        z-index : 0;
     }
 `
 

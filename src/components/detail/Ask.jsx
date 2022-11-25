@@ -252,7 +252,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 </Carousel>
                             </div>
 
-                            <StContent style={{ marginBottom: "14px", paddingTop: "5px" }}>{post.content}</StContent>
+                            <StContent style={{ marginBottom: "14px", paddingTop: "5px" }} value={post.content || ""} readOnly />
 
                             <div>행사장 링크</div>
                             <STInput style={{ marginBottom: "14px" }}>{post.postLink}</STInput>
@@ -355,6 +355,7 @@ const STInput = styled.div`
     padding-top: 6px;
     padding-left: 6px;
     padding-bottom: 6px;
+    word-break: break-all;
 `
 
 const STButton = styled.p`
