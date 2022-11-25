@@ -8,6 +8,7 @@ import AlertModal from "../Modals/AlertModal";
 import ErrorModal from "../Modals/ErrorModal";
 import { useState } from "react";
 import ImageLoading from "../elements/ImageLoading";
+import PageState from "../common/PageState";
 
 const Login = () => {
   const [modal, setModal] = React.useState(false);
@@ -67,15 +68,11 @@ const Login = () => {
   }, [code]);
 
   return (
-    <>
-      <Layout>
-        {error && <ErrorModal error="로그인 실패" navigation="/login" />}
-        <ImageLoadingWrap>
-          <ImageLoading color="rgba(0, 0, 0, 0.13)" />
-        </ImageLoadingWrap>
-        <CommunityBox>{modal && <AlertModal alertModalData={alertModalData} closeModal={modalOnOff} goAction={goAction}></AlertModal>}</CommunityBox>
-      </Layout>
-    </>
+    <Layout>
+      {error && <ErrorModal error="로그인 실패" navigation="/login" />}
+      <PageState display='flex' state='loading' imgWidth='25%' height='100vh'
+        text='로그인 중입니다.' />
+    </Layout>
   );
 };
 export default Login;

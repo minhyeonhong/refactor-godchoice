@@ -67,6 +67,9 @@ const MyPage = () => {
     navigate("/")
   }
 
+  useEffect(() => {
+    console.log("userImgUrl", userImgUrl);
+  }, [userImgUrl])
 
   return (
     <Layout>
