@@ -11,7 +11,7 @@ import {
     StEventPlaceBox,
     StButtonBox
 } from '../styles/Detail.styled'
-import { ModalWrap, AllInput, AllTextarea } from '../styles/GatherDetail.styled'
+import { ModalWrap, AllInput } from '../styles/GatherDetail.styled'
 import noImg from '../../assets/images/common/noImg.jpg'
 import { useDispatch } from 'react-redux';
 import SearchAddress from '../post/SearchAddress';
@@ -105,10 +105,10 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
             <StWrap>
                 {edit ? (
 
-                    <div>
-                        <StTitleBox>
-                            <AllInput type="text" placeholder="제목" name="title" defaultValue={modPost.title || ""} onChange={modPostHandle} style={{ width: "100%" }} />
-                        </StTitleBox>
+                    <div style={{ marginTop: "14px" }}>
+                        <h4 style={{ textAlign: "center", marginTop: "18px", marginBottom: "18px" }}>질문글</h4>
+                        <STInput3 type="text" placeholder="제목" name="title" defaultValue={modPost.title || ""} onChange={modPostHandle} style={{ width: "100%" }} />
+
                         <div><br />
 
                             {/*이미지 올리기*/}
@@ -117,7 +117,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                     {modPost.askPostImgList.map((img, i) => {
                                         return (
                                             <Carousel.Item key={img.id}>
-                                                <img style={{ height: "180px" }}
+                                                <img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
                                                     className="d-block w-100"
                                                     src={img.postImgUrl}
                                                     alt={`slide${i + 1}`}
@@ -152,46 +152,44 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                         multiple />
                                 </label>
 
-                                <div>
-                                    {
-                                        fileUrls.map((imgUrl, i) => {
-                                            return (
-                                                <img style={{ width: '60px', height: '60px' }} src={imgUrl} key={i} />
-                                            )
-                                        })
-                                    }
-                                </div>
+
+                                {
+                                    fileUrls && fileUrls.map((imgUrl, i) => {
+                                        return (
+                                            <img style={{ width: '60px', height: '60px' }} src={imgUrl} key={i} />
+                                        )
+                                    })
+                                }
+
                             </StCarouselWrap>
 
                         </div>
-                        <StContentBox>
-                            <AllTextarea type="text" name="content" defaultValue={modPost.content || ""} onChange={modPostHandle} />
-                        </StContentBox>
 
-                        <StEventLinkBox>
-                            <br /><label>행사장 링크</label><br />
-                            <AllInput type="text" name="postLink" defaultValue={modPost.postLink} onChange={modPostHandle} style={{ width: "100%" }} />
-                        </StEventLinkBox><br />
+                        <AllTextarea style={{ height: "200px", marginTop: "14px", marginBottom: "14px" }} type="text" name="content" defaultValue={modPost.content || ""} onChange={modPostHandle} />
+
+                        <label>행사장 링크</label><br />
+                        <STInput3 type="text" name="postLink" defaultValue={modPost.postLink} onChange={modPostHandle} style={{ width: "100%", marginBottom: "14px" }} />
 
                         <div>
-                            <StEventPlaceBox>
-                                <div>행사장소<button onClick={popupPostCode}> 주소 검색하기</button></div>
-                                {isPopupOpen && (
-                                    <ModalWrap>
-                                        <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
-                                    </ModalWrap>
-                                )}
-                                <div className='address-box'>
-                                    <div className='tag'>#{modPost.postAddress && modPost.postAddress.split(' ')[0]}</div>
-                                    <div className='address'>{modPost.postAddress}</div>
-                                </div>
-                            </StEventPlaceBox><br />
+
+                            <div>행사장소<button onClick={popupPostCode}> 주소 검색하기</button></div>
+                            {isPopupOpen && (
+                                <ModalWrap onClick={popupPostCode}>
+                                    <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
+                                </ModalWrap>
+                            )}
+                            <div className='address-box'>
+                                <div className='tag'>#{modPost.postAddress && modPost.postAddress.split(' ')[0]}</div>
+                                <div className='address'>{modPost.postAddress}</div>
+                            </div>
+
+
                             <input type="text" placeholder='상세주소' value={modPost.detailAddress} onChange={modPostHandle} />
                             <KakaoMap address={modPost.postAddress} width='100%' height='130px' />
                         </div><br />
                         <div>
-                            <button onClick={onSubmitAsk}> 수정완료</button>
-                            <button onClick={toggleEdit}>취소</button>
+                            <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={onSubmitAsk}> 수정완료</STEditButton>
+                            <STEditButton onClick={toggleEdit}>취소</STEditButton>
                         </div>
                     </div>
                 )
@@ -395,3 +393,23 @@ const STImg = styled.div`
     //margin-left: 10px;
 `
 
+const STInput3 = styled.input`
+    width: 100%;
+    height: 36px;
+    background: white;
+    border-radius: 10px;
+    font-weight: 500;
+    padding-top: 6px;
+    padding-left: 6px;
+    padding-bottom: 6px;
+    border:transparent;
+    `
+
+const AllTextarea = styled.textarea`
+    border-radius: 10px;
+    border: transparent;
+    width :100%;
+    background-color: white;
+    padding-left: 10px;
+    padding-top:10px;
+`

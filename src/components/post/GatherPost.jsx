@@ -192,6 +192,18 @@ const GatherPost = () => {
                 <div style={{ paddingLeft: "10px", paddingRight: "10px", height: "100%" }}>
                     <h4 style={{ textAlign: "center", marginTop: "18px", marginBottom: "18px" }}>모집글</h4>
 
+                    <div style={{ display: "flex", marginBottom: "14px" }}>
+                        <STSelect name="category" onChange={onChangeHandler2} style={{ flex: "1", textAlign: "center" }} >
+                            <option>카테고리</option>
+                            <option value="마라톤">마라톤</option>
+                            <option value="페스티벌">페스티벌</option>
+                            <option value="전시회">전시회</option>
+                            <option value="공연">공연</option>
+                            <option value="기타">기타</option>
+                        </STSelect>
+                        <STInput2 type="date" name="date" onChange={onChangeHandler2} min={today2} style={{ flex: "1", marginLeft: "10px", textAlign: "center" }} />
+
+                    </div>
 
                     <div style={{ marginBottom: "14px" }}>
                         <STInput type="text" placeholder="제목" name="title" onChange={onChangeHandler2} style={{ width: "100%" }} />
@@ -227,18 +239,6 @@ const GatherPost = () => {
 
                     <AllTextarea type="text" placeholder="소개글" name="content" onChange={onChangeHandler2} style={{}} />
 
-                    <div style={{ display: "flex" }}>
-                        <STSelect name="category" onChange={onChangeHandler2} style={{ flex: "1", textAlign: "center" }} >
-                            <option>카테고리</option>
-                            <option value="마라톤">마라톤</option>
-                            <option value="페스티벌">페스티벌</option>
-                            <option value="전시회">전시회</option>
-                            <option value="공연">공연</option>
-                            <option value="기타">기타</option>
-                        </STSelect>
-                        <STInput2 type="date" name="date" onChange={onChangeHandler2} min={today2} style={{ flex: "1", marginLeft: "10px", textAlign: "center" }} />
-
-                    </div>
                     <div style={{ display: "flex", marginTop: "14px" }}>
                         <STDiv style={{ flex: "1", textAlign: "center", display: "flex" }}>
                             <STButton style={{ flex: "0.7" }} onClick={handleAdd}>+</STButton>
@@ -273,7 +273,7 @@ const GatherPost = () => {
                         <p style={{ paddingTop: "5px" }}>~</p>
                         <STInput2 type="text" placeholder='나이' style={{ width: "50%", textAlign: "center" }} name="endAge" onChange={onChangeHandler2} />
                     </div>
-
+                    <br />
 
                     <div style={{ marginTop: "14px", marginBottom: "14px" }}>
                         <label>카카오 링크</label><br />
