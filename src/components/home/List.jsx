@@ -45,7 +45,7 @@ const List = ({ posts, main, isLoading, istLastPage, setPage }) => {
                                 }
                             </StImgBox>
                             <StContentBox>
-                                <div className='titleBox'>{val.title}</div>
+                                <div className='titleBox'>{val.title.length > 10 ? val.title.substring(0, 9) + '...' : val.title}</div>
                                 <div>{val.category}</div>
                                 <div className='contentBox'>{val.content}</div>
                                 <div className='dtateBox'>

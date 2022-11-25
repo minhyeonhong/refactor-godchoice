@@ -147,11 +147,14 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 :
                                 (<STIngDiv style={{ background: "#727785" }}>{post.postState}</STIngDiv>)
                             }
-                            <STImg style={{ display: "flex", marginLeft: "16px" }}>
-                                <img src={Views} style={{ width: "20px", height: "20px", flex: "2" }} />
-                                <div style={{ color: "#8B909F", flex: "8", marginLeft: "5px" }}>{post.viewCount}</div>
+                            <STImg >
+                                <div style={{ color: "#8B909F", flex: "8", marginLeft: "5px" }}>
+                                    <img src={Views} style={{ width: "20px", height: "20px", flex: "2" }} />
+                                    {post.viewCount}
+                                </div>
+                                <PostScrap style={{ position: "absolute", right: "10px" }} bookMarkStatus={post.bookMarkStatus} />
                             </STImg>
-                            <PostScrap style={{ position: "absolute", right: "10px" }} bookMarkStatus={post.bookMarkStatus} />
+
                         </STIng>
 
                         <STBox2 style={{ display: "flex" }}>
@@ -410,6 +413,7 @@ const STInput = styled.div`
     padding-top: 6px;
     padding-left: 6px;
     padding-bottom: 6px;
+    word-break: break-all;
 `
 
 const LikeBox = styled.div`
@@ -467,7 +471,9 @@ const STEditButton = styled.button`
 `
 
 const STImg = styled.div`
-    display : inline-block;
+    width : 94%;
+    display : flex;
+    justify-content : space-between;
     //background-color: black;
     position: absolute;
     left : 94px;
