@@ -9,9 +9,7 @@ export const __insertComment = createAsyncThunk(
     "commentSlice/__insertComment",
     async (payload, thunkAPI) => {
         try {
-            console.log("__insertComment payload", payload);
             const insertRes = await commentApis.insertCommentAX(payload)
-            console.log("insertRes", insertRes);
             // if (insertRes.data.status !== 200) return;
             // const getRes = await commentApis.getCommentAX({ postId: payload.postId, kind: payload.kind });
             // console.log("getRes", getRes);
@@ -30,7 +28,6 @@ export const __deleteComment = createAsyncThunk(
     "commentSlice/__deleteComment",
     async (payload, thunkAPI) => {
         try {
-            console.log("__deleteComment payload", payload)
             const res = await commentApis.deleteCommentAX(payload)
 
             return thunkAPI.fulfillWithValue(res.data);
@@ -45,9 +42,7 @@ export const __getComment = createAsyncThunk(
     "commentSlice/__getComment",
     async (payload, thunkAPI) => {
         try {
-            console.log("__getComment payload", payload)
             const res = await commentApis.getCommentAX(payload)
-            console.log("__getComment res", res)
             //return thunkAPI.fulfillWithValue(res.data);
         } catch (error) {
             return thunkAPI.rejectWithValue(error);
@@ -73,7 +68,6 @@ export const commentSlice = createSlice({
         [__insertComment.fulfilled]: (state, action) => {
             state.isLoading = false;
             if (action.payload.status === 200) {
-                console.log("action.payload", action.payload);
                 state.commentList = action.payload.data;
             } else {
                 console.log(action.payload.msg);
@@ -81,7 +75,7 @@ export const commentSlice = createSlice({
         },
         [__insertComment.rejected]: (state, action) => {
             state.isLoading = false;
-            console.log(action.payload);
+            console.log("error", action.payload);
         },
         //__deleteComment
         [__deleteComment.pending]: (state, action) => {
@@ -90,7 +84,6 @@ export const commentSlice = createSlice({
         [__deleteComment.fulfilled]: (state, action) => {
             state.isLoading = false;
             if (action.payload.status === 200) {
-                console.log("__deleteComment action.payload", action.payload);
                 state.commentList = action.payload.data;
             } else {
                 console.log(action.payload.msg);
@@ -98,7 +91,7 @@ export const commentSlice = createSlice({
         },
         [__deleteComment.rejected]: (state, action) => {
             state.isLoading = false;
-            console.log(action.payload);
+            console.log("error", action.payload);
         },
         //__getComment
         [__getComment.pending]: (state, action) => {
@@ -106,7 +99,6 @@ export const commentSlice = createSlice({
         },
         [__getComment.fulfilled]: (state, action) => {
             state.isLoading = false;
-            console.log("__getComment", action.payload)
             if (action.payload.status === 200) {
                 state.commentList = action.payload.data;
             } else {
@@ -115,7 +107,7 @@ export const commentSlice = createSlice({
         },
         [__getComment.rejected]: (state, action) => {
             state.isLoading = false;
-            console.log(action.payload);
+            console.log("error", action.payload);
         },
     }
 });

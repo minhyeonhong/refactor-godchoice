@@ -11,9 +11,10 @@ const Search = ({ updateSearchInfo, searchState }) => {
     const tagList = ['서울', '인천', '세종', '대구', '부산', '울산', '광주', '대전', '제주도', '경기도', '강원도', '충청도', '경상도', '전라도'];
 
     const userAddressTag = localStorage.getItem('userAddressTag');
+
     //검색정보 state
     const [searchInfo, setSearchInfo, searchInfoHandle] = useInput({
-        tag: userAddressTag !== null ? [userAddressTag] : [],
+        tag: userAddressTag !== null && userAddressTag !== 'null' ? [userAddressTag] : [],
         progress: '진행중',
         sort: '최신순',
         search: '',

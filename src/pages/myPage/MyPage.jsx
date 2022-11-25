@@ -19,12 +19,13 @@ const MyPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const data = useSelector((state) => state.myPage.userInfo);
-  console.log("data ===> ", data.adminPage)
   const token = localStorage.getItem("token");
   // const nickName = localStorage.getItem("nickName");
   const nickName = data.nickName;
   const email = data.email;
   const userImgUrl = data.userImg;
+
+  localStorage.setItem("userAddressTag", data.addressTag);
 
   // const userProfileImg = () => {
   //   if (nickName === null) {
@@ -66,7 +67,6 @@ const MyPage = () => {
     // delCookie("addressTag")
     navigate("/")
   }
-
 
   return (
     <Layout>

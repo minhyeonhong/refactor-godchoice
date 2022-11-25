@@ -45,9 +45,6 @@ const Home = () => {
         dispatch(__getAdminPost());
     }, [])
 
-    useEffect(() => {
-        console.log("isLoading", isLoading);
-    }, [isLoading])
 
     //검색 상태 업데이트
     const updateSearchInfo = (searchInfo) => {
@@ -62,10 +59,10 @@ const Home = () => {
     //리스트 불러오기
     useMemo(() => {
         if (Object.keys(searchState).length > 0) {
-            console.log("isResetSearch", isResetSearch);
             dispatch(__getAllPostList(searchState));
         }
     }, [searchState])
+
 
     return (
 
@@ -84,7 +81,7 @@ const Home = () => {
                 {/* 슬라이드 */}
                 <StCarouselWrap>
                     <Carousel activeIndex={index} onSelect={handleSelect}>
-                        {adminPosts === undefined ?
+                        {adminPosts.length === 0 ?
                             <Carousel.Item>
                                 <PageState
                                     display='flex'

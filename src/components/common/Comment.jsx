@@ -44,7 +44,6 @@ const Comment = ({ postId, kind, commentDtoList }) => {
             return
         }
 
-        //console.log("obj", obj);
         dispatch(__insertComment(obj));
     }
 

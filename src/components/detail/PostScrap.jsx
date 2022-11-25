@@ -27,7 +27,7 @@ const PostScrap = ({ bookMarkStatus }) => {
   return (
     <>
       <div onClick={() => scrapHandler()}>
-        {scrapState !== null && scrapState ? <BookmarkFill /> : ""}
+        {scrapState !== null && scrapState ? <BookmarkFill /> : <BookmarkStroke />}
       </div>
     </>
   );

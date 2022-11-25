@@ -8,6 +8,7 @@ import AlertModal from "../Modals/AlertModal";
 import ErrorModal from "../Modals/ErrorModal";
 import { useState } from "react";
 import ImageLoading from "../elements/ImageLoading";
+import PageState from "../common/PageState";
 
 const Login = () => {
   const [modal, setModal] = React.useState(false);
@@ -33,7 +34,6 @@ const Login = () => {
     try {
       axios.get(`${process.env.REACT_APP_API_URL}/member/signup/google?code=${code}`)
         .then((res) => {
-          console.log("넘어온 값", res); // 토큰이 넘어올 것임
           const Access_Token = res.headers.access_token;
           const resData = res.data.data;
 
@@ -43,9 +43,6 @@ const Login = () => {
           localStorage.setItem("userAddressTag", resData.userAddressTag);
           localStorage.setItem("userId", resData.userId);
           localStorage.setItem("userImgUrl", resData.userImgUrl);
-
-
-          console.log("토큰나와라 ===> ", localStorage.getItem("token"))
 
           window.location.replace("/mypage")
         }).catch((error) => {
@@ -67,15 +64,11 @@ const Login = () => {
   }, [code]);
 
   return (
-    <>
-      <Layout>
-        {error && <ErrorModal error="로그인 실패" navigation="/login" />}
-        <ImageLoadingWrap>
-          <ImageLoading color="rgba(0, 0, 0, 0.13)" />
-        </ImageLoadingWrap>
-        <CommunityBox>{modal && <AlertModal alertModalData={alertModalData} closeModal={modalOnOff} goAction={goAction}></AlertModal>}</CommunityBox>
-      </Layout>
-    </>
+    <Layout>
+      {error && <ErrorModal error="로그인 실패" navigation="/login" />}
+      <PageState display='flex' state='loading' imgWidth='25%' height='100vh'
+        text='로그인 중입니다.' />
+    </Layout>
   );
 };
 export default Login;

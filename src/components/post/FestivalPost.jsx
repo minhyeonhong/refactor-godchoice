@@ -17,6 +17,7 @@ import Col from 'react-bootstrap/Col';
 import Layout from '../layout/Layout'
 import { useEffect } from 'react';
 import noImg from '../../assets/images/common/noImg.png'
+import { ModalWrap } from '../styles/GatherDetail.styled';
 
 const FestivalPost = () => {
 
@@ -38,6 +39,8 @@ const FestivalPost = () => {
             alert('이미지는 최대 5개까지 업로드가 가능합니다.');
             return;
         }
+        setImgFile([]);
+        setImgUrl([]);
 
         //선택한 이미지 파일 반복문 돌리기
         [...files].forEach(file => {
@@ -141,7 +144,6 @@ const FestivalPost = () => {
                     return (alert('http:// 또는 https://가 포함된 링크를 입력해주세요'))
                 }
             }
-            console.log("obj", obj)
             formData.append("eventPostReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
             dispatch(__addPost(formData));
         }
@@ -182,137 +184,120 @@ const FestivalPost = () => {
         }
     }
 
-    useEffect(() => {
-        console.log("isAdmin", isAdmin);
-    }, [isAdmin])
 
     return (
-        <Layout>
-            <FestivalWrap>
-                <SelectWrap>
-                    <SelTop>
-                        <STSelect value="행사글" style={{ width: "50%" }} disabled>
+        <>
+            {isPopupOpen && (
+                <ModalWrap onClick={popupPostCode}>
+                    <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
+                </ModalWrap>
+            )}
+            <Layout style={{ height: "100%" }} >
+                <FestivalWrap>
+                    {/* <STSelect value="행사글" style={{ width: "50%" }} disabled>
                             <option value="행사글">행사글</option>
-                        </STSelect>
+                        </STSelect> */}
+                    <h4 style={{ textAlign: "center", marginTop: "8px", marginBottom: "18px" }}>행사글</h4>
 
-                        <STSelect style={{ width: "50%" }} name="category" onChange={onChangeHandler}>
-                            <option>카테고리</option>
-                            <option value="마라톤">마라톤</option>
-                            <option value="페스티벌">페스티벌</option>
-                            <option value="전시회">전시회</option>
-                            <option value="공연">공연</option>
-                            <option value="기타">기타</option>
-                        </STSelect>
-                    </SelTop>
-                    {/* SelTop */}
+
+                    <Form.Group className="mb-3" controlId="formGridAddress1" style={{ height: "auto" }}>
+                        <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler} style={{ width: "100%", height: "48px", border: "none", margin: "0 0 10px 0" }} />
+                    </Form.Group>
+
+                    {imgUrl.length === 0 && <img src={noImg} style={{ width: "100%", marginBottom: "14px" }} onClick={() => { imgRef.current.click() }} />}
+
+                    <div >
+
+                        {/* <div style={{position:"absolute"}} > */}
+                        <label htmlFor="imgFile">
+                            <input
+                                style={{ display: "none" }}
+                                type="file"
+                                id="imgFile"
+                                onChange={onChangeImage}
+                                accept="image/*"
+                                ref={imgRef}
+                                name="imgFile"
+                                multiple />
+
+                        </label>
+                        <Carousel>
+                            {imgUrl && imgUrl.map((img, index) => {
+                                return (
+                                    <Carousel.Item key={img.id}>
+                                        <img src={img} style={{ width: '100%', height: "396px", objectFit: "contain" }} onClick={() => { imgRef.current.click() }} />
+
+                                    </Carousel.Item>
+                                )
+                            })
+                            }
+                        </Carousel>
+                    </div >
+
+                    <AllTextarea type="text" placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" name="content" onChange={onChangeHandler} maxLength={2500} style={{ height: '200px', width: "100%", border: "none", padding: "10px", margin: "0", marginBottom: "14px" }} />
+
+                    <STSelect style={{ width: "100%", marginBottom: "10px", padding: "10px" }} name="category" onChange={onChangeHandler}>
+                        <option>카테고리</option>
+                        <option value="마라톤">마라톤</option>
+                        <option value="페스티벌">페스티벌</option>
+                        <option value="전시회">전시회</option>
+                        <option value="공연">공연</option>
+                        <option value="기타">기타</option>
+                    </STSelect>
 
                     <SelBottom>
                         <Row className="mb-3">
                             <Form.Group as={Col} controlId="formGridCity">
-                                {/* <Form.Label>행사시작</Form.Label> */}
+                                <Form.Label>행사시작</Form.Label>
                                 <Form.Control type="date" name="startPeriod" onChange={onChangeHandler} min={today2} className="dateform"
                                 />
                             </Form.Group>
                             {/* <span>~</span> */}
                             <Form.Group as={Col} controlId="formGridCity">
-                                {/* <Form.Label>행사마감</Form.Label> */}
+                                <Form.Label>행사마감</Form.Label>
                                 <Form.Control type="date" name="endPeriod" onChange={onChangeHandler} min={today3} className="dateform" />
                             </Form.Group>
                         </Row>
                     </SelBottom>
                     {/* SelBottom */}
 
-                </SelectWrap>
-                {/* SelectWrap */}
 
-                <Form.Group className="mb-3" controlId="formGridAddress1" style={{height:"auto"}}>
-                    <Form.Label style={{ fontSize: "18px" }} > 글 작성</Form.Label>
-                    <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler} style={{ width: "100%", height: "48px", border: "none", margin: "0 0 10px 0" }} />
-                </Form.Group>
+                    <Form.Group className="mb-3" controlId="formGridAddress1">
+                        <Form.Label>행사장 링크</Form.Label>
+                        <Form.Control type="text" placeholder="링크" name="postLink" onChange={onChangeHandler} style={{ width: "100%", height: "48px", border: "none", margin: "0 0 10px 0" }} />
+                    </Form.Group>
 
-                <div style={{ height:"356px" , margin:"10px 0"}} >
-                {imgUrl.length === 0 && <img src={noImg} style={{ width: "100%" }} onClick={() => { imgRef.current.click() }} />}
-                <div>
-                    <label htmlFor="imgFile">
-                        <input
-                            style={{ display: "none" }}
-                            type="file"
-                            id="imgFile"
-                            onChange={onChangeImage}
-                            accept="image/*"
-                            ref={imgRef}
-                            name="imgFile"
-                            multiple />
+                    {/* 주소 부분 */}
+                    <div>
+                        <StSearchBox style={{ background: "#E1E3EC", height: "40px" }} onClick={popupPostCode}>
+                            <button style={{ color: "#8B909F" }}><FiSearch style={{ width: '20px', height: '40px', color: '#424754', marginRight: "10px" }} />주소검색</button>
+                        </StSearchBox>
 
-                    </label>
-                </div >
 
-                <Carousel>
-                    {imgUrl && imgUrl.map((img, index) => {
-                        return (
-                            <Carousel.Item key={img.id}>
-                                <button style={{ width: "100%" }}>
-                                    <img src={img} style={{ width: '396px', height: "396px", objectFit: "contain" }} onClick={() => { imgRef.current.click() }} />
-                                </button>
-                            </Carousel.Item>
-                        )
-                    })
+
+                        <AddressBox >
+                            {
+                                postAddress !== "" && (
+                                    <>
+                                        <div style={{ display: "flex", marginBottom: "10px" }}>
+                                            <STAddressButton style={{ marginRight: "10px", flex: "2" }}>{"#" + region}</STAddressButton>
+                                            <STInput3 type="text" value={postAddress} style={{ flex: "8" }} readOnly>{postAddress}</STInput3>
+                                        </div>
+                                        <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{ width: "80%", marginBottom: "10px", float: "right" }} />
+                                        <KakaoMap address={postAddress} width="328px" height="300px" />
+                                    </>)
+                            }
+                        </AddressBox >
+                    </div><br />
+                    {
+                        localStorage.getItem('role') === 'ADMIN' &&
+                        <div><input type='checkbox' onChange={adminPostHandle} />관리자글</div>
                     }
-                </Carousel>
-                            
-                    {/* <STUploadButton onClick={() => { imgRef.current.click() }}>+</STUploadButton><br /> */}
-
-                    <label htmlFor="imgFile">
-                        <input
-                            style={{ display: "none" }}
-                            type="file"
-                            id="imgFile"
-                            onChange={onChangeImage}
-                            accept="image/*"
-                            ref={imgRef}
-                            name="imgFile"
-                            multiple />
-                    </label>
-                </div >
-                <AllTextarea type="text" placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" name="content" onChange={onChangeHandler} maxLength={2500} style={{ height: '200px', width: "100%", border: "none", padding: "10px", margin:"0 0 10px 0" }} />
-
-                <Form.Group className="mb-3" controlId="formGridAddress1">
-                    <Form.Label style={{fontSize:"18px"}} >행사장 링크</Form.Label>
-                    <Form.Control type="text" placeholder="링크" name="postLink" onChange={onChangeHandler}  style={{ width: "100%", height: "48px", border: "none", margin: "0 0 10px 0" }} />
-                </Form.Group>
-
-                {/* 주소 부분 */}
-                <div>
-                    <StSearchBox onClick={popupPostCode}>
-                        <button ><FiSearch style={{ width: '100%', height: '20px', color: '#FFAE00'}} /></button>
-                    </StSearchBox>
-
-                    {isPopupOpen && (
-                        <ModalWrap>
-                            <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
-                        </ModalWrap>
-                    )}
-
-                    <AddressBox >
-                        {
-                            postAddress !== "" && (
-                                <>
-                                    <RegionButton>{"#" + region}</RegionButton>
-                                    <AddressInput type="text" value={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{ width: "90%" }} />
-                                    <AddressInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{ width: "80%" }} />
-                                    <KakaoMap address={postAddress} width="328px" height="300px" />
-                                </>)
-                        }
-                    </AddressBox >
-                </div><br />
-                {
-                    localStorage.getItem('role') === 'ADMIN' &&
-                    <div><input type='checkbox' onChange={adminPostHandle} />관리자글</div>
-                }
-                <AllButton style={{ background: "#B6B6B6" }} onClick={onSubmit}>작성</AllButton>
-                {/*<AllButton onClick={()=>navigate(-1)}>취소</AllButton>  <AddressModal />*/}
-            </FestivalWrap>
-        </Layout>
+                    <AllButton style={{ background: "#3556E1", color: "white", borderRadius: "10px" }} onClick={onSubmit}>작성</AllButton>
+                    {/*<AllButton onClick={()=>navigate(-1)}>취소</AllButton>  <AddressModal />*/}
+                </FestivalWrap>
+            </Layout>
+        </>
 
     )
 }
@@ -339,9 +324,9 @@ const SelBottom = styled.div`
     display: flex;
     justify-content : space-between;
      --bs-gutter-x : 0;
-     gap : 15px;
+     gap : 10px;
     .dateform {
-        border-radius : 30px;
+        border-radius : 10px;
         height : 48px;
         flex : 1;
         border: none;
@@ -352,13 +337,16 @@ const SelBottom = styled.div`
 `
 
 const STSelect = styled.select`
+    width : 100%;
     height : 48px;
     font-size: 16px;
     background-color: #FFF;
-    border-radius: 30px;
+    border-radius: 10px;
     padding:12px 16px;
     border: none;
-    flex : 1;
+    option {
+       padding: 0 10px ;
+    }
 `
 
 const StSearchBox = styled.div`
@@ -426,18 +414,49 @@ const STUploadButton = styled.button`
     border : transparent;
 `
 //modal
-const ModalWrap = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-  padding: 0 15px;
-  box-sizing: border-box;
-`;
+// const ModalWrap = styled.div`
+//   position: fixed;
+//   bottom: 0;
+//   left: 0;
+//   width: 100%;
+//   height: 100%;
+//   background-color: rgba(0, 0, 0, 0.4);
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   z-index: 999;
+//   padding: 0 15px;
+//   box-sizing: border-box;
+// `;
+
+const STAddressButton = styled.div`
+    width: 64px;
+    height: 36px;
+    background-color: #DCE0F1;
+    border-radius: 30px;
+    text-align: center;
+    padding-top: 6px;
+`
+const STInput3 = styled.div`
+    width: 100%;
+    /* height: 36px; */
+    background: white;
+    border-radius: 10px;
+    font-weight: 500;
+    padding-top: 6px;
+    padding-left: 6px;
+    border : transparent;
+`
+
+const STInput = styled.input`
+    width: 100%;
+    height: 36px;
+    background: white;
+    border-radius: 10px;
+    font-weight: 500;
+    padding-top: 6px;
+    padding-left: 6px;
+    padding-bottom: 6px;
+    border:transparent;
+`
 

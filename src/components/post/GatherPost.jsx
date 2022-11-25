@@ -155,10 +155,9 @@ const GatherPost = () => {
             postLink: gatherPosts.postLink,
             postAddress: postAddress + gatherPosts.detailAddress,
         }
-        // console.log(obj2)
         formData.append("gatherPostDto", new Blob([JSON.stringify(obj2)], { type: "application/json" }));
         dispatch(__addPost2(formData));
-        window.location.replace('/')
+        //window.location.replace('/')
     }
 
 
@@ -227,8 +226,8 @@ const GatherPost = () => {
 
                     <AllTextarea type="text" placeholder="소개글" name="content" onChange={onChangeHandler2} style={{}} />
 
-                    <div style={{ display: "flex" }}>
-                        <STSelect name="category" onChange={onChangeHandler2} style={{ flex: "1", textAlign: "center" }} >
+                    <div style={{ display: "flex", marginBottom: "14px", gap: "10px" }}>
+                        <STSelect name="category" onChange={onChangeHandler2} style={{ flex: "0.9", textAlign: "center" }} >
                             <option>카테고리</option>
                             <option value="마라톤">마라톤</option>
                             <option value="페스티벌">페스티벌</option>
@@ -236,15 +235,27 @@ const GatherPost = () => {
                             <option value="공연">공연</option>
                             <option value="기타">기타</option>
                         </STSelect>
-                        <STInput2 type="date" name="date" onChange={onChangeHandler2} min={today2} style={{ flex: "1", marginLeft: "10px", textAlign: "center" }} />
-
-                    </div>
-                    <div style={{ display: "flex", marginTop: "14px" }}>
                         <STDiv style={{ flex: "1", textAlign: "center", display: "flex" }}>
                             <STButton style={{ flex: "0.7" }} onClick={handleAdd}>+</STButton>
                             <div style={{ flex: "2", lineHeight: "40px" }}>{counter === 0 ? "모집인원" : counter}</div>
                             <STButton style={{ flex: "0.7", right: "0px" }} onClick={handleminus}>-</STButton>
                         </STDiv>
+                    </div>
+
+                    <label style={{ marginLeft: "3px" }}>연령대</label><br />
+                    <div style={{ flex: "1", display: "flex", marginTop: "5px" }}>
+                        <STInput2 type="text" placeholder='나이' style={{ width: "50%", textAlign: "center" }} name="startAge" onChange={onChangeHandler2} />
+                        <p style={{ paddingTop: "5px" }}>~</p>
+                        <STInput2 type="text" placeholder='나이' style={{ width: "50%", textAlign: "center" }} name="endAge" onChange={onChangeHandler2} />
+                    </div>
+
+                    <div style={{ display: "flex", marginTop: "10px", marginLeft: "3px" }}>
+                        <div style={{ flex: "1" }}>만날 날짜</div>
+                        <div style={{ flex: "1" }}>성비관련</div>
+                    </div>
+
+                    <div style={{ display: "flex", marginTop: "5px" }}>
+                        <STInput2 type="date" name="date" onChange={onChangeHandler2} min={today2} style={{ flex: "0.8", textAlign: "center" }} />
                         <div style={{ flex: "1", marginLeft: "10px" }}>
                             <ButtonGroup className="mb-2" >
                                 {sexs.map((radio, idx) => (
@@ -264,16 +275,7 @@ const GatherPost = () => {
                                 ))}
                             </ButtonGroup>
                         </div>
-
-
                     </div>
-
-                    <div style={{ flex: "1", display: "flex", marginTop: "8px" }}>
-                        <STInput2 type="text" placeholder='나이' style={{ width: "50%", textAlign: "center" }} name="startAge" onChange={onChangeHandler2} />
-                        <p style={{ paddingTop: "5px" }}>~</p>
-                        <STInput2 type="text" placeholder='나이' style={{ width: "50%", textAlign: "center" }} name="endAge" onChange={onChangeHandler2} />
-                    </div>
-
 
                     <div style={{ marginTop: "14px", marginBottom: "14px" }}>
                         <label>카카오 링크</label><br />

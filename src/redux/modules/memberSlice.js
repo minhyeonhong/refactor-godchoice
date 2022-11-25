@@ -10,7 +10,6 @@ export const __kakaoLogin = createAsyncThunk(
     try {
       axios.get(`${process.env.REACT_APP_API_URL}/member/signup/kakao?code=${payload}`)
         .then((res) => {
-          console.log("넘어온 값", res); // 토큰이 넘어올 것임
           const Access_Token = res.headers.access_token;
           const resData = res.data.data;
 
