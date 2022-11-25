@@ -45,6 +45,7 @@ const Home = () => {
         dispatch(__getAdminPost());
     }, [])
 
+
     useEffect(() => {
         console.log("isLoading", isLoading);
     }, [isLoading])
@@ -67,6 +68,7 @@ const Home = () => {
         }
     }, [searchState])
 
+
     return (
 
         <Layout>
@@ -84,7 +86,7 @@ const Home = () => {
                 {/* 슬라이드 */}
                 <StCarouselWrap>
                     <Carousel activeIndex={index} onSelect={handleSelect}>
-                        {adminPosts === undefined ?
+                        {adminPosts.length === 0 ?
                             <Carousel.Item>
                                 <PageState
                                     display='flex'
