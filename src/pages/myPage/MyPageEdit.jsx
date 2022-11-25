@@ -16,6 +16,10 @@ import google from "../../assets/logo_google.png";
 const MyPageEdit = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const selectList = ["서울", "인천", "세종", "대구", "부산", "울산", "광주", "대전", "제주도", "경기도", "강원도", "충청도", "경상도", "전라도" ];
+  const [Selected, setSelected] = useState("");
+
+
 
   const data = {
     nickName: "",
@@ -61,11 +65,15 @@ const MyPageEdit = () => {
     setInputForm({ ...inputForm, [name]: value });
   };
 
+  const onChangeHandler2 = (v) => {
+    setSelected(v.target.value);
+  };
+
   const onSubmitHandler = async () => {
     let formData = new FormData();
     let uploadImg = img_ref.current;
 
-    const obj = { userName: inputForm.nickName, userAddress: inputForm.address }
+    const obj = { userName: inputForm.nickName, userAddress: Selected }
     console.log("넘어오니 ===> ", obj)
 
     formData.append(
@@ -94,21 +102,12 @@ const MyPageEdit = () => {
   return (
     <>
       <Layout>
-        <div>
+        {/* <div>
           <h3>프로필 수정</h3>
-        </div>
+        </div> */}
         <MyProfile>
           <MyImgWrap>
             <MyImgBox>
-              {/* {imagePreview === null ? (
-                  profileData?.userImgUrl === null ? (
-                    <BasicProfile />
-                  ) : (
-                    <img src={profileData?.profileImgUrl} alt="" />
-                  )
-                ) : (
-                  <img src={imagePreview} alt="" />
-                )} */}
               <img src={imagePreview} alt="" />
               <label htmlFor="img_UpFile">
                 <Camera />
@@ -155,9 +154,9 @@ const MyPageEdit = () => {
             {/* <span className="MyTextCheck"></span> */}
           </MyTextWrap>
           <MyTextWrap>
-            <div className="MyTextAdd">관심 지역</div>
+            <div className="MyTextNick">관심 지역</div>
             <div className="MyTextInputWrap">
-              <input
+              {/* <input
                 type="text"
                 value={inputForm.address}
                 name="address"
@@ -167,8 +166,16 @@ const MyPageEdit = () => {
                     ? "관심 지역을 입력해주세요."
                     : address
                 }
-              />
-              <Delete />
+              /> */}
+              <select onChange={onChangeHandler2} value={Selected} style={{width : "100%", height : "56px", border: "1px solid #808080", borderRadius:"10px"}} >
+                {selectList.map((v) => (
+                  <option value={v} key={v} >
+                    {v}
+                  </option>
+                ))}
+              </select>
+              {/* <p>Selected : <b>{Selected}</b> </p> */}
+              {/* <Delete /> */}
             </div>
             {/* <span className="MyTextCheck"></span> */}
           </MyTextWrap>
@@ -199,8 +206,8 @@ const MyImgWrap = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 120px;
-  margin-top: 32px;
+  height: 150px;
+  margin-top: 40px;
 `;
 
 const MyImgBox = styled.div`
@@ -297,20 +304,20 @@ const MyDoneBtnWrap = styled.div`
   display: flex;
   width: 100%;
   height: 56px;
+  margin : 50px 0 100px 0;
 `;
 
 const MyDoneBtn = styled.button`
   display: flex;
-  width: 350px;
+  width: 100%;
   height: 56px;
+  margin : 20px;
   justify-content: center;
   align-items: center;
   font-size: 18px;
-  background-color: #dedede;
+  background-color: #3556E1;
   border: none;
-  border-radius: 8px;
-  position: fixed;
-  bottom: 26px;
-  left: 50%;
-  transform: translate(-50%);
+  border-radius: 10px;
+  color : #fff;
+  font-weight : 400;
 `;

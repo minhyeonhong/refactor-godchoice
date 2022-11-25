@@ -78,8 +78,8 @@ const StyledTopBtn = styled.button`
   border: none;
   border-radius: 50px;
 
-  background-color: gray;
-  opacity: 50%;
+  background-color: grey;
+  opacity: 0.7;
   box-shadow: 0px 0px 5px gray;
 
   position: fixed;
