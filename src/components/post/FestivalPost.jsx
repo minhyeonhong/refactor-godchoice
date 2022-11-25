@@ -48,7 +48,7 @@ const FestivalPost = () => {
             //이미지 압축 지정 
             const options = {
                 maxSizeMB: 0.5,
-                maxWidthOrHeight: 220,
+                maxWidthOrHeight: 1000,
                 useWebWorker: true,
             };
 
