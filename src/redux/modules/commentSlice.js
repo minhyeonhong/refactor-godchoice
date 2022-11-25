@@ -43,7 +43,7 @@ export const __getComment = createAsyncThunk(
     async (payload, thunkAPI) => {
         try {
             const res = await commentApis.getCommentAX(payload)
-            //return thunkAPI.fulfillWithValue(res.data);
+            return thunkAPI.fulfillWithValue(res.data);
         } catch (error) {
             return thunkAPI.rejectWithValue(error);
         }

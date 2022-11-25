@@ -12,14 +12,18 @@ const Comment = ({ postId, kind, commentDtoList }) => {
     const dispatch = useDispatch();
     const { commentList } = useSelector((state) => state.commentSlice);
 
+    // useEffect(() => {
+    //     if (Object.keys(commentDtoList).length > 0) {
+    //         commentDtoList.forEach(element => {
+    //             setOpenReComment(e => [...e, false])
+    //         });
+    //         dispatch(setCommentList(commentDtoList));
+    //     }
+    // }, [commentDtoList])
+
     useEffect(() => {
-        if (Object.keys(commentDtoList).length > 0) {
-            commentDtoList.forEach(element => {
-                setOpenReComment(e => [...e, false])
-            });
-            dispatch(setCommentList(commentDtoList));
-        }
-    }, [commentDtoList])
+        dispatch(__getComment({ postId, kind }));
+    }, [])
 
     const [comment, setComment, commentHandle] = useInput({
         content: ""
