@@ -93,10 +93,10 @@ const QuestionPost = () => {
         if (question.content === "") { return (alert('내용을 입력하세요')) }
 
         //행사장 링크(필수 아님)
-        const arr = question.postLink.indexOf("http://" || "https://") !== -1
+        const arr = question.postLink.indexOf("https://") !== -1
         if (question.postLink !== "") {
             if (arr === false) {
-                return (alert('http:// 또는 https://가 포함된 링크를 입력해주세요'))
+                return (alert('https://가 포함된 링크를 입력해주세요'))
             }
         }
 

@@ -56,10 +56,10 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         if (modPost.category === "") { return (alert('카테고리를 입력하세요')) }
 
         //링크 검사(행사장링크 필수 아님)
-        const arr = modPost.postLink.indexOf("http://" || "https://") !== -1
+        const arr = modPost.postLink.indexOf("https://") !== -1
         if (modPost.postLink !== "") {
             if (arr === false) {
-                return (alert('http:// 또는 https://가 포함된 링크를 입력해주세요'))
+                return (alert('https://가 포함된 링크를 입력해주세요'))
             }
         }
 

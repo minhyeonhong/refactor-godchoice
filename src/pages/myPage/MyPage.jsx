@@ -18,53 +18,16 @@ import { BookmarkFill, Comment, MyPost } from '../../assets';
 const MyPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const data = useSelector((state) => state.myPage.userInfo);
-  const token = localStorage.getItem("token");
-  // const nickName = localStorage.getItem("nickName");
-  const nickName = data.nickName;
-  const email = data.email;
-  const userImgUrl = data.userImg;
+  const { userInfo } = useSelector((state) => state.myPage);
 
-  localStorage.setItem("userAddressTag", data.addressTag);
-
-  // const userProfileImg = () => {
-  //   if (nickName === null) {
-  //     return <ProfileImg onClick={() => navigate("/login")} />;
-  //   } else {
-  //     if (userImgUrl === null || userImgUrl === undefined) {
-  //       return <ProfileImg />;
-  //     } else {
-  //       return <img src={userImgUrl} alt="" />;
-  //     }
-  //   }
-  // };
-
-
-  // useEffect(() => {
-  //     dispatch(__getMyInfo(nickName));
-  //   }, [nickName, JSON.stringify[data]]);
+  //유저 정보 받아오기
   useEffect(() => {
-    dispatch(__getMyInfo(token));
-  }, [token, JSON.stringify[data]]);
-
-
-  // const MyPageList = ({ listName, onClick }) => {
-  //   return (
-  //     <div>
-  //       <div className="listTitle" onClick={onClick}>
-  //         {listName}
-  //       </div>
-  //     </div>
-  //   );
-  // };
+    dispatch(__getMyInfo());
+  }, []);
 
   // 로그아웃
   const handleLogout = () => {
     localStorage.clear();
-    // delCookie("nickName");
-    // delCookie("email")
-    // delCookie("userImg")
-    // delCookie("addressTag")
     navigate("/")
   }
 
@@ -78,7 +41,7 @@ const MyPage = () => {
         <MyProfileWrap>
           <MyImgContainer>
             <MyImgBox>
-              < img src={userImgUrl} alt={'ProfileImg'} />
+              < img src={userInfo.userImg} alt={'ProfileImg'} />
               {/* {userProfileImg()} */}
             </MyImgBox>
           </MyImgContainer>
@@ -87,7 +50,7 @@ const MyPage = () => {
           <NickBox>
 
             <div className="nickName">
-              {nickName}
+              {userInfo.nickName}
             </div>
             <Btns>
               <Button btnType="submit" onClick={() => { navigate("/mypageedit") }}>프로필 수정</Button>
@@ -98,33 +61,6 @@ const MyPage = () => {
         </MyProfileWrap>
         {/* MyProfileWrap */}
 
-        {/* <MyStateWrap>
-                <div className="MyStateWrap">
-                  <div
-                    className="stateBox"
-                    onClick={() => navigate("/mypagepost")}>
-                    <div className="title">내가 쓴 글</div>
-                  </div>
-                  <StateBox>
-                    <div
-                      className="stateBox"
-                      onClick={() => navigate("/mypagecomment")}>
-                      <div className='title'>댓글 단 글</div>
-                    </div>
-                  </StateBox>
-                  <div
-                    className="stateBox"
-                    onClick={() => navigate("/mypagecomment")}>
-                    <div className='title'>댓글 단 글</div>
-                  </div>
-                </StateBox>
-                <div
-                  className="stateBox"
-                  onClick={() => navigate("/mypagescrap")}>
-                  <div className="title">스크랩</div>
-                </div>
-          </MyStateWrap> */}
-        {/* MyStateWrap */}
         <MyCateWrap>
           <CateBox onClick={() => navigate("/mypagepost")}>
             <div className='title'>내가 쓴 글</div>
@@ -145,9 +81,9 @@ const MyPage = () => {
         {/* MyCateWrap */}
         <div>
           {
-            data.adminPage !== undefined &&
-            data.adminPage !== null &&
-            data.adminPage.map((post) => {
+            userInfo.adminPage !== undefined &&
+            userInfo.adminPage !== null &&
+            userInfo.adminPage.map((post) => {
               return (
                 <div key={post.id}>
                   {post.title}

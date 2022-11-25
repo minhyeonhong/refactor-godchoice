@@ -124,10 +124,10 @@ const GatherPost = () => {
         if (gatherPosts.kakaoLink === "") { return (alert('연락할 카카오 링크를 입력하세요')) }
         if (postAddress === "") { return (alert('함께 만날 주소를 입력해주세요')) }
         // //링크 검사(행사장링크 필수 아님)
-        const arr = gatherPosts.postLink.indexOf("http://" || "https://") !== -1
+        const arr = gatherPosts.postLink.indexOf("https://") !== -1
         if (gatherPosts.postLink !== "") {
             if (arr === false) {
-                return (alert('http:// 또는 https://가 포함된 링크를 입력해주세요'))
+                return (alert('https://가 포함된 링크를 입력해주세요'))
             }
         }
 

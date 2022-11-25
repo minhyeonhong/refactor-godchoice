@@ -87,6 +87,14 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
             formData.append("multipartFile", null);
         }
 
+        //링크 검사(행사장링크 필수 아님)
+        const arr = modPost.postLink.indexOf("https://") !== -1
+        if (modPost.postLink !== "") {
+            if (arr === false) {
+                return (alert('https://가 포함된 링크를 입력해주세요'))
+            }
+        }
+
         const detail = modPost.detailAddress === undefined ? "" : modPost.detailAddress
 
         const obj = {
