@@ -25,6 +25,7 @@ import {
     __getAdminPost
 } from "../redux/modules/postSlice";
 import { useMemo } from 'react';
+import PageState from "../components/common/PageState";
 
 const Home = () => {
     const dispatch = useDispatch();
@@ -44,6 +45,10 @@ const Home = () => {
         dispatch(__getAdminPost());
     }, [])
 
+    useEffect(() => {
+        console.log("isLoading", isLoading);
+    }, [isLoading])
+
     //검색 상태 업데이트
     const updateSearchInfo = (searchInfo) => {
         dispatch(putSearchState({ main: searchState.main === undefined ? 'event' : searchState.main, ...searchInfo }));
@@ -55,7 +60,7 @@ const Home = () => {
     }, [page])
 
     //리스트 불러오기
-    useEffect(() => {
+    useMemo(() => {
         if (Object.keys(searchState).length > 0) {
             console.log("isResetSearch", isResetSearch);
             dispatch(__getAllPostList(searchState));
@@ -63,29 +68,28 @@ const Home = () => {
     }, [searchState])
 
     return (
-        <Layout>
-            {/* <AddPostButton /> */}
-            <ScrollToTop />
 
-            {modalOn && <WritingToggle modalOn={modalOn} setModalOn={setModalOn} />}
-            {/* <Routes>
-  {background && <Route exact path={"/chat"} element={<ChatRoom />} />}
-</Routes> */}
-            <TopButton modalOn={modalOn} setModalOn={setModalOn} />
-            <StHomeWrap>
+        <Layout>
+            <PageState
+                display={isLoading ? 'flex' : 'none'}
+                state='loading' imgWidth='25%' height='100vh'
+                text='잠시만 기다려 주세요.' />
+
+            <StHomeWrap display={isLoading ? 'none' : 'block'}>
+                <>
+                    <ScrollToTop />
+                    {modalOn && <WritingToggle modalOn={modalOn} setModalOn={setModalOn} />}
+                    <TopButton modalOn={modalOn} setModalOn={setModalOn} />
+                </>
                 {/* 슬라이드 */}
                 <StCarouselWrap>
                     <Carousel activeIndex={index} onSelect={handleSelect}>
                         {adminPosts === undefined ?
                             <Carousel.Item>
-                                <img style={{ height: "180px" }}
-                                    className="d-block w-100"
-                                    src={noImg}
-                                    alt="First slide"
-                                />
-                                <Carousel.Caption>
-                                    <h3>배너 없어요</h3>
-                                </Carousel.Caption>
+                                <PageState
+                                    display='flex'
+                                    state='notFound' imgWidth='25%' height='180px'
+                                    text='등록된 배너가 없습니다.' />
                             </Carousel.Item>
                             :
                             adminPosts.map((post) => {
@@ -138,6 +142,7 @@ width: 100%;
 `
 
 const StHomeWrap = styled.div`
+    display : ${(props) => props.display}
   //background-color: #FEFCF8;
 `;
 
@@ -148,6 +153,10 @@ const StCarouselWrap = styled.div`
   }
   .carousel a {
     display: none;
+  }
+  .carousel-caption {
+    right: 0%;
+    text-align: inherit;
   }
 `;
 const StTabBox = styled.div`
