@@ -54,8 +54,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
             formData.append("multipartFile", null);
         }
 
-        const detail = detailAddress === undefined ? "" : detailAddress
-
+        const detail = modPost.detailAddress === undefined ? "" : modPost.detailAddress
 
         const obj = {
             imgId: delImg.join(),
@@ -64,6 +63,8 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
             postLink: modPost.postLink,
             postAddress: modPost.postAddress + detail
         }
+
+        console.log("obj", obj);
         //폼 데이터에 글작성 데이터 넣기
         formData.append("askPostPutRequestDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
 
@@ -97,7 +98,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         dispatch(__deletePost(postId))
     }
 
-    const [detailAddress, setDetailAddress] = useState()
+
 
 
     return (
@@ -184,13 +185,20 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                     <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
                                 </ModalWrap>
                             )}
-                            <div style={{ display: "flex", marginTop: "14px" }}>
-                                <STAddressDiv style={{ flex: "1" }}>#{modPost.postAddress && modPost.postAddress.split(' ')[0]}</STAddressDiv>
-                                <STInput style={{ flex: "4", marginLeft: "10px" }}>{modPost.postAddress}</STInput>
-                            </div>
 
                             {
-                                modPost.postAddress !== post.postAddress && <STInput3 style={{ float: "right", width: "79%", height: "40px", marginTop: "10px" }} type="text" placeholder='상세주소' name={detailAddress} onChange={(e) => setDetailAddress(e.target.value)} />
+                                modPost.postAddress && (
+                                    <>
+                                        <div style={{ display: "flex", marginTop: "14px" }}>
+                                            <STAddressDiv style={{ flex: "1" }}>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressDiv>
+                                            <STInput style={{ flex: "4", marginLeft: "10px" }}>{modPost.postAddress}</STInput>
+                                        </div>
+                                    </>
+                                )
+                            }
+
+                            {
+                                modPost.postAddress !== post.postAddress && <STInput3 style={{ float: "right", width: "79%", height: "40px", marginTop: "10px" }} type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle} />
                             }
 
 
@@ -222,13 +230,13 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                             <STInput style={{ marginBottom: "8px" }}>{post.title}</STInput>
 
                             <div>
-                                <Carousel fade>
+                                <Carousel >
                                     {
                                         post.askPostImgList
                                         && post.askPostImgList.map((img, i) => {
                                             return (
                                                 <Carousel.Item key={img.id + i}>
-                                                    <img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
+                                                    <Img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
                                                         src={img.postImgUrl} />
                                                 </Carousel.Item>)
                                         })
@@ -241,11 +249,18 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                             <div>행사장 링크</div>
                             <STInput style={{ marginBottom: "14px" }}>{post.postLink}</STInput>
 
-                            <div>행사장소</div>
-                            <div style={{ display: "flex", marginBottom: "8px" }}>
-                                <STAddressButton style={{ flex: "2" }}>#{post.postAddress.split(' ')[0]}</STAddressButton>
-                                <STInput style={{ flex: "8", marginLeft: "5px" }}>{post.postAddress}</STInput>
-                            </div>
+                            {
+                                modPost.postAddress && (
+                                    <>
+                                        <div>행사장소</div>
+                                        <div style={{ display: "flex", marginBottom: "8px" }}>
+                                            <STAddressButton style={{ flex: "2" }}>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressButton>
+                                            <STInput style={{ flex: "8", marginLeft: "5px" }}>{post.postAddress}</STInput>
+                                        </div>
+                                    </>
+                                )
+                            }
+
 
                             <KakaoMap address={post.postAddress} width='100%' height='144px' />
 
@@ -447,4 +462,7 @@ const STAddressDiv = styled.div`
     border-radius: 30px;
     text-align: center;
     padding-top: 6px;
+`
+const Img = styled.img`
+    z-index : 1 !important;
 `

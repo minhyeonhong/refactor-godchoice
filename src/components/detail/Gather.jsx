@@ -295,10 +295,17 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                             <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
                                         </ModalWrap>
                                     )}
-                                    <div style={{ display: "flex", marginTop: "14px" }}>
-                                        <STAddressDiv>#{modPost.postAddress.split(' ')[0]}</STAddressDiv>
-                                        <STInput style={{ marginLeft: "10px" }}>{modPost.postAddress}</STInput>
-                                    </div>
+
+                                    {
+                                        modPost.postAddress && (
+                                            <>
+                                                <div style={{ display: "flex", marginTop: "14px" }}>
+                                                    <STAddressDiv>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressDiv>
+                                                    <STInput style={{ marginLeft: "10px" }}>{modPost.postAddress}</STInput>
+                                                </div>
+                                            </>
+                                        )}
+
 
                                     {
                                         modPost.postAddress !== post.postAddress && <STInput3 style={{ float: "right", width: "83%", height: "40px", marginTop: "10px" }} type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle} />
@@ -354,19 +361,20 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 </STBox2>
                                 <STInput style={{ marginBottom: "8px" }}>{post.title}</STInput>
 
-                                <Carousel fade>
-                                    {
-                                        post.postImgInfo
-                                        && post.postImgInfo.map((img, i) => {
-                                            return (
-                                                <Carousel.Item key={img.id + i}>
-                                                    <img style={{ width: "100%", height: "396px", objectFit: "contain" }}
-                                                        src={img.postImgUrl} />
-                                                </Carousel.Item>)
-                                        })
-                                    }
-                                </Carousel>
-
+                                <div>
+                                    <Carousel>
+                                        {
+                                            post.postImgInfo
+                                            && post.postImgInfo.map((img, i) => {
+                                                return (
+                                                    <Carousel.Item key={img.id + i}>
+                                                        <img style={{ width: "100%", height: "396px", objectFit: "contain" }}
+                                                            src={img.postImgUrl} />
+                                                    </Carousel.Item>)
+                                            })
+                                        }
+                                    </Carousel>
+                                </div>
                                 <StContent style={{ marginBottom: "14px", paddingTop: "5px" }}>{post.content}</StContent>
 
                                 <div>카카오 링크</div>
@@ -375,11 +383,18 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 <div>행사장 링크</div>
                                 <STInput style={{ marginBottom: "14px" }}>{post.postLink}</STInput>
 
-                                <div>행사장소</div>
-                                <div style={{ marginBottom: "8px", display: "flex" }}>
-                                    <STAddressButton style={{ flex: "1" }}>#{post.postAddress.split(' ')[0]}</STAddressButton>
-                                    <STInput style={{ marginLeft: "5px", flex: "4" }}>{post.postAddress}</STInput>
-                                </div>
+                                {
+                                    modPost.postAddress && (
+                                        <>
+                                            <div>행사장소</div>
+                                            <div style={{ marginBottom: "8px", display: "flex" }}>
+                                                <STAddressButton style={{ flex: "1" }}>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressButton>
+                                                <STInput style={{ marginLeft: "5px", flex: "4" }}>{post.postAddress}</STInput>
+                                            </div>
+                                        </>
+                                    )
+                                }
+
                                 <KakaoMap address={post.postAddress} width='100%' height='144px' />
 
 
