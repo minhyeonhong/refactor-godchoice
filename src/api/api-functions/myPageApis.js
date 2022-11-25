@@ -7,7 +7,7 @@ export const myPageApis = {
 
     //마이페이지 조회
     // getMyPageAX: (email) => instance.get(`/getMyPage?email=${email}`),
-    getMyPageAX: (payload) => instance.get(`/mypage/user`, payload),
+    getMyPageAX: (payload) => instance.get(`/mypage/user`),
 
     //마이페이지 수정
     putMyPageAX: (payload) => instance.put(`/mypage`, payload),

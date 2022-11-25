@@ -12,31 +12,30 @@ import kakao from "../../assets/logo_kakao.png";
 import naver from "../../assets/logo_naver.png";
 import google from "../../assets/logo_google.png";
 
+import useInput from "../../hooks/useInput";
 
 const MyPageEdit = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const selectList = ["서울", "인천", "세종", "대구", "부산", "울산", "광주", "대전", "제주도", "경기도", "강원도", "충청도", "경상도", "전라도"];
-  const [Selected, setSelected] = useState("");
 
-  const data = {
-    nickName: "",
-    address: "",
-  };
+  const { userInfo } = useSelector((state) => state.myPage);
+
+  //수정 인풋state
+  const [modMyInfo, setModMyInfo, modMyInfoHandle] = useInput({
+    userName: "",
+    userAddress: ""
+  });
+
+  //유저 정보 받아오기
+  useEffect(() => {
+    dispatch(__getMyInfo());
+  }, []);
 
 
-  const profileData = useSelector((state) => state.myPage.userInfo);
   const img_ref = useRef(null);
-
-  const [inputForm, setInputForm] = useState(data);
   const [imgFile, setImgFile] = useState([]);
-  const [imagePreview, setImagePreview] = useState(profileData.userImg);
-
-
-  const userId = localStorage.getItem("userId");
-  const email = localStorage.getItem("email");
-  const nickName = profileData.nickName;
-  const address = profileData.addressTag;
+  const [imagePreview, setImagePreview] = useState(userInfo.userImg);
 
   const onLoadFile = (e) => {
     const reader = new FileReader();
@@ -49,20 +48,16 @@ const MyPageEdit = () => {
     };
   };
 
-  const onChangeHandler = (e) => {
-    const { name, value } = e.target;
-    setInputForm({ ...inputForm, [name]: value });
-  };
 
-  const onChangeHandler2 = (v) => {
-    setSelected(v.target.value);
-  };
-
+  //서브밋
   const onSubmitHandler = async () => {
     let formData = new FormData();
     let uploadImg = img_ref.current;
 
-    const obj = { userName: inputForm.nickName, userAddress: Selected }
+    let obj = {
+      userName: modMyInfo.userName === '' ? userInfo.nickName : modMyInfo.userName,
+      userAddress: modMyInfo.userAddress === '' ? (userInfo.addressTag === null ? "서울" : userInfo.addressTag) : modMyInfo.userAddress
+    }
 
     formData.append(
       "user",
@@ -75,21 +70,13 @@ const MyPageEdit = () => {
       formData.append("multipartFile", uploadImg.files[0]);
     }
 
+    console.log("obj", obj);
+
     dispatch(__putMyInfo(formData));
 
-    // const data = dispatch(
-    //   __putMyInfo(formData)
-    // ).unwrap();
-
-    // if (data) {
-    //   window.alert("프로필이 변경되었습니다!")
-    //   // navigate(-1, {replace: true})
-    // }
   };
 
-  useEffect(() => {
-    dispatch(__getMyInfo(userId));
-  }, [imagePreview]);
+
 
   return (
     <>
@@ -118,10 +105,10 @@ const MyPageEdit = () => {
           <LoginInfo>
             <LoginInfoTitle>로그인 정보</LoginInfoTitle>
             <LoginInfoContent>
-              {profileData.domain === 'google' ? <img src={google} alt="logoImg" /> : null}
-              {profileData.domain === 'kakao' ? <img src={kakao} alt="logoImg" /> : null}
-              {profileData.domain === 'naver' ? <img src={naver} alt="logoImg" /> : null}
-              {profileData.email}
+              {userInfo.domain === 'google' ? <img src={google} alt="logoImg" /> : null}
+              {userInfo.domain === 'kakao' ? <img src={kakao} alt="logoImg" /> : null}
+              {userInfo.domain === 'naver' ? <img src={naver} alt="logoImg" /> : null}
+              {userInfo.email}
             </LoginInfoContent>
           </LoginInfo>
 
@@ -130,14 +117,10 @@ const MyPageEdit = () => {
             <div className="MyTextInputWrap">
               <input
                 type="text"
-                value={inputForm.nickName}
-                name="nickName"
-                onChange={onChangeHandler}
-                placeholder={
-                  nickName === null
-                    ? "닉네임을 입력해주세요."
-                    : nickName
-                }
+                value={modMyInfo.userName || ""}
+                name="userName"
+                onChange={modMyInfoHandle}
+                placeholder={userInfo.nickName}
                 minLength="1"
                 maxLength="6"
               />
@@ -148,23 +131,12 @@ const MyPageEdit = () => {
           <MyTextWrap>
             <div className="MyTextNick">관심 지역</div>
             <div className="MyTextInputWrap">
-              {/* <input
-                type="text"
-                value={inputForm.address}
-                name="address"
-                onChange={onChangeHandler}
-                placeholder={
-                  address === null
-                    ? "관심 지역을 입력해주세요."
-                    : address
+              <select onChange={modMyInfoHandle} name='userAddress' defaultValue={userInfo.addressTag} style={{ width: "100%", height: "56px", border: "1px solid #808080", borderRadius: "10px" }} >
+                {
+                  selectList.map((select) => (
+                    <option value={select} key={select} >{select}</option>
+                  ))
                 }
-              /> */}
-              <select onChange={onChangeHandler2} defaultValue={address} style={{ width: "100%", height: "56px", border: "1px solid #808080", borderRadius: "10px" }} >
-                {selectList.map((v) => (
-                  <option value={v} key={v} >
-                    {v}
-                  </option>
-                ))}
               </select>
               {/* <p>Selected : <b>{Selected}</b> </p> */}
               {/* <Delete /> */}

@@ -11,7 +11,9 @@ export const __getMyInfo = createAsyncThunk(
     async (payload, thunkAPI) => {
         try {
             const response = await myPageApis.getMyPageAX(payload)
-            return thunkAPI.fulfillWithValue(response.data.data)
+            if (response.data.status === 200) {
+                return thunkAPI.fulfillWithValue(response.data.data);
+            }
         } catch (error) {
             return thunkAPI.rejectWithValue(error)
         }
@@ -29,6 +31,7 @@ export const __putMyInfo = createAsyncThunk(
             myPageApis.putMyPageAX(payload)
                 .then((res) => {
                     if (res.data.status === 200) {
+                        localStorage.setItem('userAddressTag', res.data.data.addressTag);
                         window.location.replace("/mypage");
                     }
                 }).catch((error) => {
@@ -130,8 +133,7 @@ export const __getMyScrap = createAsyncThunk(
 );
 
 const initialState = {
-    // myPage: [],
-    userInfo: [],
+    userInfo: {},
     isLoading: false,
     myPostList: {},
     myCommentList: {},
@@ -154,7 +156,6 @@ const myPageSlice = createSlice({
         },
         [__getMyInfo.fulfilled]: (state, action) => {
             state.isLoading = false; // 네트워크 요청이 끝났으니, false로 변경
-            // state.userInfo.push(action.payload);
             state.userInfo = action.payload;
         },
         [__getMyInfo.rejected]: (state, action) => {
@@ -169,20 +170,6 @@ const myPageSlice = createSlice({
             state.isLoading = false;
             console.log("error", action.payload);
         },
-
-
-        // [_putMyInfoImg.pending]: (state) => {
-        //     state.isLoading = true; 
-        // },
-        // [__putMyInfoImg.fulfilled]: (state, action) => {
-        //     state.isLoading = false;
-        //     // state.userInfo.nickname = action.payload.nickname;
-        // },
-        // [__putMyInfoImg.rejected]: (state, action) => {
-        //     state.isLoading = false; 
-        //     state.error = action.payload; 
-        // },
-
 
         [__getMyPost.pending]: (state) => {
             state.isLoading = true;
