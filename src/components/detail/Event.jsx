@@ -131,6 +131,8 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
     const onEventDelete = (postId) => {
         dispatch(__deletePost(postId))
     }
+
+    //console.log(modPost.postAddress.split(' ')[0].substr(0, 2))
     return (
         Object.keys(post).length < 1 ?
             <div>페이지 정보 없음</div>
@@ -190,12 +192,19 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                         <div>행사장 링크</div>
                         <STInput style={{ marginBottom: "14px" }}>{post.postLink}</STInput>
 
+                        {
+                            modPost.postAddress && (
+                                <>
+                                    <div>행사장소</div>
+                                    <div style={{ display: "flex", marginBottom: "8px" }}>
+                                        <STAddressButton style={{ flex: "2" }}>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressButton>
+                                        <STInput style={{ flex: "8", marginLeft: "5px" }}>{post.postAddress}</STInput>
+                                    </div>
+                                </>
+                            )
+                        }
 
-                        <div>행사장소</div>
-                        <div style={{ display: "flex", marginBottom: "8px" }}>
-                            <STAddressButton style={{ flex: "2" }}>#{post.postAddress.split(' ')[0]}</STAddressButton>
-                            <STInput style={{ flex: "8", marginLeft: "5px" }}>{post.postAddress}</STInput>
-                        </div>
+
 
                         <KakaoMap address={post.postAddress} width='100%' height='144px' />
 
@@ -303,12 +312,16 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
                             </ModalWrap>
                         )}
-                        <div style={{ display: "flex", marginTop: "14px" }}>
-                            <STAddressDiv style={{ marginRight: "5px" }}>#{modPost.postAddress.split(' ')[0]}</STAddressDiv>
-                            <STInput >{modPost.postAddress}</STInput>
-                        </div>
+
                         {
-                            modPost.postAddress !== post.postAddress && <STInput3 style={{ float: "right", width: "79%", height: "40px", marginTop: "10px" }} type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle} />
+                            modPost.postAddress && (
+                                <>
+                                    <div style={{ display: "flex", marginTop: "14px" }}>
+                                        <STAddressDiv style={{ marginRight: "5px" }}>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressDiv>
+                                        <STInput >{modPost.postAddress}</STInput>
+                                    </div>
+                                </>
+                            )
                         }
 
                         <KakaoMap address={modPost.postAddress} width='100%' height='130px' />
