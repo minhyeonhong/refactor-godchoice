@@ -201,38 +201,15 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
                         {localStorage.getItem('userId') === post.userId.toString() &&
                             (<div>
-                                <STEditButton style={{ background: "#515466" }} onClick={() => { onEventDelete(postId); }}>삭제</STEditButton>
+                                <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={() => { onEventDelete(postId); }}>삭제</STEditButton>
                                 <STEditButton onClick={() => { setMod(true) }}>수정</STEditButton>
                             </div>)}
                     </>
                     :
 
                     <>
-                        <StTypeBox>
-                            <SelTop style={{ marginTop: "14px" }}>
-                                <STSelect value="모집글" style={{ width: "50%" }} disabled>
-                                    <option value="모집글">모집글</option>
-                                </STSelect>
-
-                                <STSelect style={{ width: "50%" }} defaultValue={modPost.category} name="category" onChange={modPostHandle}>
-                                    {categoryOption.map((cate, i) => {
-                                        return (
-                                            <option value={cate} key={i}>{cate}</option>
-                                        )
-                                    })}
-                                </STSelect>
-                            </SelTop>
-
-                            <SelBottom>
-                                <STDateInput type="date" name="startPeriod" value={modPost.startPeriod || ""} onChange={modPostHandle} min={today2} />
-                                <STDateInput type="date" name="endPeriod" value={modPost.endPeriod || ""} onChange={modPostHandle} min={today2} />
-                            </SelBottom>
-                        </StTypeBox>
-
-
-
+                        <h4 style={{ textAlign: "center", marginTop: "18px", marginBottom: "18px" }}>행사글</h4>
                         <STTitleInput type='text' name='title' value={modPost.title || ""} onChange={modPostHandle} />
-
 
                         <StCarouselWrap>
                             {//modPost.postImgInfo.length > 1 &&
@@ -288,10 +265,30 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
                         <STContentTextarea style={{ height: "200px" }} name='content' value={modPost.content || ""} onChange={modPostHandle} placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" maxLength={2500}></STContentTextarea>
 
-                        <div>행사장 링크</div>
+                        <StTypeBox>
+                            <label style={{ marginLeft: "10px", marginTop: "14px" }}>카테고리</label>
+                            <SelTop style={{ marginTop: "10px" }}>
+                                <STSelect defaultValue={modPost.category} name="category" onChange={modPostHandle}>
+                                    {categoryOption.map((cate, i) => {
+                                        return (
+                                            <option value={cate} key={i}>{cate}</option>
+                                        )
+                                    })}
+                                </STSelect>
+                            </SelTop>
+                            <div style={{ display: "flex", marginLeft: "10px", marginBottom: "14px" }}>
+                                <div style={{ flex: "1" }}>시작 날짜</div>
+                                <div style={{ flex: "0.9" }}>마감 날짜</div>
+                            </div>
+
+                            <SelBottom style={{ marginBottom: "10px" }}>
+                                <STDateInput type="date" name="startPeriod" value={modPost.startPeriod || ""} onChange={modPostHandle} min={today2} />
+                                <STDateInput type="date" name="endPeriod" value={modPost.endPeriod || ""} onChange={modPostHandle} min={today2} />
+                            </SelBottom>
+                        </StTypeBox>
+
+                        <label style={{ marginLeft: "5px" }}>행사장 링크</label>
                         <STTitleInput type='text' name='postLink' value={modPost.postLink || ""} onChange={modPostHandle} />
-
-
 
                         <div>행사장소</div>
                         <StSearchBox style={{ background: "#E1E3EC" }} onClick={popupPostCode}>
@@ -307,7 +304,7 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                             </ModalWrap>
                         )}
                         <div style={{ display: "flex", marginTop: "14px" }}>
-                            <STAddressDiv >#{modPost.postAddress.split(' ')[0]}</STAddressDiv>
+                            <STAddressDiv style={{ marginRight: "5px" }}>#{modPost.postAddress.split(' ')[0]}</STAddressDiv>
                             <STInput >{modPost.postAddress}</STInput>
                         </div>
                         {
@@ -319,7 +316,7 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
 
                         <div >
-                            <STEditButton style={{ background: "#515466" }} onClick={() => setMod(false)}>취소</STEditButton>
+                            <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={() => setMod(false)}>취소</STEditButton>
                             <STEditButton onClick={putPostSubmit}>수정완료</STEditButton>
                         </div>
 
