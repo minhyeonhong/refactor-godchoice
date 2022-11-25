@@ -15,7 +15,7 @@ const Header = () => {
         <StHeaderWrap>
             {/* <StBackBox><button className='arrow-left' onClick={() => { window.history.back() }} /></StBackBox> */}
             {/* <Back } style={{height: "48px"}} /> */}
-            <StLogoBox> <Link to="/"> <img src={logo} /></Link></StLogoBox>
+            <StLogoBox> <Link to="/"> <img src={logo} style={{ width: '166px' }} /></Link></StLogoBox>
             <StRightBox>
 
                 <Link to="/"><Bell style={{ height: "48px", marginRight: "15px", padding: "2px" }} /></Link>
