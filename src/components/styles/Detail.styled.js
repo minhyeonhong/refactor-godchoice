@@ -71,7 +71,7 @@ border: 1px solid #C8C9CA;
 
 //modal
 export const ModalWrap = styled.div`
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;

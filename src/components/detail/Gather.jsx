@@ -183,18 +183,42 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                     edit ?
                         (
                             <div>
+                                <SelectWrap>
+                                    <SelTop style={{ marginTop: "14px" }}>
+                                        <STSelect value="모집글" style={{ width: "50%" }} disabled>
+                                            <option value="모집글">모집글</option>
+                                        </STSelect>
 
-                                <button>모집글</button>
+                                        <STSelect style={{ width: "50%" }} defaultValue={modPost.category} name="category" onChange={modPostHandle}>
+                                            <option value="마라톤">마라톤</option>
+                                            <option value="페스티벌">페스티벌</option>
+                                            <option value="전시회">전시회</option>
+                                            <option value="공연">공연</option>
+                                            <option value="기타">기타</option>
+                                        </STSelect>
+                                    </SelTop>
+                                    <SelBottom style={{ marginBottom: "14px" }}>
+                                        <STInput2 style={{ width: "33%" }} type="date" name="date" defaultValue={modPost.date || ""} onChange={modPostHandle} min={today2} />
+                                        <STSelect style={{ width: "33%" }} name="sex" defaultValue={modPost.sex} onChange={modPostHandle}>
+                                            <option value="NF">성비무관</option>
+                                            <option value="M">남</option>
+                                            <option value="W">여</option>
+                                        </STSelect>
+                                        <STNumber style={{ width: "33%", dispaly: "flex" }}>
+                                            <button style={{ flex: "1" }} onClick={handleAdd}>+</button>
+                                            <div style={{ flex: "1" }}>{counter}</div>
+                                            <button style={{ flex: "1" }} onClick={handleminus}>-</button>
+                                        </STNumber>
+                                    </SelBottom>
+                                    <SelBottom>
 
-                                <STSelect name="category" defaultValue={modPost.category || ""} onChange={modPostHandle}>
-                                    <option value="마라톤">마라톤</option>
-                                    <option value="페스티벌">페스티벌</option>
-                                    <option value="전시회">전시회</option>
-                                    <option value="공연">공연</option>
-                                    <option value="기타">기타</option>
-                                </STSelect>
+                                    </SelBottom>
+                                </SelectWrap>
+                                {/* <button>모집글</button> */}
 
-                                <AllInput type="date" name="date" defaultValue={modPost.date || ""} onChange={modPostHandle} min={today2} />
+
+                                {/* 
+                             
                                 <AllInput type="text" defaultValue={modPost.startAge} name="startAge" onChange={modPostHandle} /> ~ {''}
                                 <AllInput type="text" defaultValue={modPost.endAge} name="endAge" onChange={modPostHandle} />
 
@@ -202,16 +226,10 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                     <option value="NF">성비무관</option>
                                     <option value="M">남</option>
                                     <option value="W">여</option>
-                                </STSelect>
+                                </STSelect> */}
 
-                                <STNumber>
-                                    <STButton onClick={handleAdd}>+</STButton> {counter}<STButton onClick={handleminus}>-</STButton>
-                                </STNumber><br />
-                                <StTitleBox>
-                                    <AllInput type="text" placeholder="제목" name="title" defaultValue={modPost.title || ""} onChange={modPostHandle} style={{ width: "100%" }} />
-                                </StTitleBox>
+                                <STInput3 style={{ marginBottom: "14px" }} type="text" placeholder="제목" name="title" defaultValue={modPost.title || ""} onChange={modPostHandle} />
 
-                                {/*사진 업로드*/}
 
                                 {/*이미지 올리기*/}
                                 <StCarouselWrap>
@@ -219,7 +237,7 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                         {modPost.postImgInfo.map((imgInfo, i) => {
                                             return (
                                                 <Carousel.Item key={imgInfo.id}>
-                                                    <img style={{ height: "180px" }}
+                                                    <img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
                                                         className="d-block w-100"
                                                         src={imgInfo.postImgUrl}
                                                         alt={`slide${i + 1}`}
@@ -253,63 +271,59 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                             multiple />
                                     </label>
 
-                                    <div>
-                                        {
-                                            fileUrls.map((imgUrl, i) => {
-                                                return (
-                                                    <img style={{ width: '60px', height: '60px' }} src={imgUrl} key={i} />
-                                                )
-                                            })
-                                        }
-                                    </div>
+                                    {
+                                        fileUrls && fileUrls.map((imgUrl, i) => {
+                                            return (
+                                                <img style={{ width: '60px', height: '60px' }} src={imgUrl} key={i} />
+                                            )
+                                        })
+                                    }
+
                                 </StCarouselWrap>
 
+                                <AllTextarea style={{ width: "100%", height: "200px", marginTop: "14px", marginBottom: "14px" }} name="content" defaultValue={modPost.content || ""} onChange={modPostHandle} />
 
-                                <StContentBox>
-                                    <AllTextarea type="text" name="content" defaultValue={modPost.content || ""} onChange={modPostHandle} />
-                                </StContentBox>
+                                <div style={{ marginBottom: "14px" }}>
+                                    <label>카카오 링크</label><br />
+                                    <STInput3 type="text" name="kakaoLink" defaultValue={modPost.kakaoLink} onChange={modPostHandle} style={{ width: "100%" }} />
+                                </div>
 
-                                <StEventLinkBox>
-                                    <br /><label>카카오 링크</label><br />
-                                    <AllInput type="text" name="kakaoLink" defaultValue={modPost.kakaoLink} onChange={modPostHandle} style={{ width: "100%" }} />
-                                </StEventLinkBox>
-
-                                <StEventLinkBox>
-                                    <br /><label>행사장 링크</label><br />
-                                    <AllInput type="text" name="postLink" defaultValue={modPost.postLink} onChange={modPostHandle} style={{ width: "100%" }} />
-                                </StEventLinkBox>
-                                <br />
+                                <div style={{ marginBottom: "14px" }}>
+                                    <label>행사장 링크</label><br />
+                                    <STInput3 type="text" name="postLink" defaultValue={modPost.postLink} onChange={modPostHandle} style={{ width: "100%" }} />
+                                </div>
 
                                 <div>
-                                    <StEventPlaceBox>
-                                        <div>행사장소<button onClick={popupPostCode}> 주소 검색하기</button></div>
+                                    <div>행사장소<br /><button onClick={popupPostCode}> 주소 검색하기</button></div>
 
-                                        {isPopupOpen && (
-                                            <ModalWrap>
-                                                <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
-                                            </ModalWrap>
-                                        )}
-                                        <div className='address-box'>
-                                            <div className='tag'>#{modPost.postAddress.split(' ')[0]}</div>
-                                            <div className='address'>{modPost.postAddress}</div>
-                                        </div>
-                                    </StEventPlaceBox><br />
+                                    {isPopupOpen && (
+                                        <ModalWrap>
+                                            <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
+                                        </ModalWrap>
+                                    )}
+                                    <div className='address-box'>
+                                        <div className='tag'>#{modPost.postAddress.split(' ')[0]}</div>
+                                        <div className='address'>{modPost.postAddress}</div>
+                                    </div>
+
                                     <input type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle} />
                                     <KakaoMap address={modPost.postAddress} width='100%' height='130px' />
                                 </div><br />
                                 <div>
-                                    <label>{modPost.postState}</label>
-                                    <Form.Check
-                                        type="switch"
-                                        id="custom-switch"
-                                        checked={modPost.postState === '진행중' ? true : false}
-                                        onChange={ingHandle}
-                                    />
+                                    <StRadioBox>
+                                        <label>{modPost.postState}</label>
+                                        <Form.Check
+                                            type="switch"
+                                            id="custom-switch"
+                                            checked={modPost.postState === '진행중' ? true : false}
+                                            onChange={ingHandle}
+                                        />
+                                    </StRadioBox>
                                 </div>
 
                                 <div>
-                                    <button onClick={onSubmitGather}>수정완료</button>
-                                    <button onClick={toggleEdit}>취소</button>
+                                    <STEditButton onClick={onSubmitGather}>수정완료</STEditButton>
+                                    <STEditButton style={{ background: "#515466", marginRight: "5px" }} onClick={toggleEdit}>취소</STEditButton>
                                 </div>
                             </div>
 
@@ -392,14 +406,16 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 export default Gather;
 
 const STSelect = styled.select`
-    font-size: 14px;
-    background-color: #F4F4F4;
-    /* width : 48%; */
-    border-radius: 10px;
-    border : transparent;
-    padding:5px;
-    height : 32px;
+    height : 48px;
+    font-size: 16px;
+    background-color: #FFF;
+    border-radius: 30px;
+    padding:12px 16px;
+    border: none;
+    flex : 1;
+    /* border:2px solid #B8C4FF; */
 `
+
 const AllInput = styled.input`
     border-radius: 10px;
     background-color: #F4F4F4;
@@ -412,13 +428,15 @@ const AllTextarea = styled.textarea`
     border-radius: 10px;
     border: transparent;
     width :100%;
-    background-color: #F4F4F4;
+    background-color: white;
+    padding-left: 10px;
+    padding-top:10px;
 `
 const STNumber = styled.div`
     border-radius: 8px;
     background-color: #F4F4F4;
     font-size: 14px;
-    float: right;
+    /* float: right; */
     text-align: center;
     height : 32px;
 `
@@ -556,4 +574,79 @@ const STImg = styled.div`
     position: absolute;
     left : 94px;
     margin-left: 10px;
+`
+const SelectWrap = styled.div`
+width: 100%;
+height: auto;
+
+`
+
+const SelTop = styled.div`
+display: flex;
+gap: 15px;
+margin-bottom : 10px;
+`
+
+const SelBottom = styled.div`
+display: flex;
+justify-content : space-between;
+gap: 15px;
+/* .dateform {
+    border-radius : 30px;
+    height : 48px;
+    flex : 1;
+    border: none;
+} */
+`
+
+// const AllTextarea = styled.textarea`
+//     border-radius: 10px;
+//     border: transparent;
+//     padding-left: 10px;
+//     padding-top: 10px;
+// `
+const STInput2 = styled.input`
+    height : 48px;
+    font-size: 16px;
+    background-color: #FFF;
+    border-radius: 30px;
+    padding:12px 16px;
+    border: none;
+    flex : 1;
+`
+
+const STInput3 = styled.input`
+    width: 100%;
+    height: 36px;
+    background: white;
+    border-radius: 10px;
+    font-weight: 500;
+    padding-top: 6px;
+    padding-left: 6px;
+    padding-bottom: 6px;
+    border:transparent;
+    `
+
+const StRadioBox = styled.div`
+    width : 110px;
+    display : flex;
+    flex-direction : row;
+    align-items : center;
+    gap : 10px;
+    label {
+        font-family : 'Pretendard Variable';
+    }
+    .form-check-input:checked {
+        background-color : #15DD95;
+    }
+    .form-switch .form-check-input {
+        width : 52px;
+        height : 32px;
+        background-image : url("data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%27-4 -4 8 8%27%3e%3ccircle r=%273%27 fill=%27%23fff%27/%3e%3c/svg%3e");
+    }
+    .form-check-input{
+        background-color : #aff5db;
+        box-shadow : none;
+        border : none;
+    }
 `

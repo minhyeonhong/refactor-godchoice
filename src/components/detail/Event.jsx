@@ -209,31 +209,30 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
                     <>
                         <StTypeBox>
-                            <div>행사글</div>
-                            <STSelect defaultValue={modPost.category} name="category" onChange={modPostHandle}>
-                                {categoryOption.map((cate, i) => {
-                                    return (
-                                        <option value={cate} key={i}>{cate}</option>
-                                    )
-                                })}
-                            </STSelect>
+                            <SelTop style={{ marginTop: "14px" }}>
+                                <STSelect value="모집글" style={{ width: "50%" }} disabled>
+                                    <option value="모집글">모집글</option>
+                                </STSelect>
 
-                            <div>
-                                <Row className="mb-3">
-                                    <Form.Group as={Col} controlId="formGridCity">
-                                        <Form.Label>행사시작</Form.Label>
-                                        <Form.Control type="date" name="startPeriod" value={modPost.startPeriod || ""} onChange={modPostHandle} min={today2} />
-                                    </Form.Group>
-                                    <Form.Group as={Col} controlId="formGridCity">
-                                        <Form.Label>행사마감</Form.Label>
-                                        <Form.Control type="date" name="endPeriod" value={modPost.endPeriod || ""} onChange={modPostHandle} min={today2} />
-                                    </Form.Group>
-                                </Row>
-                            </div>
+                                <STSelect style={{ width: "50%" }} defaultValue={modPost.category} name="category" onChange={modPostHandle}>
+                                    {categoryOption.map((cate, i) => {
+                                        return (
+                                            <option value={cate} key={i}>{cate}</option>
+                                        )
+                                    })}
+                                </STSelect>
+                            </SelTop>
+
+                            <SelBottom>
+                                <STDateInput type="date" name="startPeriod" value={modPost.startPeriod || ""} onChange={modPostHandle} min={today2} />
+                                <STDateInput type="date" name="endPeriod" value={modPost.endPeriod || ""} onChange={modPostHandle} min={today2} />
+                            </SelBottom>
                         </StTypeBox>
-                        <StTitleBox>
-                            <input type='text' name='title' value={modPost.title || ""} onChange={modPostHandle} />
-                        </StTitleBox>
+
+
+
+                        <STTitleInput type='text' name='title' value={modPost.title || ""} onChange={modPostHandle} />
+
 
                         <StCarouselWrap>
                             {//modPost.postImgInfo.length > 1 &&
@@ -241,7 +240,7 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                     {modPost.postImgInfo.map((imgInfo, i) => {
                                         return (
                                             <Carousel.Item key={i}>
-                                                <img style={{ height: "180px" }}
+                                                <img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
                                                     className="d-block w-100"
                                                     src={imgInfo.postImgUrl}
                                                     alt={`slide${i + 1}`}
@@ -251,6 +250,7 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                     })}
                                 </Carousel>
                             }
+
                             {modPost.postImgInfo.map((imgInfo, i) => {
                                 return (
                                     imgInfo.postImgId &&
@@ -275,50 +275,48 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                     multiple />
                             </label>
 
-                            <div>
-                                {
-                                    fileUrls.map((imgUrl, i) => {
-                                        return (
-                                            <img style={{ width: '60px', height: '60px' }} src={imgUrl} key={i} />
-                                        )
-                                    })
-                                }
-                            </div>
+
+                            {
+                                fileUrls && fileUrls.map((imgUrl, i) => {
+                                    return (
+                                        <img style={{ width: '60px', height: '60px' }} src={imgUrl} key={i} />
+                                    )
+                                })
+                            }
 
                         </StCarouselWrap>
 
-                        <StContentBox>
-                            <AllTextarea type="text" name='content' value={modPost.content || ""} onChange={modPostHandle} placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" maxLength={2500} />
-                        </StContentBox>
+                        <STContentTextarea style={{ height: "200px" }} name='content' value={modPost.content || ""} onChange={modPostHandle} placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" maxLength={2500}></STContentTextarea>
 
-                        <StEventLinkBox>
-                            <div>행사장 링크</div>
-                            <input type='text' name='postLink' value={modPost.postLink || ""} onChange={modPostHandle} />
-                        </StEventLinkBox>
-                        <StEventPlaceBox>
-                            <div>행사장소</div>
-                            <button onClick={popupPostCode}>
-                                <FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00' }} />
-                            </button>
-                            {isAddressModal && (
-                                <ModalWrap>
-                                    <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
-                                </ModalWrap>
-                            )}
-                            <div className='address-box'>
-                                <div className='tag'>#{modPost.postAddress.split(' ')[0]}</div>
-                                <div className='address'>{modPost.postAddress}</div>
-                            </div>
-                        </StEventPlaceBox>
+                        <div>행사장 링크</div>
+                        <STTitleInput type='text' name='postLink' value={modPost.postLink || ""} onChange={modPostHandle} />
+
+
+
+                        <div>행사장소</div>
+                        <button onClick={popupPostCode}>
+                            <FiSearch style={{ width: '20px', height: '20px', color: '#FFAE00' }} />
+                        </button>
+                        {isAddressModal && (
+                            <ModalWrap>
+                                <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
+                            </ModalWrap>
+                        )}
+                        <div className='address-box'>
+                            <div className='tag'>#{modPost.postAddress.split(' ')[0]}</div>
+                            <div className='address'>{modPost.postAddress}</div>
+                        </div>
+
                         <KakaoMap address={modPost.postAddress} width='100%' height='130px' />
                         <input type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle} />
-                        <StButtonBox>
 
-                            <div>
-                                <button onClick={() => setMod(false)}>취소</button>
-                                <button onClick={putPostSubmit}>수정하기</button>
-                            </div>
-                        </StButtonBox>
+
+                        <div >
+                            <STEditButton style={{ background: "#515466" }} onClick={() => setMod(false)}>취소</STEditButton>
+                            <STEditButton onClick={putPostSubmit}>수정하기</STEditButton>
+                        </div>
+
+
                     </>
                 }
                 <Comment postId={postId} kind='event' commentDtoList={post.commentDtoList} />
@@ -353,16 +351,7 @@ const StTypeBox = styled.div`
     flex-direction:column;
     justify-content:space-between;
 `
-const STSelect = styled.select`
-    font-size: 14px;
-    background-color: #F4F4F4;
-    width : 48%;
-    border-radius: 10px;
-    border : transparent;
-    padding:5px;
-    height : 32px;
-    
-`
+
 
 //---------------------
 
@@ -466,4 +455,57 @@ const STImg = styled.div`
     position: absolute;
     left : 94px;
     margin-left: 10px;
+`
+
+const SelTop = styled.div`
+display: flex;
+gap: 15px;
+margin-bottom : 10px;
+`
+
+const SelBottom = styled.div`
+display: flex;
+justify-content : space-between;
+gap: 15px;
+`
+const STSelect = styled.select`
+    height : 48px;
+    font-size: 16px;
+    background-color: #FFF;
+    border-radius: 30px;
+    padding:12px 16px;
+    border: none;
+    flex : 1;
+    /* border:2px solid #B8C4FF; */
+`
+
+const STDateInput = styled.input`
+    height : 48px;
+    font-size: 16px;
+    background-color: #FFF;
+    border-radius: 30px;
+    padding:12px 16px;
+    border: none;
+    flex : 1;
+`
+const STTitleInput = styled.input`
+    width: 100%;
+    //height: 36px;
+    background: white;
+    border-radius: 10px;
+    font-weight: 500;
+    padding-top: 6px;
+    padding-left: 6px;
+    padding-bottom: 6px;
+    border: transparent;
+    margin-top: 14px;
+    margin-bottom: 14px;
+`
+const STContentTextarea = styled.textarea`
+    border-radius: 10px;
+    border: transparent;
+    width :100%;
+    background-color: white;
+    padding-left: 10px;
+    padding-top:10px;
 `
