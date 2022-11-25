@@ -585,7 +585,7 @@ const STEditButton = styled.button`
     border : transparent;
 `
 const STImg = styled.div`
-    width : 94%;
+    width : 68%;
     display : flex;
     justify-content : space-between;
     //background-color: black;
