@@ -20,8 +20,9 @@ const WritingToggle = ({modalOn, setModalOn}) => {
 export default WritingToggle;
 
 const WritingToggleWrap = styled.div`
-background-color: #000;
-opacity : 0.7;
+z-index : 999;
+background-color: gray;
+opacity : 0.8;
 color : #fff;
 border-radius : 20px;
 padding : 10px;

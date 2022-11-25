@@ -17,6 +17,7 @@ import Col from 'react-bootstrap/Col';
 import Layout from '../layout/Layout'
 import { useEffect } from 'react';
 import noImg from '../../assets/images/common/noImg.png'
+import { ModalWrap } from '../styles/GatherDetail.styled';
 
 const FestivalPost = () => {
 
@@ -38,6 +39,8 @@ const FestivalPost = () => {
             alert('이미지는 최대 5개까지 업로드가 가능합니다.');
             return;
         }
+        setImgFile([]);
+        setImgUrl([]);
 
         //선택한 이미지 파일 반복문 돌리기
         [...files].forEach(file => {
@@ -195,7 +198,7 @@ const FestivalPost = () => {
                     <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
                 </ModalWrap>
             )}
-            <Layout>
+            <Layout style={{ height: "100%" }} >
                 <FestivalWrap>
                     {/* <STSelect value="행사글" style={{ width: "50%" }} disabled>
                             <option value="행사글">행사글</option>
@@ -207,9 +210,11 @@ const FestivalPost = () => {
                         <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler} style={{ width: "100%", height: "48px", border: "none", margin: "0 0 10px 0" }} />
                     </Form.Group>
 
-                    {/* <div style={{margin:"10px 0", height: "336px"}} > */}
                     {imgUrl.length === 0 && <img src={noImg} style={{ width: "100%", marginBottom: "14px" }} onClick={() => { imgRef.current.click() }} />}
-                    <div style={{ position: "absolute" }} >
+
+                    <div >
+
+                        {/* <div style={{position:"absolute"}} > */}
                         <label htmlFor="imgFile">
                             <input
                                 style={{ display: "none" }}
@@ -222,34 +227,17 @@ const FestivalPost = () => {
                                 multiple />
 
                         </label>
-                        {/* </div > */}
-
                         <Carousel>
                             {imgUrl && imgUrl.map((img, index) => {
                                 return (
                                     <Carousel.Item key={img.id}>
-                                        <button style={{ width: "100%" }}>
-                                            <img src={img} style={{ width: '396px', height: "auto", objectFit: "contain" }} onClick={() => { imgRef.current.click() }} />
-                                        </button>
+                                        <img src={img} style={{ width: '100%', height: "396px", objectFit: "contain" }} onClick={() => { imgRef.current.click() }} />
+
                                     </Carousel.Item>
                                 )
                             })
                             }
                         </Carousel>
-
-                        {/* <STUploadButton onClick={() => { imgRef.current.click() }}>+</STUploadButton><br /> */}
-
-                        <label htmlFor="imgFile">
-                            <input
-                                style={{ display: "none" }}
-                                type="file"
-                                id="imgFile"
-                                onChange={onChangeImage}
-                                accept="image/*"
-                                ref={imgRef}
-                                name="imgFile"
-                                multiple />
-                        </label>
                     </div >
 
                     <AllTextarea type="text" placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" name="content" onChange={onChangeHandler} maxLength={2500} style={{ height: '200px', width: "100%", border: "none", padding: "10px", margin: "0", marginBottom: "14px" }} />
@@ -288,14 +276,10 @@ const FestivalPost = () => {
                     {/* 주소 부분 */}
                     <div>
                         <StSearchBox style={{ background: "#E1E3EC", height: "40px" }} onClick={popupPostCode}>
-                            <button style={{ color: "#8B909F" }}><FiSearch style={{ width: '20px', height: '40px', color: '#424754', marginRight: "10px" }} /></button>
+                            <button style={{ color: "#8B909F" }}><FiSearch style={{ width: '20px', height: '40px', color: '#424754', marginRight: "10px" }} />주소검색</button>
                         </StSearchBox>
 
-                        {isPopupOpen && (
-                            <ModalWrap>
-                                <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
-                            </ModalWrap>
-                        )}
+
 
                         <AddressBox >
                             {
@@ -436,20 +420,20 @@ const STUploadButton = styled.button`
     border : transparent;
 `
 //modal
-const ModalWrap = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-  padding: 0 15px;
-  box-sizing: border-box;
-`;
+// const ModalWrap = styled.div`
+//   position: fixed;
+//   bottom: 0;
+//   left: 0;
+//   width: 100%;
+//   height: 100%;
+//   background-color: rgba(0, 0, 0, 0.4);
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   z-index: 999;
+//   padding: 0 15px;
+//   box-sizing: border-box;
+// `;
 
 const STAddressButton = styled.div`
     width: 64px;

@@ -7,19 +7,19 @@ import { Navigate } from "react-router-dom";
 
 // user 정보 가져오기
 export const __getMyInfo = createAsyncThunk(
-    "myPage/__getMyInfo", 
+    "myPage/__getMyInfo",
     async (payload, thunkAPI) => {
         try {
             const response = await myPageApis.getMyPageAX(payload)
             console.log("getMyPageAX response ===> ", response)
             return thunkAPI.fulfillWithValue(response.data.data)
         } catch (error) {
-            console.log(error) 
-                alert(error.response.msg)
-                return thunkAPI.rejectWithValue(error)
-            
+            console.log(error)
+            alert(error.response.msg)
+            return thunkAPI.rejectWithValue(error)
+
         }
- 
+
     }
 );
 
@@ -28,23 +28,34 @@ export const __getMyInfo = createAsyncThunk(
 export const __putMyInfo = createAsyncThunk(
     "myPage/__putMyInfo",
     async (payload, thunkAPI) => {
-    try {
-    //   const response = await myPageApis.putMyPageAX(payload)
-      const response = await myPageApis.putMyPageAX(payload,
-        {
-            "Content-Type":"multipart/form-data",
+        try {
+            //   const response = await myPageApis.putMyPageAX(payload)
+            console.log("__putMyInfo payload", payload);
+            myPageApis.putMyPageAX(payload)
+                .then((res) => {
+                    if (res.data.status === 200) {
+                        window.location.replace("/mypage");
+                    }
+                }).catch((error) => {
+                    console.log("__putMyInfo error", error);
+                    window.location.replace("/mypage");
+                })
+
+            //   const response = await myPageApis.putMyPageAX(payload,
+            //     {
+            //         "Content-Type":"multipart/form-data",
+            //     }
+            //     );
+            //     console.log("putMyPageAX response ===> ",response)
+
+            //     if (response.data.msg ==="수정이 완료되었습니다" 
+            //     ){alert(response.data.msg)}
+            //     window.location.replace("/mypage")
+            // return thunkAPI.fulfillWithValue(response.data.data);
+        } catch (error) {
+            return thunkAPI.rejectWithValue(error)
         }
-        );
-        console.log("putMyPageAX response ===> ",response)
-        
-        if (response.data.msg ==="수정이 완료되었습니다" 
-        ){alert(response.data.msg)}
-        window.location.replace("/mypage")
-      return thunkAPI.fulfillWithValue(response.data.data);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error)
     }
-  }
 )
 
 
@@ -88,66 +99,66 @@ export const __putMyInfo = createAsyncThunk(
 export const __getMyPost = createAsyncThunk(
     "myPage/__getMyPost", async (payload, thunkAPI) => {
         try {
-            const response = await myPageApis.getMyPostAX(payload) 
-                console.log("getMyPostAX response ===> ", response)
-                return thunkAPI.fulfillWithValue(response.data.data)
-            } catch (error) {
-                console.log(error) 
-                    alert(error.response.msg)
-                    return thunkAPI.rejectWithValue(error)
-            }
-    
+            const response = await myPageApis.getMyPostAX(payload)
+            console.log("getMyPostAX response ===> ", response)
+            return thunkAPI.fulfillWithValue(response.data.data)
+        } catch (error) {
+            console.log(error)
+            alert(error.response.msg)
+            return thunkAPI.rejectWithValue(error)
         }
-    );
+
+    }
+);
 
 // 내가 댓글 단 글
 export const __getMyCmt = createAsyncThunk(
     "myPage/__getMyCmt", async (payload, thunkAPI) => {
         try {
-            const response = await myPageApis.getMyCmtAX(payload) 
-                console.log("getMyCmtAX response ===> ", response)
-                return thunkAPI.fulfillWithValue(response.data.data)
-            } catch (error) {
-                console.log(error) 
-                    alert(error.response.msg)
-                    return thunkAPI.rejectWithValue(error)
-            }
-    
+            const response = await myPageApis.getMyCmtAX(payload)
+            console.log("getMyCmtAX response ===> ", response)
+            return thunkAPI.fulfillWithValue(response.data.data)
+        } catch (error) {
+            console.log(error)
+            alert(error.response.msg)
+            return thunkAPI.rejectWithValue(error)
         }
-    );
+
+    }
+);
 
 
 // 스크랩
 export const __getMyScrap = createAsyncThunk(
     "myPage/__getMyScrap", async (payload, thunkAPI) => {
         try {
-            const response = await myPageApis.getMyScrapAX(payload) 
-                console.log("getMyScrapAX response ===> ", response)
-                return thunkAPI.fulfillWithValue(response.data.data)
-            } catch (error) {
-                console.log(error) 
-                    alert(error.response.msg)
-                    return thunkAPI.rejectWithValue(error)
-            }
-    
+            const response = await myPageApis.getMyScrapAX(payload)
+            console.log("getMyScrapAX response ===> ", response)
+            return thunkAPI.fulfillWithValue(response.data.data)
+        } catch (error) {
+            console.log(error)
+            alert(error.response.msg)
+            return thunkAPI.rejectWithValue(error)
         }
-    );
+
+    }
+);
 
 const initialState = {
     // myPage: [],
-    userInfo:[],
+    userInfo: [],
     isLoading: false,
-    myPostList:{},
-    myCommentList:{},
-    myScrapList:{},
+    myPostList: {},
+    myCommentList: {},
+    myScrapList: {},
     saveCategoryTab: 'event'
 };
 
 const myPageSlice = createSlice({
-    name:"myPage",
+    name: "myPage",
     initialState,
-    reducers:{
-        saveCategory: (state,action) => {
+    reducers: {
+        saveCategory: (state, action) => {
             state.saveCategoryTab = action.payload;  // 선택한 카테고리 save
         }
 
@@ -170,8 +181,8 @@ const myPageSlice = createSlice({
             state.userInfo = action.payload;
         },
         [__putMyInfo.rejected]: (state, action) => {
-            state.isLoading = false; 
-            state.error = action.payload; 
+            state.isLoading = false;
+            state.error = action.payload;
             console.log("action 나와라!!! ===> ", action);
         },
 
@@ -190,43 +201,43 @@ const myPageSlice = createSlice({
 
 
         [__getMyPost.pending]: (state) => {
-            state.isLoading = true; 
+            state.isLoading = true;
         },
         [__getMyPost.fulfilled]: (state, action) => {
-            state.isLoading = false; 
-            console.log("action.payload ===>",action.payload);
+            state.isLoading = false;
+            console.log("action.payload ===>", action.payload);
             state.myPostList = action.payload;
-            
+
         },
         [__getMyPost.rejected]: (state, action) => {
-            state.isLoading = false; 
-            state.error = action.payload; 
-        }, 
+            state.isLoading = false;
+            state.error = action.payload;
+        },
 
 
         [__getMyCmt.pending]: (state) => {
-            state.isLoading = true; 
+            state.isLoading = true;
         },
         [__getMyCmt.fulfilled]: (state, action) => {
-            state.isLoading = false; 
+            state.isLoading = false;
             state.myCommentList = action.payload;
         },
         [__getMyCmt.rejected]: (state, action) => {
-            state.isLoading = false; 
-            state.error = action.payload; 
-        }, 
+            state.isLoading = false;
+            state.error = action.payload;
+        },
 
 
         [__getMyScrap.pending]: (state) => {
-            state.isLoading = true; 
+            state.isLoading = true;
         },
         [__getMyScrap.fulfilled]: (state, action) => {
-            state.isLoading = false; 
+            state.isLoading = false;
             state.myScrapList = action.payload;
         },
         [__getMyScrap.rejected]: (state, action) => {
-            state.isLoading = false; 
-            state.error = action.payload; 
+            state.isLoading = false;
+            state.error = action.payload;
         }
 
     },
@@ -235,5 +246,5 @@ const myPageSlice = createSlice({
 export const { saveCategory } = myPageSlice.actions;
 export default myPageSlice.reducer;
 
-  
+
 
