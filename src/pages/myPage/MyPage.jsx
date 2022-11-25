@@ -25,6 +25,8 @@ const MyPage = () => {
   const email = data.email;
   const userImgUrl = data.userImg;
 
+  localStorage.setItem("userAddressTag", data.addressTag);
+
   // const userProfileImg = () => {
   //   if (nickName === null) {
   //     return <ProfileImg onClick={() => navigate("/login")} />;

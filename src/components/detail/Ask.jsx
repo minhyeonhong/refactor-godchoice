@@ -206,11 +206,12 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                     (
                         <>
                             <STIng style={{ marginTop: "14px", marginBottom: "14px" }}>
-                                <STImg style={{ display: "flex" }}>
-                                    <img src={Views} style={{ width: "20px", height: "20px", flex: "2" }} />
-                                    <div style={{ color: "#8B909F", flex: "8", marginLeft: "5px" }}>{post.viewCount}</div>
+                                <STImg>
+                                    <div style={{ color: "#8B909F", flex: "8", marginLeft: "5px" }}>
+                                        <img src={Views} style={{ width: "20px", height: "20px", flex: "2" }} />
+                                        {post.viewCount}
+                                    </div>
                                     <PostScrap style={{ position: "absolute", right: "10px" }} bookMarkStatus={post.bookMarkStatus} />
-
                                 </STImg>
                             </STIng>
                             <div style={{ marginBottom: "14px" }}>
@@ -395,7 +396,9 @@ const STEditButton = styled.button`
 `
 
 const STImg = styled.div`
-    display : inline-block;
+    width : 94%;
+    display : flex;
+    justify-content : space-between;
     //background-color: black;
     position: absolute;
 
