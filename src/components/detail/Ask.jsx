@@ -211,10 +211,10 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 <STImg style={{ display: "flex" }}>
                                     <img src={Views} style={{ width: "20px", height: "20px", flex: "2" }} />
                                     <div style={{ color: "#8B909F", flex: "8", marginLeft: "5px" }}>{post.viewCount}</div>
-                                </STImg>
-                                <PostScrap style={{}} bookMarkStatus={post.bookMarkStatus} />
-                            </STIng>
+                                    <PostScrap style={{ position: "absolute", right: "10px" }} bookMarkStatus={post.bookMarkStatus} />
 
+                                </STImg>
+                            </STIng>
                             <div style={{ marginBottom: "14px" }}>
                                 <img src={post.userImg} style={{ width: "36px", height: "36px", borderRadius: "30px" }} />
                                 <STUsername>{post.userName}</STUsername>
@@ -252,7 +252,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
                             {localStorage.getItem('userId') === post.userId.toString() &&
                                 (<div>
-                                    <STEditButton style={{ background: "#515466" }} onClick={() => { onAskDelete(postId); }}>삭제</STEditButton>
+                                    <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={() => { onAskDelete(postId); }}>삭제</STEditButton>
                                     <STEditButton onClick={toggleEdit}>수정</STEditButton>
                                 </div>)}
                         </>
@@ -400,7 +400,7 @@ const STImg = styled.div`
     display : inline-block;
     //background-color: black;
     position: absolute;
-    left : 94px;
+
     //margin-left: 10px;
 `
 

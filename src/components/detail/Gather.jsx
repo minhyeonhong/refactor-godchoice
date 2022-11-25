@@ -183,39 +183,8 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                     edit ?
                         (
                             <div>
-                                <SelectWrap>
-                                    <SelTop style={{ marginTop: "14px" }}>
-                                        <STSelect value="모집글" style={{ width: "50%" }} disabled>
-                                            <option value="모집글">모집글</option>
-                                        </STSelect>
 
-                                        <STSelect style={{ width: "50%" }} defaultValue={modPost.category} name="category" onChange={modPostHandle}>
-                                            <option value="마라톤">마라톤</option>
-                                            <option value="페스티벌">페스티벌</option>
-                                            <option value="전시회">전시회</option>
-                                            <option value="공연">공연</option>
-                                            <option value="기타">기타</option>
-                                        </STSelect>
-                                    </SelTop>
-                                    <SelBottom style={{ marginBottom: "14px" }}>
-                                        <STInput2 style={{ width: "33%" }} type="date" name="date" defaultValue={modPost.date || ""} onChange={modPostHandle} min={today2} />
-                                        <STSelect style={{ width: "33%" }} name="sex" defaultValue={modPost.sex} onChange={modPostHandle}>
-                                            <option value="NF">성비무관</option>
-                                            <option value="M">남</option>
-                                            <option value="W">여</option>
-                                        </STSelect>
-                                        <STDiv style={{ width: "33%", textAlign: "center", display: "flex" }}>
-                                            <STCountButton style={{ flex: "0.7" }} onClick={handleAdd}>+</STCountButton>
-                                            <div style={{ flex: "1" }}>{counter}</div>
-                                            <STCountButton style={{ flex: "0.7", right: "0px" }} onClick={handleminus}>-</STCountButton>
-                                        </STDiv>
-
-                                    </SelBottom>
-                                    <SelBottom>
-
-                                    </SelBottom>
-                                </SelectWrap>
-
+                                <h4 style={{ textAlign: "center", marginTop: "18px", marginBottom: "18px" }}>모집글</h4>
                                 <STInput3 style={{ marginBottom: "14px" }} type="text" placeholder="제목" name="title" defaultValue={modPost.title || ""} onChange={modPostHandle} />
 
 
@@ -270,6 +239,46 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 </StCarouselWrap>
 
                                 <AllTextarea style={{ width: "100%", height: "200px", marginTop: "14px", marginBottom: "14px" }} name="content" defaultValue={modPost.content || ""} onChange={modPostHandle} />
+
+                                <SelectWrap>
+
+                                    <div style={{ display: "flex", marginLeft: "10px", marginBottom: "5px" }}>
+                                        <div style={{ flex: "1" }}>카테고리</div>
+                                        <div style={{ flex: "0.9" }}>만날 날짜</div>
+                                    </div>
+
+                                    <SelTop >
+                                        <STSelect style={{ width: "50%" }} defaultValue={modPost.category} name="category" onChange={modPostHandle}>
+                                            <option value="마라톤">마라톤</option>
+                                            <option value="페스티벌">페스티벌</option>
+                                            <option value="전시회">전시회</option>
+                                            <option value="공연">공연</option>
+                                            <option value="기타">기타</option>
+                                        </STSelect>
+                                        <STInput2 style={{ width: "50%" }} type="date" name="date" defaultValue={modPost.date || ""} onChange={modPostHandle} min={today2} />
+                                    </SelTop>
+
+                                    <div style={{ display: "flex", marginLeft: "10px", marginBottom: "5px" }}>
+                                        <div style={{ flex: "1" }}>성비관련</div>
+                                        <div style={{ flex: "0.9" }}>인원 수</div>
+                                    </div>
+
+                                    <SelBottom style={{ marginBottom: "14px" }}>
+                                        <STSelect style={{ width: "50%" }} name="sex" defaultValue={modPost.sex} onChange={modPostHandle}>
+                                            <option value="NF">성비무관</option>
+                                            <option value="M">남</option>
+                                            <option value="W">여</option>
+                                        </STSelect>
+                                        <STDiv style={{ width: "50%", textAlign: "center", display: "flex" }}>
+                                            <STCountButton style={{ flex: "0.7" }} onClick={handleAdd}>+</STCountButton>
+                                            <div style={{ flex: "1" }}>{counter}</div>
+                                            <STCountButton style={{ flex: "0.7", right: "0px" }} onClick={handleminus}>-</STCountButton>
+                                        </STDiv>
+                                    </SelBottom>
+                                    <SelBottom>
+
+                                    </SelBottom>
+                                </SelectWrap>
 
                                 <div style={{ marginBottom: "14px" }}>
                                     <label>카카오 링크</label><br />
@@ -383,7 +392,7 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 {localStorage.getItem('userId') === post.userId.toString() &&
                                     (<div style={{ float: "right" }}>
                                         <STEditButton onClick={toggleEdit}>수정</STEditButton>
-                                        <STEditButton style={{ background: "#515466" }} onClick={() => { onGatherDelete(postId); }}>삭제</STEditButton>
+                                        <STEditButton style={{ background: "#515466", marginRight: "5px" }} onClick={() => { onGatherDelete(postId); }}>삭제</STEditButton>
                                     </div>)}
 
                             </>
@@ -668,10 +677,10 @@ const STAddressDiv = styled.div`
  padding-top: 6px;
 `
 const STDiv = styled.div`
-    height : 40px;
+    height : 48px;
     font-size: 14px;
     background-color: #FFF;
-    border-radius: 10px;
+    border-radius: 30px;
     /* padding:12px 16px; */
     border: transparent;
     position: relative;
