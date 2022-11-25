@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import spinerImg from '../../assets/images/common/spiner.gif'
+// import spinerImg from '../../assets/images/common/spiner.gif'
+import spinerImg from '../../assets/images/common/spiner_hands.gif'
 
 const Loading = (props) => {
   return (

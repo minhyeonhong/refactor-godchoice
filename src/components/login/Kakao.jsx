@@ -9,6 +9,7 @@ import { __kakaoLogin } from '../../redux/modules/memberSlice';
 // import { setCookie } from '../../cookie/cookie';
 import { GOOGLE_AUTH_URL, KAKAO_AUTH_URL, NAVER_AUTH_URL } from "../../api/login";
 import { useDispatch } from 'react-redux';
+import PageState from '../common/PageState';
 
 
 const Kakao = () => {
@@ -27,7 +28,8 @@ const Kakao = () => {
 	}, [code])
 
 	return (
-		<H3>로그인 중입니다.</H3>
+		<PageState display='flex' state='loading' imgWidth='25%' height='100vh'
+			text='로그인 중입니다.' />
 	)
 };
 
