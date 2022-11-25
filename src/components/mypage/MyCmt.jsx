@@ -3,37 +3,37 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { saveCategory, __getMyCmt  } from "../../redux/modules/myPageSlice";
+import { saveCategory, __getMyCmt } from "../../redux/modules/myPageSlice";
 import Button from "../elements/Button";
 import { __postScrap } from "../../redux/modules/postSlice";
 import PostScrap from "../detail/PostScrap";
-import { Views } from "../../assets";
+import { BookmarkFill, Views } from "../../assets";
 
 const MyCmt = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-    const [categoryTab, setCategoryTab] = useState("event");
-    useEffect(() => {
-        dispatch(__getMyCmt());
-        setCategoryTab(saveCategoryTab);
-    }, []);
+  const [categoryTab, setCategoryTab] = useState("event");
+  useEffect(() => {
+    dispatch(__getMyCmt());
+    setCategoryTab(saveCategoryTab);
+  }, []);
 
-    const { myCommentList } = useSelector((state) => state.myPage);
-    console.log("제발 !!!!!! ===> ", myCommentList);
+  const { myCommentList } = useSelector((state) => state.myPage);
+  console.log("제발 !!!!!! ===> ", myCommentList);
 
-    const onClickCategory = (tab) => {
-        setCategoryTab(tab);
-        dispatch(saveCategory(tab));
-    };
+  const onClickCategory = (tab) => {
+    setCategoryTab(tab);
+    dispatch(saveCategory(tab));
+  };
 
-    const { saveCategoryTab } = useSelector((state) => state.myPage);
-    const {eventPost, gatherPost, askPost} = myCommentList
-    
+  const { saveCategoryTab } = useSelector((state) => state.myPage);
+  const { eventPost, gatherPost, askPost } = myCommentList
 
-    return (
-        <>
-        <CateWrap>
+
+  return (
+    <>
+      <CateWrap>
         <Container>
           <CategoryBox>
             <Button
@@ -66,103 +66,112 @@ const MyCmt = () => {
             >
               질문글
             </Button>
-          
+
           </CategoryBox>
 
           <CategoryInfoList>
-           
-              <>
 
-             { categoryTab === "event" ? (eventPost && eventPost.map((v) => (
+            <>
+
+              {categoryTab === "event" ? (eventPost && eventPost.map((v) => (
+                <ListBox
+                  key={v.postId}
+                  onClick={() =>
+                    navigate(`/eventposts/${v.postId}`)
+                  }
+                >
+                  <ItemImg bgImg={v.imgUrl}>
+                    {v.bookMarkStatus &&
+                      <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
+                    }
+                    {/* <PostScrap bookMarkStatus={v.bookMarkStatus} /> */}
+                  </ItemImg>
+                  <ItemContainer>
+                    <ItemTop>
+                      <p style={{ fontWeight: 500, fontSize: "20px" }}>{v.title}</p>
+                      <p>{v.category}</p>
+                      <p>{v.content}</p>
+                    </ItemTop>
+                    <ItemBottom>
+                      <p>~ {v.endPeriod}</p>
+                      <p> <Views style={{ height: "19px" }} /> {v.viewCount}</p>
+                    </ItemBottom>
+                  </ItemContainer>
+                </ListBox>
+              )
+              )) : categoryTab === "gather" ? (gatherPost &&
+                gatherPost.map(
+                  (v) => (
                     <ListBox
                       key={v.postId}
                       onClick={() =>
-                        navigate(`/eventposts/${v.postId}`)
+                        navigate(`/gatherposts/${v.postId}`)
                       }
                     >
-                     <ItemImg bgImg={v.imgUrl}>
-                          <PostScrap bookMarkStatus={v.bookMarkStatus} />
-                        </ItemImg>
-                        <ItemContainer>
-                          <ItemTop>
-                            <p style={{fontWeight:500, fontSize:"20px"}}>{v.title}</p>
-                            <p>{v.category}</p>
-                            <p>{v.content}</p>
-                          </ItemTop>
-                          <ItemBottom>
-                            <p>~ {v.endPeriod}</p>
-                            <p> <Views style={{height:"19px"}} /> {v.viewCount}</p>
-                          </ItemBottom>
-                        </ItemContainer>
-                      </ListBox>
+                      <ItemImg bgImg={v.imgUrl}>
+                        {v.bookMarkStatus &&
+                          <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
+                        }
+                        {/* <PostScrap bookMarkStatus={v.bookMarkStatus} /> */}
+                      </ItemImg>
+                      <ItemContainer>
+                        <ItemTop>
+                          <p style={{ fontWeight: 500, fontSize: "20px" }}>{v.title}</p>
+                          <p>{v.category}</p>
+                          <p>{v.content}</p>
+                        </ItemTop>
+                        <ItemBottom>
+                          <p>~ {v.endPeriod}</p>
+                          <p> <Views style={{ height: "19px" }} /> {v.viewCount}</p>
+                        </ItemBottom>
+                      </ItemContainer>
+                    </ListBox>
                   )
-)):categoryTab === "gather"?(gatherPost &&
-gatherPost.map(
-    (v) => (
-        <ListBox
-          key={v.postId}
-          onClick={() =>
-            navigate(`/gatherposts/${v.postId}`)
-          }
-        >
-         <ItemImg bgImg={v.imgUrl}>
-                          <PostScrap bookMarkStatus={v.bookMarkStatus} />
-                        </ItemImg>
-                        <ItemContainer>
-                          <ItemTop>
-                            <p style={{fontWeight:500, fontSize:"20px"}}>{v.title}</p>
-                            <p>{v.category}</p>
-                            <p>{v.content}</p>
-                          </ItemTop>
-                          <ItemBottom>
-                            <p>~ {v.endPeriod}</p>
-                            <p> <Views style={{height:"19px"}} /> {v.viewCount}</p>
-                          </ItemBottom>
-                        </ItemContainer>
-                      </ListBox>
-      )
 
-)
-)
-:  ( askPost && askPost.map(
-(v) => (
+                )
+              )
+                : (askPost && askPost.map(
+                  (v) => (
                     <ListBox
                       key={v.postId}
                       onClick={() =>
                         navigate(`/askposts/${v.postId}`)
                       }
                     >
-                     <ItemImg bgImg={v.imgUrl}>
-                          <PostScrap bookMarkStatus={v.bookMarkStatus} />
-                        </ItemImg>
-                        <ItemContainer>
-                          <ItemTop  style={{marginBottom:"20px"}}>
-                            <p style={{fontWeight:500, fontSize:"20px"}}>{v.title}</p>
-                            <p>{v.category}</p>
-                            <p>{v.content}</p>
-                          </ItemTop>
-                          <ItemBottom>
-                            <p> {v.endPeriod}</p>
-                            <p> <Views style={{height:"19px"}} /> {v.viewCount}</p>
-                          </ItemBottom>
-                        </ItemContainer>
-                      </ListBox>
+                      <ItemImg bgImg={v.imgUrl}>
+                        {v.bookMarkStatus &&
+                          <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
+                        }
+                        {/* <PostScrap bookMarkStatus={v.bookMarkStatus} /> */}
+                      </ItemImg>
+                      <ItemContainer>
+                        <ItemTop style={{ marginBottom: "20px" }}>
+                          <p style={{ fontWeight: 500, fontSize: "20px" }}>{v.title}</p>
+                          <p>{v.category}</p>
+                          <p>{v.content}</p>
+                        </ItemTop>
+                        <ItemBottom>
+                          <p> {v.endPeriod}</p>
+                          <p> <Views style={{ height: "19px" }} /> {v.viewCount}</p>
+                        </ItemBottom>
+                      </ItemContainer>
+                    </ListBox>
                   )
-)) 
-// if(categoryTab === "event"){
-// eventPost.map(
-// )
-// }else if(categoryTab === "gather"){
-// gatherPost.map(
-// )
-// }else{
-// askPost.map(
-// )
-// }
-}
+                ))
+                // if(categoryTab === "event"){
+                // eventPost.map(
+                // )
+                // }else if(categoryTab === "gather"){
+                // gatherPost.map(
+                // )
+                // }else{
+                // askPost.map(
+                // )
+                // }
+              }
 
 
-                {/* {myPostList.filter((v) => v.whatwhat === saveCategoryTab).map(
+              {/* {myPostList.filter((v) => v.whatwhat === saveCategoryTab).map(
                     (v) => (
                     <ListBox
                       key={v.postId}
@@ -189,12 +198,12 @@ gatherPost.map(
                     </ListBox>
                   )
                   )} */}
-              </>
+            </>
           </CategoryInfoList>
         </Container>
       </CateWrap>
-        </>
-    )
+    </>
+  )
 }
 
 export default MyCmt;

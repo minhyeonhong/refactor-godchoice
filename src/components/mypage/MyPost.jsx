@@ -7,7 +7,7 @@ import { __getMyPost, saveCategory } from "../../redux/modules/myPageSlice";
 import Button from "../elements/Button";
 import { __postScrap } from "../../redux/modules/postSlice";
 import PostScrap from "../detail/PostScrap";
-import { Views } from "../../assets";
+import { BookmarkFill, Views } from "../../assets";
 
 
 const MyPost = () => {
@@ -81,7 +81,10 @@ const MyPost = () => {
                   }
                 >
                   <ItemImg bgImg={v.imgUrl}>
-                    <PostScrap bookMarkStatus={v.bookMarkStatus} />
+                    {v.bookMarkStatus &&
+                      <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
+                    }
+                    {/* <PostScrap bookMarkStatus={v.bookMarkStatus} /> */}
                   </ItemImg>
                   <ItemContainer>
                     <ItemTop>
@@ -106,7 +109,10 @@ const MyPost = () => {
                       }
                     >
                       <ItemImg bgImg={v.imgUrl}>
-                        <PostScrap bookMarkStatus={v.bookMarkStatus} />
+                        {v.bookMarkStatus &&
+                          <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
+                        }
+                        {/* <PostScrap bookMarkStatus={v.bookMarkStatus} /> */}
                       </ItemImg>
                       <ItemContainer>
                         <ItemTop>
@@ -132,7 +138,10 @@ const MyPost = () => {
                     }
                   >
                     <ItemImg bgImg={v.imgUrl}>
-                      <PostScrap bookMarkStatus={v.bookMarkStatus} />
+                      {v.bookMarkStatus &&
+                        <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
+                      }
+                      {/* <PostScrap bookMarkStatus={v.bookMarkStatus} /> */}
                     </ItemImg>
                     <ItemContainer>
                       <ItemTop style={{ marginBottom: "20px" }} >
