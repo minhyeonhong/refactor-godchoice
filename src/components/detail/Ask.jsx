@@ -64,8 +64,6 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
             postLink: modPost.postLink,
             postAddress: modPost.postAddress + detail
         }
-        console.log(detailAddress)
-        console.log("obj", obj);
         //폼 데이터에 글작성 데이터 넣기
         formData.append("askPostPutRequestDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
 

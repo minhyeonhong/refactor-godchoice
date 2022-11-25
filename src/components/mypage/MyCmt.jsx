@@ -20,7 +20,6 @@ const MyCmt = () => {
   }, []);
 
   const { myCommentList } = useSelector((state) => state.myPage);
-  console.log("제발 !!!!!! ===> ", myCommentList);
 
   const onClickCategory = (tab) => {
     setCategoryTab(tab);

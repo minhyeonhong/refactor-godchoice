@@ -132,7 +132,6 @@ const Login = () => {
     try {
       axios.get(`${process.env.REACT_APP_API_URL}/member/signup/naver?code=${code}&state=${state}`)
         .then((res) => {
-          console.log("넘어온 값", res); // 토큰이 넘어올 것임
           const Access_Token = res.headers.access_token;
           const resData = res.data.data;
 
@@ -143,10 +142,7 @@ const Login = () => {
           localStorage.setItem("userId", resData.userId);
           localStorage.setItem("userImgUrl", resData.userImgUrl);
 
-
-          console.log("토큰나와라 ===> ", localStorage.getItem("token"))
-
-          // window.location.replace("/mypage")
+          window.location.replace("/mypage");
         }).catch((error) => {
           console.log("소셜로그인 에러", error);
           //window.alert("로그인에 실패하였습니다.");

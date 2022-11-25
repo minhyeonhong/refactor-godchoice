@@ -36,8 +36,6 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
     const [edit, setEdit] = useState(false);
     const toggleEdit = () => { setEdit(!edit); };
 
-    // const {gatherPosts} = useSelector((state)=>(state.gatherPosts))
-    // console.log(gatherPosts)
     //이미지 업로드 훅
     const [files, fileUrls, uploadHandle] = useImgUpload(5, true, 0.5, 1000);
     //기존 프리뷰 지울 state
@@ -96,7 +94,6 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
             postState: modPost.postState,
         }
 
-        console.log("obj", obj);
         //폼 데이터에 글작성 데이터 넣기
         formData.append("gatherPostDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
 
@@ -167,9 +164,6 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
     }
 
 
-    useEffect(() => {
-        console.log("gather post", post);
-    }, [post])
     //성별에 맞는 svg 
     const sexSvg = sex === "남" ? GenderMale : (sex === "여" ? GenderFemale : GenderIntersex)
 

@@ -47,19 +47,16 @@ export const __putPost = createAsyncThunk(
     try {
       postApis.putGatherAskAx(payload)
         .then((res) => {
-          console.log("res", res);
           if (res.data.status === 200) {
             window.location.reload();
           } else {
             console.log(res.data);
-            alert(res.data.msg);
           }
         }).catch((error) => {
 
         })
 
     } catch (error) {
-      console.log("error", error);
       return thunkAPI.rejectWithValue(error);
     }
   }
@@ -68,16 +65,13 @@ export const __putPost = createAsyncThunk(
 export const __deletePost = createAsyncThunk(
   "posts/__deletePost",
   async (payload, thunkAPI) => {
-    // console.log(payload)
     try {
       postApis.deleteEventPostAx(payload)
         .then((res) => {
-          console.log("res", res);
           window.location.replace('/');
         })
 
     } catch (error) {
-      console.log("error", error);
       return thunkAPI.rejectWithValue(error);
     }
   }

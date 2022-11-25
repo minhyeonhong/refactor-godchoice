@@ -144,7 +144,6 @@ const FestivalPost = () => {
                     return (alert('http:// 또는 https://가 포함된 링크를 입력해주세요'))
                 }
             }
-            console.log("obj", obj)
             formData.append("eventPostReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
             dispatch(__addPost(formData));
         }
@@ -184,11 +183,6 @@ const FestivalPost = () => {
             setIsAdmin(false);
         }
     }
-
-    useEffect(() => {
-        console.log("isAdmin", isAdmin);
-    }, [isAdmin])
-
 
 
     return (

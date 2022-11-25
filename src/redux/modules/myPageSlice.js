@@ -11,13 +11,9 @@ export const __getMyInfo = createAsyncThunk(
     async (payload, thunkAPI) => {
         try {
             const response = await myPageApis.getMyPageAX(payload)
-            console.log("getMyPageAX response ===> ", response)
             return thunkAPI.fulfillWithValue(response.data.data)
         } catch (error) {
-            console.log(error)
-            alert(error.response.msg)
             return thunkAPI.rejectWithValue(error)
-
         }
 
     }
@@ -30,14 +26,12 @@ export const __putMyInfo = createAsyncThunk(
     async (payload, thunkAPI) => {
         try {
             //   const response = await myPageApis.putMyPageAX(payload)
-            console.log("__putMyInfo payload", payload);
             myPageApis.putMyPageAX(payload)
                 .then((res) => {
                     if (res.data.status === 200) {
                         window.location.replace("/mypage");
                     }
                 }).catch((error) => {
-                    console.log("__putMyInfo error", error);
                     window.location.replace("/mypage");
                 })
 
@@ -100,11 +94,8 @@ export const __getMyPost = createAsyncThunk(
     "myPage/__getMyPost", async (payload, thunkAPI) => {
         try {
             const response = await myPageApis.getMyPostAX(payload)
-            console.log("getMyPostAX response ===> ", response)
             return thunkAPI.fulfillWithValue(response.data.data)
         } catch (error) {
-            console.log(error)
-            alert(error.response.msg)
             return thunkAPI.rejectWithValue(error)
         }
 
@@ -116,11 +107,8 @@ export const __getMyCmt = createAsyncThunk(
     "myPage/__getMyCmt", async (payload, thunkAPI) => {
         try {
             const response = await myPageApis.getMyCmtAX(payload)
-            console.log("getMyCmtAX response ===> ", response)
             return thunkAPI.fulfillWithValue(response.data.data)
         } catch (error) {
-            console.log(error)
-            alert(error.response.msg)
             return thunkAPI.rejectWithValue(error)
         }
 
@@ -133,11 +121,8 @@ export const __getMyScrap = createAsyncThunk(
     "myPage/__getMyScrap", async (payload, thunkAPI) => {
         try {
             const response = await myPageApis.getMyScrapAX(payload)
-            console.log("getMyScrapAX response ===> ", response)
             return thunkAPI.fulfillWithValue(response.data.data)
         } catch (error) {
-            console.log(error)
-            alert(error.response.msg)
             return thunkAPI.rejectWithValue(error)
         }
 
@@ -182,8 +167,7 @@ const myPageSlice = createSlice({
         },
         [__putMyInfo.rejected]: (state, action) => {
             state.isLoading = false;
-            state.error = action.payload;
-            console.log("action 나와라!!! ===> ", action);
+            console.log("error", action.payload);
         },
 
 
@@ -205,9 +189,7 @@ const myPageSlice = createSlice({
         },
         [__getMyPost.fulfilled]: (state, action) => {
             state.isLoading = false;
-            console.log("action.payload ===>", action.payload);
             state.myPostList = action.payload;
-
         },
         [__getMyPost.rejected]: (state, action) => {
             state.isLoading = false;

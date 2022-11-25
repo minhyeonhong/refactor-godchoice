@@ -122,7 +122,6 @@ const QuestionPost = () => {
             "askPostRequestDto",
             new Blob([JSON.stringify(obj3)], { type: "application/json" })
         );
-        console.log(obj3)
         dispatch(__addPost3(formData));
     }
 
@@ -132,13 +131,13 @@ const QuestionPost = () => {
     return (
         <>
             {isPopupOpen && (
-                        <ModalWrap onClick={popupPostCode}>
-                            <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
-                        </ModalWrap>
-                    )}
+                <ModalWrap onClick={popupPostCode}>
+                    <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
+                </ModalWrap>
+            )}
 
             <Layout>
-                <div style={{marginLeft:"10px", marginRight:"10px"}}>
+                <div style={{ marginLeft: "10px", marginRight: "10px" }}>
                     <h4 style={{ textAlign: "center", marginTop: "18px", marginBottom: "18px" }}>질문글</h4>
 
                     <STInput type="text" placeholder="제목" name="title" onChange={onChangeHandler}
@@ -180,36 +179,36 @@ const QuestionPost = () => {
                         <STInput type="text" placeholder="링크" name="postLink" onChange={onChangeHandler} style={{ width: "100%" }} />
                     </div>
 
-                   
+
                 </div>
-                
-                  {/*주소 부분 */}
-                <div style={{marginLeft:"10px"}}>
-                    <StSearchBox onClick={popupPostCode} style={{background:"#E1E3EC"}}>
-                        <button style={{color:"#8B909F"}}><FiSearch style={{ width: '20px', height: '20px',color: '#424754', marginLeft: "10px", marginRight: "10px" }} />주소검색</button>
+
+                {/*주소 부분 */}
+                <div style={{ marginLeft: "10px" }}>
+                    <StSearchBox onClick={popupPostCode} style={{ background: "#E1E3EC" }}>
+                        <button style={{ color: "#8B909F" }}><FiSearch style={{ width: '20px', height: '20px', color: '#424754', marginLeft: "10px", marginRight: "10px" }} />주소검색</button>
                     </StSearchBox>
-                        
+
                     <AddressBox >
                         {
                             postAddress !== "" && (
                                 <div>
-                                    <div style={{ display: "flex", marginBottom:"10px" }}>
-                                        <STAddressButton style={{marginRight:"10px", flex:"2"}}>{"#" + region}</STAddressButton>
-                                        <STInput3 type="text" defaultvalue={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{ flex:"8"}}>{postAddress}</STInput3>
+                                    <div style={{ display: "flex", marginBottom: "10px" }}>
+                                        <STAddressButton style={{ marginRight: "10px", flex: "2" }}>{"#" + region}</STAddressButton>
+                                        <STInput3 type="text" defaultvalue={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{ flex: "8" }}>{postAddress}</STInput3>
                                     </div>
-                                        <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{ width: "80%", float:"right" }} />
-                                        <KakaoMap address={postAddress} width="328px" height="300px" />
+                                    <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{ width: "80%", float: "right" }} />
+                                    <KakaoMap address={postAddress} width="328px" height="300px" />
 
                                 </div>)
                         }
                     </AddressBox >
-                </div> 
+                </div>
 
                 <div>
-                    <AllButton style={{background:"#3556E1", color:"white"}} onClick={onSubmit}>작성</AllButton>
+                    <AllButton style={{ background: "#3556E1", color: "white" }} onClick={onSubmit}>작성</AllButton>
                 </div>
             </Layout>
-            
+
         </>
     )
 }

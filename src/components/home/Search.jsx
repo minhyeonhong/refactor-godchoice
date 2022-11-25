@@ -37,7 +37,6 @@ const Search = ({ updateSearchInfo, searchState }) => {
     //검색정보 state 바뀔때마다 api요청
     useEffect(() => {
         updateSearchInfo(searchInfo);
-        console.log("콘솔", searchInfo);
     }, [searchInfo])
 
     //검색어로 검색후 검색어를 지웠을때 처리

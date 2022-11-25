@@ -18,7 +18,7 @@ const Header = () => {
             <StLogoBox> <Link to="/"> <img src={logo} /></Link></StLogoBox>
             <StRightBox>
 
-                <Bell style={{ height: "48px", marginRight: "15px", padding: "2px" }} />
+                <Link to="/"><Bell style={{ height: "48px", marginRight: "15px", padding: "2px" }} /></Link>
                 {localStorage.getItem("token") === null ?
                     <RiLoginBoxLine style={{ width: '32px', height: "48px", marginRight: "15px", padding: "2px", color: '#00208F' }}
                         onClick={() => { navigate("/login") }} />

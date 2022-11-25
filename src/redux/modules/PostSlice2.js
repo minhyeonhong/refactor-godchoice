@@ -19,7 +19,6 @@ export const __addPost2 = createAsyncThunk(
           if (response.data.status === 200) window.location.replace(`/gatherposts/${response.data.data.postId}`);
         });
     } catch (error) {
-      console.log("error", error);
       return thunkAPI.rejectWithValue(error);
     }
   }
@@ -31,19 +30,16 @@ export const __putPost = createAsyncThunk(
     try {
       postApis.putGatherPostAx(payload)
         .then((res) => {
-          console.log("res", res);
           if (res.data.status === 200) {
             window.location.reload();
           } else {
             console.log(res.data);
-            alert(res.data.msg);
           }
         }).catch((error) => {
 
         })
 
     } catch (error) {
-      console.log("error", error);
       return thunkAPI.rejectWithValue(error);
     }
   }
@@ -57,12 +53,10 @@ export const __deletePost = createAsyncThunk(
     try {
       postApis.deleteGatherPostAx(payload)
         .then((res) => {
-          console.log("res", res);
           window.location.replace('/');
         })
 
     } catch (error) {
-      console.log("error", error);
       return thunkAPI.rejectWithValue(error);
     }
   }

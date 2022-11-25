@@ -19,7 +19,6 @@ const MyPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const data = useSelector((state) => state.myPage.userInfo);
-  console.log("data ===> ", data.adminPage)
   const token = localStorage.getItem("token");
   // const nickName = localStorage.getItem("nickName");
   const nickName = data.nickName;
@@ -66,10 +65,6 @@ const MyPage = () => {
     // delCookie("addressTag")
     navigate("/")
   }
-
-  useEffect(() => {
-    console.log("userImgUrl", userImgUrl);
-  }, [userImgUrl])
 
   return (
     <Layout>

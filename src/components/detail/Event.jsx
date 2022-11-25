@@ -47,10 +47,6 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         setIndex(selectedIndex);
     };
 
-    useEffect(() => {
-        console.log("event post", post);
-    }, [post])
-
     //상세글 수정하기 상태
     const [mod, setMod] = useState(false);
 
@@ -92,8 +88,6 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         }
 
         const detail = modPost.detailAddress === undefined ? "" : modPost.detailAddress
-        //        console.log(delImg.join())
-
 
         const obj = {
             imgId: delImg.join(),
@@ -103,11 +97,9 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
             title: modPost.title,
             content: modPost.content,
             postLink: modPost.postLink,
-            //postState: modPost.postState,
             postAddress: modPost.postAddress + detail
         }
 
-        //console.log("obj", obj);
         //폼 데이터에 글작성 데이터 넣기
         formData.append("eventPostPutReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
 

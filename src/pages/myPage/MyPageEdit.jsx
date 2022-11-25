@@ -24,10 +24,8 @@ const MyPageEdit = () => {
     address: "",
   };
 
-  console.log("이건 data야!", data);
 
   const profileData = useSelector((state) => state.myPage.userInfo);
-  console.log("프로필 데이터가 뭔데", profileData);
   const img_ref = useRef(null);
 
   const [inputForm, setInputForm] = useState(data);
@@ -39,13 +37,6 @@ const MyPageEdit = () => {
   const email = localStorage.getItem("email");
   const nickName = profileData.nickName;
   const address = profileData.addressTag;
-
-  console.log("address나와랏", address);
-  console.log("userId ===> ", userId);
-  console.log("email ===> ", email);
-  console.log("profileData.userImg ===> ", profileData.userImg)
-  console.log("닉네임 ===> ", profileData.nickName)
-
 
   const onLoadFile = (e) => {
     const reader = new FileReader();
@@ -72,7 +63,6 @@ const MyPageEdit = () => {
     let uploadImg = img_ref.current;
 
     const obj = { userName: inputForm.nickName, userAddress: Selected }
-    console.log("넘어오니 ===> ", obj)
 
     formData.append(
       "user",

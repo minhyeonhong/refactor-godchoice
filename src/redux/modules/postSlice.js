@@ -21,10 +21,9 @@ export const __addAdminPost = createAsyncThunk(
     "posts/__addAdminPost",
     async (payload, thunkAPI) => {
         try {
-            console.log("__addAdminPost payload", payload);
             postApis.addAdminPostAX(payload)
                 .then((response) => {
-                    console.log("response", response.data);
+                    window.location.replace('/mypage');
                 });
         } catch (error) {
             console.log("error", error);
@@ -38,7 +37,7 @@ export const __delAdminPost = createAsyncThunk(
         try {
             postApis.deleteAdminPostAX(payload)
                 .then((response) => {
-                    console.log("response", response.data);
+                    console.log("관리자글 삭제 response", response.data);
                 });
         } catch (error) {
             console.log("error", error);
@@ -109,19 +108,16 @@ export const __putPost = createAsyncThunk(
         try {
             postApis.putPostAx(payload)
                 .then((res) => {
-                    console.log("res", res);
                     if (res.data.status === 200) {
                         window.location.reload();
                     } else {
                         console.log(res.data);
-                        alert(res.data.msg);
                     }
                 }).catch((error) => {
 
                 })
 
         } catch (error) {
-            console.log("error", error);
             return thunkAPI.rejectWithValue(error);
         }
     }
@@ -134,12 +130,10 @@ export const __deletePost = createAsyncThunk(
         try {
             postApis.deleteEventPostAx(payload)
                 .then((res) => {
-                    console.log("res", res);
                     window.location.replace('/');
                 })
 
         } catch (error) {
-            console.log("error", error);
             return thunkAPI.rejectWithValue(error);
         }
     }

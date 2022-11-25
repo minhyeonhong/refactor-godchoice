@@ -155,7 +155,6 @@ const GatherPost = () => {
             postLink: gatherPosts.postLink,
             postAddress: postAddress + gatherPosts.detailAddress,
         }
-        // console.log(obj2)
         formData.append("gatherPostDto", new Blob([JSON.stringify(obj2)], { type: "application/json" }));
         dispatch(__addPost2(formData));
         //window.location.replace('/')

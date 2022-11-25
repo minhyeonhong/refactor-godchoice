@@ -46,10 +46,6 @@ const Home = () => {
     }, [])
 
 
-    useEffect(() => {
-        console.log("isLoading", isLoading);
-    }, [isLoading])
-
     //검색 상태 업데이트
     const updateSearchInfo = (searchInfo) => {
         dispatch(putSearchState({ main: searchState.main === undefined ? 'event' : searchState.main, ...searchInfo }));
@@ -63,7 +59,6 @@ const Home = () => {
     //리스트 불러오기
     useMemo(() => {
         if (Object.keys(searchState).length > 0) {
-            console.log("isResetSearch", isResetSearch);
             dispatch(__getAllPostList(searchState));
         }
     }, [searchState])

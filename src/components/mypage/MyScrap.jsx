@@ -24,7 +24,6 @@ const MyScrap = () => {
   }, []);
 
   const { myScrapList } = useSelector((state) => state.myPage);
-  console.log("제발 !!!!!! ===> ", myScrapList);
 
   const onClickCategory = (tab) => {
     setCategoryTab(tab);

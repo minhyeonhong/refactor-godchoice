@@ -26,14 +26,9 @@ const List = ({ posts, main, isLoading, istLastPage, setPage }) => {
     useEffect(() => {
         // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니고 마지막이 아니면 페이지+1
         if (inView && !isLoading && !istLastPage) {
-            console.log("페이지 증가");
             setPage(prevState => prevState + 1)
         }
     }, [inView, isLoading])
-
-    useEffect(() => {
-        console.log("list posts", posts);
-    }, [posts])
 
     return (
         <StCardWrap>

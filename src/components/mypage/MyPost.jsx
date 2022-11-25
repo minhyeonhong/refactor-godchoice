@@ -29,7 +29,6 @@ const MyPost = () => {
 
   const { saveCategoryTab } = useSelector((state) => state.myPage);
   const { eventPost, gatherPost, askPost } = myPostList
-  console.log("제발 !!!!!! ===> ", myPostList);
 
   return (
     <>
