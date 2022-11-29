@@ -38,7 +38,7 @@ h3 {
 ul {
   list-style: none;
 }
-p {
+p, span {
   margin: 0;
   font-family: 'Pretendard';
 }

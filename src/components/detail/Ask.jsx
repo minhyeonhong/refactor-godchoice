@@ -11,7 +11,7 @@ import {
     StEventPlaceBox,
     StButtonBox
 } from '../styles/Detail.styled'
-import { ModalWrap, AllInput } from '../styles/GatherDetail.styled'
+import { ModalWrap, AllInput } from '../styles/AddPost.styled'
 import noImg from '../../assets/images/common/noImg.jpg'
 import { useDispatch } from 'react-redux';
 import SearchAddress from '../post/SearchAddress';

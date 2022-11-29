@@ -12,7 +12,7 @@ import Layout from '../../components/layout/Layout';
 import { flexColumn } from '../../components/styles/Flex';
 // import { ProfileImg } from '../../assets';
 import Button from '../../components/elements/Button';
-import { flexBetween, flexEvenly, flexRow } from '../../styles/Flex';
+import { flexBetween, flexEvenly, flexRow } from '../../components/styles/Flex';
 import { BookmarkFill, Comment, MyPost } from '../../assets';
 
 const MyPage = () => {
