@@ -1,5 +1,5 @@
 import styled, { css } from "styled-components";
-import { colors } from "../../styles/color";
+// import { colors } from "../styles/color";
 
 const Button = ({
   imgUrl,
@@ -138,7 +138,7 @@ const StButton = styled.button`
       props.btnType === "tabMenu" &&
       css`
         width: 100%;
-        height: 78px;
+        height: 60px;
         box-sizing: border-box;Participation
         font-weight: 600;
         font-size: 20px;

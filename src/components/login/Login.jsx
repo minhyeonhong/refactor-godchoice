@@ -25,24 +25,6 @@ const Login = () => {
       <LoginWrap>
         <Container>
           <Logo> <img src={logo} alt="logo" /> </Logo>
-          {/* <Button btnType="login" onClick={() => onClickHandler("k")}>
-            <div>
-              <img src={kakao} alt="kakao_img" />
-            </div>
-            <LoginText>카카오 로그인</LoginText>
-          </Button>
-          <Button btnType="login" onClick={() => onClickHandler("n")}>
-            <div>
-              <img src={naver} alt="naver_img" />
-            </div>
-            <LoginText>네이버 로그인</LoginText>
-          </Button>
-          <Button btnType="login" onClick={() => onClickHandler("g")}>
-            <div>
-              <img src={google} alt="google_img" />
-            </div>
-            <LoginText>구글 로그인</LoginText>
-          </Button> */}
           <KakaoBtn style={{width : "100%"}} onClick={() => onClickHandler("k")} />
           <NaverBtn style={{width : "100%"}} onClick={() => onClickHandler("n")} />
           <GoogleBtn style={{width : "100%"}} onClick={() => onClickHandler("g")} />

@@ -284,8 +284,8 @@ const FestivalPost = () => {
                                             <STAddressButton style={{ marginRight: "10px", flex: "2" }}>{"#" + region}</STAddressButton>
                                             <STInput3 type="text" value={postAddress} style={{ flex: "8" }} readOnly>{postAddress}</STInput3>
                                         </div>
-                                        <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{ width: "80%", marginBottom: "10px", float: "right" }} />
-                                        <KakaoMap address={postAddress} width="328px" height="300px" />
+                                        <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{ marginBottom: "10px" }} />
+                                        <KakaoMap address={postAddress} width="100%" height="300px" />
                                     </>)
                             }
                         </AddressBox >
