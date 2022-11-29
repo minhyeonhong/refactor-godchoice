@@ -87,7 +87,7 @@ const MyCmt = () => {
                   </ItemImg>
                   <ItemContainer>
                     <ItemTop>
-                      <p style={{ fontWeight: 500, fontSize: "20px" }}>{v.title}</p>
+                      <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 15 ? v.title.substring(0, 9) + '...' : v.title}</p>
                       <p>{v.category}</p>
                       <p>{v.content}</p>
                     </ItemTop>
@@ -115,12 +115,12 @@ const MyCmt = () => {
                       </ItemImg>
                       <ItemContainer>
                         <ItemTop>
-                          <p style={{ fontWeight: 500, fontSize: "20px" }}>{v.title}</p>
+                          <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 15 ? v.title.substring(0, 9) + '...' : v.title}</p>
                           <p>{v.category}</p>
                           <p>{v.content}</p>
                         </ItemTop>
                         <ItemBottom>
-                          <p>~ {v.endPeriod}</p>
+                          <p>{v.date}</p>
                           <p> <Views style={{ height: "19px" }} /> {v.viewCount}</p>
                         </ItemBottom>
                       </ItemContainer>
@@ -145,7 +145,7 @@ const MyCmt = () => {
                       </ItemImg>
                       <ItemContainer>
                         <ItemTop style={{ marginBottom: "20px" }}>
-                          <p style={{ fontWeight: 500, fontSize: "20px" }}>{v.title}</p>
+                          <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 15 ? v.title.substring(0, 9) + '...' : v.title}</p>
                           <p>{v.category}</p>
                           <p>{v.content}</p>
                         </ItemTop>
@@ -157,46 +157,7 @@ const MyCmt = () => {
                     </ListBox>
                   )
                 ))
-                // if(categoryTab === "event"){
-                // eventPost.map(
-                // )
-                // }else if(categoryTab === "gather"){
-                // gatherPost.map(
-                // )
-                // }else{
-                // askPost.map(
-                // )
-                // }
               }
-
-
-              {/* {myPostList.filter((v) => v.whatwhat === saveCategoryTab).map(
-                    (v) => (
-                    <ListBox
-                      key={v.postId}
-                      onClick={() =>
-                        navigate(`/eventposts/${v.postId}`)
-                      }
-                    >
-                      <ItemImg
-                        bgImg={
-                          v.img !== null
-                            ? v.img
-                            : "https://www.urbanbrush.net/web/wp-content/uploads/edd/2020/02/urbanbrush-20200227023608426223.jpg"
-                        }
-                      ></ItemImg>
-                      <div>
-                        <div>
-                          <p>{v.title}</p>
-                          <p>{v.content}</p>
-                          <p>
-                            {v.startPeriod} - {v.endPeriod}
-                          </p>
-                        </div>
-                      </div>
-                    </ListBox>
-                  )
-                  )} */}
             </>
           </CategoryInfoList>
         </Container>
