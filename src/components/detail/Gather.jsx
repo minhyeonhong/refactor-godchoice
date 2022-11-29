@@ -14,7 +14,7 @@ import {
     StEventPlaceBox,
     StButtonBox
 } from '../styles/Detail.styled'
-import { ModalWrap } from '../styles/GatherDetail.styled'
+import { ModalWrap } from '../styles/AddPost.styled'
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import SearchAddress from '../post/SearchAddress';
