@@ -41,11 +41,6 @@ import Views from '../../assets/icon/Views.svg'
 
 const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
     const dispatch = useDispatch();
-    //슬라이드 자동으로 넘기는 부분
-    const [index, setIndex] = useState(0);
-    const handleSelect = (selectedIndex, e) => {
-        setIndex(selectedIndex);
-    };
 
     //상세글 수정하기 상태
     const [mod, setMod] = useState(false);
@@ -173,7 +168,7 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                         <STInput style={{ marginBottom: "8px" }}><p>{post.title}</p></STInput>
 
                         <StCarouselWrap>
-                            <Carousel activeIndex={index} onSelect={handleSelect}>
+                            <Carousel>
                                 {
                                     post.postImgInfo !== undefined &&
                                     post.postImgInfo.map((imgInfo, i) => {
@@ -225,7 +220,7 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
                         <StCarouselWrap>
                             {//modPost.postImgInfo.length > 1 &&
-                                <Carousel activeIndex={index} onSelect={handleSelect}>
+                                <Carousel>
                                     {modPost.postImgInfo.map((imgInfo, i) => {
                                         return (
                                             <Carousel.Item key={i}>

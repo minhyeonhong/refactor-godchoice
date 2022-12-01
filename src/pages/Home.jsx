@@ -3,7 +3,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import Layout from "../components/layout/Layout";
 import List from "../components/home/List";
 import Search from "../components/home/Search";
-import Loading from "../components/common/Loading";
 import Carousel from "react-bootstrap/Carousel";
 import styled from "styled-components";
 import useInput from "../hooks/useInput";
@@ -27,23 +26,15 @@ import {
 import { useMemo } from 'react';
 import PageState from "../components/common/PageState";
 
+import { postApis } from "../api/api-functions/postApis"
+import { useQuery } from "@tanstack/react-query";
+
 const Home = () => {
     const dispatch = useDispatch();
-
-    //슬라이드 자동으로 넘기는 부분
-    const [index, setIndex] = useState(0);
-    const handleSelect = (selectedIndex, e) => {
-        setIndex(selectedIndex);
-    };
 
     //store state
     const { adminPosts, searchState, posts, istLastPage, isLoading, isResetSearch } = useSelector((state) => state.postSlice);
     const [page, setPage] = useState(0);
-
-    //배너 가져오기
-    useEffect(() => {
-        dispatch(__getAdminPost());
-    }, [])
 
 
     //검색 상태 업데이트
@@ -63,6 +54,12 @@ const Home = () => {
         }
     }, [searchState])
 
+    //배너 가져오기
+    const banner = useQuery(['banner'], () => postApis.getAdminPostAX(), { refetchOnWindowFocus: false })
+
+    // const result = useQuery(['todos', searchState], () => postApis.searchPostAX(searchState), { refetchOnWindowFocus: false })
+
+    // console.log("result", result);
 
     return (
 
@@ -80,8 +77,8 @@ const Home = () => {
                 </>
                 {/* 슬라이드 */}
                 <StCarouselWrap>
-                    <Carousel activeIndex={index} onSelect={handleSelect}>
-                        {adminPosts.length === 0 ?
+                    <Carousel >
+                        {banner?.data?.data?.data?.length === 0 ?
                             <Carousel.Item>
                                 <PageState
                                     display='flex'
@@ -89,7 +86,7 @@ const Home = () => {
                                     text='등록된 배너가 없습니다.' />
                             </Carousel.Item>
                             :
-                            adminPosts.map((post) => {
+                            banner?.data?.data?.data?.map((post) => {
                                 return (
                                     <Carousel.Item key={post.id} onClick={() => { window.open(post.postLink, post.title) }}>
                                         <img style={{ height: "180px" }}
