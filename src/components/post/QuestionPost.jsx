@@ -53,13 +53,12 @@ const QuestionPost = () => {
         if (question.content === "") { return alert('내용을 입력하세요') }
 
         //행사장 링크(필수 아님)
-        const arr = question.postLink.includes('http://') || question.postLink.includes('https://')
+        const link = /(http|https):\/\//.test(question.postLink)
         if (question.postLink !== "") {
-            if (arr === false) {
-                return alert("'https://'또는 'http://'가 포함된 링크를 입력해주세요.")
+            if (link === false) {
+                return alert("'http://' 또는 'https://'가 포함된 링크를 입력해주세요.")
             }
         }
-
 
         const formData = new FormData();
 
