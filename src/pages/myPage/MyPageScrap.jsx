@@ -5,11 +5,9 @@ import MyScrap from "../../components/mypage/MyScrap";
 const MyPageScrap = () => {
 
     return (
-        <>
         <Layout>
             <MyScrap />
         </Layout>
-        </>
     )
 }
 

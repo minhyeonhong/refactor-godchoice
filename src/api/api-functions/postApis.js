@@ -8,7 +8,7 @@ export const postApis = {
     getPostAX: (post) => instance.get(`${process.env.REACT_APP_API_URL}/${post.url}/${post.postId}`),
 
     /**좋아요 */
-    postScrapAx: (post) => instance.post(`likes/${post.kind}/${post.postId}`),
+    postScrapAx: (post) => instance.post(`${process.env.REACT_APP_API_URL}/likes/${post.kind}/${post.postId}`),
 
     // 행사글 게시글 작성
     addEventPostAx: (post) => instance.post(`${process.env.REACT_APP_API_URL}/eventposts`, post),

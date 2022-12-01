@@ -8,27 +8,34 @@ import Button from "../elements/Button";
 import { __postScrap } from "../../redux/modules/postSlice";
 import PostScrap from "../detail/PostScrap";
 import { BookmarkFill, Views } from "../../assets";
+import { useQuery } from "@tanstack/react-query";
+import { myPageApis } from "../../api/api-functions/myPageApis";
 
 const MyCmt = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [categoryTab, setCategoryTab] = useState("event");
-  useEffect(() => {
-    dispatch(__getMyCmt());
-    setCategoryTab(saveCategoryTab);
-  }, []);
 
-  const { myCommentList } = useSelector((state) => state.myPage);
+  //댓글 단 글 server state
+  const [myCommentList, setMyCommentList] = useState({});
+  const { eventPost, gatherPost, askPost } = myCommentList;
+
+  //댓글 단 글 불러오기
+  useQuery(['getMyCommentList'],
+    () => myPageApis.getMyCmtAX(), //fn
+    {//options
+      refetchOnWindowFocus: false, // react-query는 사용자가 사용하는 윈도우가 다른 곳을 갔다가 다시 화면으로 돌아오면 이 함수를 재실행합니다. 그 재실행 여부 옵션 입니다.
+      retry: 0, // 실패시 재호출 몇번 할지
+      onSuccess: res => {
+        if (res.data.status === 200) {
+          setMyCommentList(res.data.data);
+        }
+      }
+    })
 
   const onClickCategory = (tab) => {
     setCategoryTab(tab);
-    dispatch(saveCategory(tab));
   };
-
-  const { saveCategoryTab } = useSelector((state) => state.myPage);
-  const { eventPost, gatherPost, askPost } = myCommentList
-
 
   return (
     <>

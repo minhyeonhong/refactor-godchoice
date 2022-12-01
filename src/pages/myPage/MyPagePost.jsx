@@ -5,11 +5,9 @@ import MyPost from "../../components/mypage/MyPost";
 const MyPagePost = () => {
 
     return (
-       <>
-    <Layout>
-        <MyPost />
-    </Layout>
-       </>
+        <Layout>
+            <MyPost />
+        </Layout>
     )
 }
 

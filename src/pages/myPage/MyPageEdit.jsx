@@ -1,10 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-
-// Redux import
-import { __putMyInfo, __getMyInfo } from "../../redux/modules/myPageSlice";
-import { useDispatch, useSelector } from "react-redux";
 
 import { Camera, Delete } from "../../assets";
 import Layout from "../../components/layout/Layout";
@@ -13,46 +9,57 @@ import naver from "../../assets/logo_naver.png";
 import google from "../../assets/logo_google.png";
 
 import useInput from "../../hooks/useInput";
+import useImgUpload from "../../hooks/useImgUpload";
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { myPageApis } from '../../api/api-functions/myPageApis';
 
 const MyPageEdit = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const selectList = ["서울", "인천", "세종", "대구", "부산", "울산", "광주", "대전", "제주도", "경기도", "강원도", "충청도", "경상도", "전라도"];
 
-  const { userInfo } = useSelector((state) => state.myPage);
+  //이미지 업로드 훅
+  const [files, fileUrls, uploadHandle] = useImgUpload(1, true, 0.5, 1000);
 
+  //이미지 업로드 인풋돔 선택 훅
+  const imgRef = useRef();
   //수정 인풋state
   const [modMyInfo, setModMyInfo, modMyInfoHandle] = useInput({
     userName: "",
     userAddress: ""
   });
 
-  //유저 정보 받아오기
-  useEffect(() => {
-    dispatch(__getMyInfo());
-  }, []);
+  // 내정보 server state
+  const [userInfo, setUserInfo] = useState({});
+  //내정보 불러오기
+  useQuery(['getMyPage'],
+    () => myPageApis.getMyPageAX(), //fn
+    {//options
+      refetchOnWindowFocus: false, // react-query는 사용자가 사용하는 윈도우가 다른 곳을 갔다가 다시 화면으로 돌아오면 이 함수를 재실행합니다. 그 재실행 여부 옵션 입니다.
+      retry: 0, // 실패시 재호출 몇번 할지
+      onSuccess: res => {
+        if (res.data.status === 200) {
+          localStorage.setItem('userAddressTag', res.data.data.addressTag);
+          setUserInfo(res.data.data);
+        }
+      }
+    })
 
-
-  const img_ref = useRef(null);
-  const [imgFile, setImgFile] = useState([]);
-  const [imagePreview, setImagePreview] = useState(userInfo.userImg);
-
-  const onLoadFile = (e) => {
-    const reader = new FileReader();
-    setImgFile(...imgFile, URL.createObjectURL(e.target.files[0]));
-
-    const prevImg = e.target.files[0];
-    reader.readAsDataURL(prevImg);
-    reader.onloadend = () => {
-      setImagePreview(reader.result);
-    };
-  };
-
+  //내정보 수정
+  const putMyInfo = useMutation({
+    mutationFn: obj => {
+      return myPageApis.putMyPageAX(obj);
+    },
+    onSuccess: res => {
+      if (res.data.status === 200) {
+        localStorage.setItem('userAddressTag', res.data.data.addressTag);
+        navigate("/mypage");
+      }
+    },
+  })
 
   //서브밋
   const onSubmitHandler = async () => {
     let formData = new FormData();
-    let uploadImg = img_ref.current;
 
     let obj = {
       userName: modMyInfo.userName === '' ? userInfo.nickName : modMyInfo.userName,
@@ -64,96 +71,88 @@ const MyPageEdit = () => {
       new Blob([JSON.stringify(obj)], { type: "application/json" })
     );
 
-    if (imgFile.length === 0) {
+    if (files.length === 0) {
       formData.append("multipartFile", null);
     } else {
-      formData.append("multipartFile", uploadImg.files[0]);
+      formData.append("multipartFile", files[0]);
     }
 
-    console.log("obj", obj);
-
-    dispatch(__putMyInfo(formData));
-
+    putMyInfo.mutate(formData);
   };
 
-
-
   return (
-    <>
-      <Layout>
-        {/* <div>
-          <h3>프로필 수정</h3>
-        </div> */}
-        <MyProfile>
-          <MyImgWrap>
-            <MyImgBox>
-              <img src={imagePreview} alt="" />
-              <label htmlFor="img_UpFile">
-                <Camera />
-              </label>
-              <input
-                ref={img_ref}
-                type="file"
-                accept="image/*"
-                id="img_UpFile"
-                onChange={onLoadFile}
-                style={{ display: "none" }}
-              />
-            </MyImgBox>
-          </MyImgWrap>
+    Object.keys(userInfo).length > 0 &&
+    <Layout>
+      <MyProfile>
+        <MyImgWrap>
+          <MyImgBox>
+            <img src={fileUrls[0] || userInfo.userImg} alt="my profil photo" />
+            <label htmlFor="img_UpFile">
+              <Camera />
+            </label>
+            <input
+              ref={imgRef}
+              type="file"
+              accept="image/*"
+              id="img_UpFile"
+              name="files"
+              onChange={uploadHandle}
+              style={{ display: "none" }}
+            />
+          </MyImgBox>
+        </MyImgWrap>
 
-          <LoginInfo>
-            <LoginInfoTitle>로그인 정보</LoginInfoTitle>
-            <LoginInfoContent>
-              {userInfo.domain === 'google' ? <img src={google} alt="logoImg" /> : null}
-              {userInfo.domain === 'kakao' ? <img src={kakao} alt="logoImg" /> : null}
-              {userInfo.domain === 'naver' ? <img src={naver} alt="logoImg" /> : null}
-              {userInfo.email}
-            </LoginInfoContent>
-          </LoginInfo>
+        <LoginInfo>
+          <LoginInfoTitle>로그인 정보</LoginInfoTitle>
+          <LoginInfoContent>
+            {userInfo.domain === 'google' && <img src={google} alt="logoImg" />}
+            {userInfo.domain === 'kakao' && <img src={kakao} alt="logoImg" />}
+            {userInfo.domain === 'naver' && <img src={naver} alt="logoImg" />}
+            {userInfo.email}
+          </LoginInfoContent>
+        </LoginInfo>
 
-          <MyTextWrap>
-            <div className="MyTextNick">닉네임</div>
-            <div className="MyTextInputWrap">
-              <input
-                type="text"
-                value={modMyInfo.userName || ""}
-                name="userName"
-                onChange={modMyInfoHandle}
-                placeholder={userInfo.nickName}
-                minLength="1"
-                maxLength="6"
-              />
-              <Delete />
-            </div>
-            {/* <span className="MyTextCheck"></span> */}
-          </MyTextWrap>
-          <MyTextWrap>
-            <div className="MyTextNick">관심 지역</div>
-            <div className="MyTextInputWrap">
-              <select onChange={modMyInfoHandle} name='userAddress' defaultValue={userInfo.addressTag} style={{ width: "100%", height: "56px", border: "1px solid #808080", borderRadius: "10px" }} >
-                {
-                  selectList.map((select) => (
-                    <option value={select} key={select} >{select}</option>
-                  ))
-                }
-              </select>
-              {/* <p>Selected : <b>{Selected}</b> </p> */}
-              {/* <Delete /> */}
-            </div>
-            {/* <span className="MyTextCheck"></span> */}
-          </MyTextWrap>
-        </MyProfile>
-        <MyDoneBtnWrap>
-          <MyDoneBtn onClick={() => window.history.back()}>
-            취소
-          </MyDoneBtn>
-          <MyDoneBtn onClick={onSubmitHandler}>
-            완료
-          </MyDoneBtn>
-        </MyDoneBtnWrap>
-      </Layout>
-    </>
+        <MyTextWrap>
+          <div className="MyTextNick">닉네임</div>
+          <div className="MyTextInputWrap">
+            <input
+              type="text"
+              value={modMyInfo.userName || ""}
+              name="userName"
+              onChange={modMyInfoHandle}
+              placeholder={userInfo.nickName}
+              minLength="1"
+              maxLength="6"
+            />
+            <Delete />
+          </div>
+          {/* <span className="MyTextCheck"></span> */}
+        </MyTextWrap>
+        <MyTextWrap>
+          <div className="MyTextNick">관심 지역</div>
+          <div className="MyTextInputWrap">
+            <select onChange={modMyInfoHandle} name='userAddress' defaultValue={userInfo.addressTag} style={{ width: "100%", height: "56px", border: "1px solid #808080", borderRadius: "10px" }} >
+              {
+                selectList.map((select) => (
+                  <option value={select} key={select} >{select}</option>
+                ))
+              }
+            </select>
+            {/* <p>Selected : <b>{Selected}</b> </p> */}
+            {/* <Delete /> */}
+          </div>
+          {/* <span className="MyTextCheck"></span> */}
+        </MyTextWrap>
+      </MyProfile>
+      <MyDoneBtnWrap>
+        <MyDoneBtn onClick={() => window.history.back()}>
+          취소
+        </MyDoneBtn>
+        <MyDoneBtn onClick={onSubmitHandler}>
+          완료
+        </MyDoneBtn>
+      </MyDoneBtnWrap>
+    </Layout>
   );
 };
 
