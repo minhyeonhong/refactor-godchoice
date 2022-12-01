@@ -6,8 +6,6 @@ import { __postList } from '../../redux/modules/postSlice'
 import { useInView } from "react-intersection-observer"
 import styled from 'styled-components';
 
-import Loading from '../../components/common/Loading'
-
 import { BsEye } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 

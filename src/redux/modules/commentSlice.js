@@ -10,13 +10,8 @@ export const __insertComment = createAsyncThunk(
     async (payload, thunkAPI) => {
         try {
             const insertRes = await commentApis.insertCommentAX(payload)
-            // if (insertRes.data.status !== 200) return;
-            // const getRes = await commentApis.getCommentAX({ postId: payload.postId, kind: payload.kind });
-            // console.log("getRes", getRes);
-            // if (getRes.data.status !== 200) return;
 
             return thunkAPI.fulfillWithValue(insertRes.data);
-
         } catch (error) {
             return thunkAPI.rejectWithValue(error);
         }

@@ -8,31 +8,49 @@ import useInput from '../../hooks/useInput';
 import Button from '../elements/Button';
 import { CaretUp, CommentArrow, XBtn, ReComment } from '../../assets/index';
 
+import { commentApis } from "../../api/api-functions/commentApis"
+import { useMutation, useQuery } from "@tanstack/react-query";
+
 const Comment = ({ postId, kind, commentDtoList }) => {
-    const dispatch = useDispatch();
-    const { commentList } = useSelector((state) => state.commentSlice);
 
-    // useEffect(() => {
-    //     if (Object.keys(commentDtoList).length > 0) {
-    //         commentDtoList.forEach(element => {
-    //             setOpenReComment(e => [...e, false])
-    //         });
-    //         dispatch(setCommentList(commentDtoList));
-    //     }
-    // }, [commentDtoList])
+    //댓글 server state
+    const [comments, setComments] = useState([]);
+    //댓글 불러오기
+    useQuery(['comments', { postId, kind }],
+        () => commentApis.getCommentAX({ postId, kind }), //fn
+        {//options
+            refetchOnWindowFocus: false, // react-query는 사용자가 사용하는 윈도우가 다른 곳을 갔다가 다시 화면으로 돌아오면 이 함수를 재실행합니다. 그 재실행 여부 옵션 입니다.
+            retry: 0, // 실패시 재호출 몇번 할지
+            onSuccess: res => {
+                if (res.data.status === 200) {
+                    setComments(res.data.data);
+                }
+            }
+        })
 
-    useEffect(() => {
-        dispatch(__getComment({ postId, kind }));
-    }, [])
-
+    //댓글 인풋
     const [comment, setComment, commentHandle] = useInput({
         content: ""
     });
-
+    //대댓글 인풋
     const [reComment, setReComment, reCommentHandle] = useInput({
         content: ""
     });
 
+    //댓글 작성
+    const insertMutation = useMutation({
+        mutationFn: obj => {
+            return commentApis.insertCommentAX(obj);
+        },
+        onSuccess: res => {
+            if (res.data.status === 200) {
+                setComments(res.data.data);
+                setComment({ content: "" });
+                setReComment({ content: "" });
+            }
+        },
+    })
+    //댓글 작성
     const submit = (parentId, content) => {
         const obj = {
             postId,
@@ -48,9 +66,28 @@ const Comment = ({ postId, kind, commentDtoList }) => {
             return
         }
 
-        dispatch(__insertComment(obj));
+        insertMutation.mutate(obj);
     }
 
+    //댓글 삭제
+    const deleteMutation = useMutation({
+        mutationFn: obj => {
+            return commentApis.deleteCommentAX(obj);
+        },
+        onSuccess: res => {
+            if (res.data.status === 200) {
+                setComments(res.data.data);
+            }
+        },
+    })
+    //댓글 삭제
+    const delComment = (obj) => {
+        if (window.confirm("댓글을 삭제 하시겠습니까?")) {
+            deleteMutation.mutate(obj);
+        }
+    }
+
+    //대댓글 인풋 온오프
     const [openReComment, setOpenReComment] = useState([]);
     const isOpenReComment = (idx, onOff) => {
         let newArr = [...openReComment];
@@ -72,7 +109,7 @@ const Comment = ({ postId, kind, commentDtoList }) => {
             <StCommentListBox>
                 {/* 댓글 */}
                 {
-                    commentList && commentList.map((item, commentIdx) => {
+                    comments?.map((item, commentIdx) => {
                         return (
                             <StCommentBox key={item.commentId}>
                                 <StComment>
@@ -80,7 +117,7 @@ const Comment = ({ postId, kind, commentDtoList }) => {
                                         <div><StUserImg src={item.userImg} /> {item.userName}</div>
                                         {
                                             Number(localStorage.getItem('userId')) === item.userId &&
-                                            <Button btnType='svg' onClick={() => { dispatch(__deleteComment({ postId, commentId: item.commentId, kind })) }}><XBtn /></Button>
+                                            <Button btnType='svg' onClick={() => { delComment({ postId, commentId: item.commentId, kind }) }}><XBtn /></Button>
                                         }
                                     </div>
                                     {/* <textarea value={item.content} readOnly /> */}
@@ -116,7 +153,7 @@ const Comment = ({ postId, kind, commentDtoList }) => {
                                                         <div><StUserImg src={child.userImg} /> {child.userName}</div>
                                                         {
                                                             Number(localStorage.getItem('userId')) === child.userId &&
-                                                            <Button btnType='svg' onClick={() => { dispatch(__deleteComment({ postId, commentId: child.commentId, kind })) }}><XBtn /></Button>
+                                                            <Button btnType='svg' onClick={() => { delComment({ postId, commentId: child.commentId, kind }) }}><XBtn /></Button>
                                                         }
                                                     </div>
                                                     <div className='contentBox'>{child.content}</div>
@@ -139,7 +176,7 @@ const Comment = ({ postId, kind, commentDtoList }) => {
                                                         <div><StUserImg src={child.userImg} /> {child.userName}</div>
                                                         {
                                                             Number(localStorage.getItem('userId')) === child.userId &&
-                                                            <Button btnType='svg' onClick={() => { dispatch(__deleteComment({ postId, commentId: child.commentId, kind })) }}><XBtn /></Button>
+                                                            <Button btnType='svg' onClick={() => { delComment({ postId, commentId: child.commentId, kind }) }}><XBtn /></Button>
                                                         }
                                                     </div>
                                                     <div className='contentBox'>{child.content}</div>
@@ -162,7 +199,7 @@ const Comment = ({ postId, kind, commentDtoList }) => {
                                                         <div><StUserImg src={child.userImg} /> {child.userName}</div>
                                                         {
                                                             Number(localStorage.getItem('userId')) === child.userId &&
-                                                            <Button btnType='svg' onClick={() => { dispatch(__deleteComment({ postId, commentId: child.commentId, kind })) }}><XBtn /></Button>
+                                                            <Button btnType='svg' onClick={() => { delComment({ postId, commentId: child.commentId, kind }) }}><XBtn /></Button>
                                                         }
                                                     </div>
                                                     <div className='contentBox'>{child.content}</div>
