@@ -90,12 +90,13 @@ const FestivalPost = () => {
             if (festival.content === "") { return alert('내용을 입력하세요') }
 
             //링크 검사
-            const arr = festival.postLink.includes('http://') || festival.postLink.includes('https://')
+            const link = /(http|https):\/\//.test(festival.postLink)
             if (festival.postLink !== "") {
-                if (arr === false) {
-                    return alert("'https://'또는 'http://'가 포함된 링크를 입력해주세요.")
+                if (link === false) {
+                    return alert("'http://' 또는 'https://'가 포함된 링크를 입력해주세요.")
                 }
             }
+
             formData.append("eventPostReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
             dispatch(__addPost(formData));
         }
@@ -137,7 +138,7 @@ const FestivalPost = () => {
                     <h4 style={{ textAlign: "center", marginTop: "8px", marginBottom: "18px" }}>행사글</h4>
 
                     <Form.Group className="mb-3" controlId="formGridAddress1" style={{ height: "auto" }}>
-                        <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler} style={{ width: "100%", height: "48px", border: "none", margin: "0 0 10px 0" }} />
+                        <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler} style={{ width: "100%", height: "45px", border: "none", margin: "0 0 10px 0" }} />
                     </Form.Group>
 
                     {/*이미지 부분*/}
@@ -195,7 +196,7 @@ const FestivalPost = () => {
 
                     <Form.Group className="mb-3" controlId="formGridAddress1">
                         <Form.Label>행사장 링크</Form.Label>
-                        <Form.Control type="text" placeholder="링크" name="postLink" onChange={onChangeHandler} style={{ width: "100%", height: "48px", border: "none", margin: "0 0 10px 0" }} />
+                        <Form.Control type="text" placeholder="링크" name="postLink" onChange={onChangeHandler} style={{ width: "100%", height: "45px", border: "none", margin: "0 0 10px 0" }} />
                     </Form.Group>
 
                     {/* 주소 부분 */}
@@ -210,9 +211,11 @@ const FestivalPost = () => {
                                     <>
                                         <div style={{ display: "flex", marginBottom: "10px" }}>
                                             <STAddressButton style={{ marginRight: "10px", flex: "2" }}>{"#" + region}</STAddressButton>
-                                            <STInput3 type="text" value={postAddress} style={{ flex: "8" }} readOnly>{postAddress}</STInput3>
+                                            <STInput3 type="text" value={postAddress} style={{ flex: "8", padding:"5px",lineHeight:"20px", height:"auto", minHeight:"45px" }} readOnly>{postAddress}</STInput3>
                                         </div>
-                                        <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{ marginBottom: "10px" }} />
+                                        <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{ marginBottom: "10px", padding:"5px",lineHeight:"20px", height:"auto", minHeight:"45px" }} />
+
+                    
                                         <KakaoMap address={postAddress} width="100%" height="300px" />
                                     </>)
                             }
@@ -237,4 +240,6 @@ const FestivalPost = () => {
 }
 
 export default FestivalPost;
+
+
 

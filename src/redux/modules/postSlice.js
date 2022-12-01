@@ -151,9 +151,13 @@ export const postSlice = createSlice({
         comments: [],
         isLoading: false,
         isResetSearch: true,
-        istLastPage: false
+        istLastPage: false,
+        testPostId: 0
     },
     reducers: {
+        test(state, action) {
+            state.testPostId = action.payload;
+        },
         //검생 상태
         putSearchState(state, action) {
             state.isResetSearch = true;
@@ -253,5 +257,5 @@ export const postSlice = createSlice({
     }
 });
 
-export const { putSearchState, putSearchStatePage, setScrapState } = postSlice.actions;
+export const { test, putSearchState, putSearchStatePage, setScrapState } = postSlice.actions;
 export default postSlice.reducer;

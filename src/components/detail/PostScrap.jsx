@@ -1,28 +1,36 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-
-// 리덕스 import
-import { __getPost, __postScrap, setScrapState } from "../../redux/modules/postSlice";
-import { useDispatch, useSelector } from "react-redux";
-
 import { BookmarkStroke, BookmarkFill } from "../../assets/index";
+import { useMutation } from "@tanstack/react-query";
+import { postApis } from "../../api/api-functions/postApis";
 
 const PostScrap = ({ bookMarkStatus }) => {
-  // 좋아요 기능
-  const dispatch = useDispatch();
-  const { scrapState } = useSelector((state) => state.postSlice)
+
   const { url, postId } = useParams();
 
-  const scrapHandler = () => {
-    dispatch(__postScrap({ kind: url.split('posts')[0].toString(), postId: Number(postId) }));
-  };
+  // bookMark server state
+  const [scrapState, setScrapState] = useState(null);
 
   useEffect(() => {
     if (bookMarkStatus !== undefined) {
-      dispatch(setScrapState(bookMarkStatus));
+      setScrapState(bookMarkStatus);
     }
   }, [bookMarkStatus])
+
+  const postScrap = useMutation({
+    mutationFn: obj => {
+      return postApis.postScrapAx(obj);
+    },
+    onSuccess: res => {
+      if (res.data.status === 200) {
+        setScrapState(!scrapState);
+      }
+    },
+  })
+
+  const scrapHandler = () => {
+    postScrap.mutate({ kind: url.split('posts')[0].toString(), postId: Number(postId) });
+  };
 
   return (
     <>

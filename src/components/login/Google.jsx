@@ -1,93 +1,41 @@
-import React, { useEffect } from "react";
-import styled from "styled-components";
-import Layout from "../layout/Layout";
-import axios from "axios";
-import { setCookie } from "../../cookie/cookie";
-import { useNavigate } from "react-router-dom";
-import AlertModal from "../Modals/AlertModal";
-import ErrorModal from "../Modals/ErrorModal";
-import { useState } from "react";
-import ImageLoading from "../elements/ImageLoading";
+import React from "react";
 import PageState from "../common/PageState";
+import { useQuery } from '@tanstack/react-query';
+import { memberApis } from '../../api/api-functions/memberApis';
 
-const Login = () => {
-  const [modal, setModal] = React.useState(false);
-  const [error, setError] = useState("");
-
-  const alertModalData = {
-    title: "환영합니다",
-    btn1: "확인",
-  };
-  const modalOnOff = () => {
-    setModal(!modal);
-  };
-  const goAction = () => {
-    /* 값이 있으면 그 값으로 페이지 이동 없으면 -1(뒤로가기) */
-    const pathname = localStorage.getItem("pathname");
-    localStorage.removeItem("pathname");
-    pathname ? navigate(pathname, { replace: true }) : navigate("/mypage", { replace: true });
-  };
-
-  const navigate = useNavigate();
+// 리다이렉트될 화면
+const Google = () => {
+  // 인가 코드
   let code = new URL(window.location.href).searchParams.get("code");
-  const getGoogleToken = async () => {
-    try {
-      axios.get(`${process.env.REACT_APP_API_URL}/member/signup/google?code=${code}`)
-        .then((res) => {
-          const Access_Token = res.headers.access_token;
-          const resData = res.data.data;
 
-          localStorage.setItem("token", Access_Token);
+  useQuery(
+    ['googleLogin', code],
+    () => memberApis.googleLoginAX(code),
+    {//options
+      refetchOnWindowFocus: false, // react-query는 사용자가 사용하는 윈도우가 다른 곳을 갔다가 다시 화면으로 돌아오면 이 함수를 재실행합니다. 그 재실행 여부 옵션 입니다.
+      retry: 0, // 실패시 재호출 몇번 할지
+      onSuccess: res => {
+        console.log("google res", res);
+        if (res.data.status === 200) {
+          localStorage.setItem("token", res.headers.access_token);
+          localStorage.setItem("refreshToken", res.headers.refresh_token);
 
-          localStorage.setItem("role", resData.role);
-          localStorage.setItem("userAddressTag", resData.userAddressTag);
-          localStorage.setItem("userId", resData.userId);
-          localStorage.setItem("userImgUrl", resData.userImgUrl);
+          localStorage.setItem("role", res.data.data.role);
+          localStorage.setItem("userAddressTag", res.data.data.userAddressTag);
+          localStorage.setItem("userId", res.data.data.userId);
+          localStorage.setItem("userImgUrl", res.data.data.userImgUrl);
 
-          window.location.replace("/mypage")
-        }).catch((error) => {
-          console.log("소셜로그인 에러", error);
-          //window.alert("로그인에 실패하였습니다.");
-          //   window.location.replace("/login");
-        })
-
-
-      modalOnOff();
-    } catch (error) {
-      setError(error);
-    }
-  };
-  useEffect(() => {
-    if (code) {
-      getGoogleToken();
-    }
-  }, [code]);
+          window.location.replace("/mypage");
+        } else {
+          alert("로그인 실패");
+          window.location.replace("/");
+        }
+      }
+    })
 
   return (
-    <Layout>
-      {error && <ErrorModal error="로그인 실패" navigation="/login" />}
-      <PageState display='flex' state='loading' imgWidth='25%' height='100vh'
-        text='로그인 중입니다.' />
-    </Layout>
+    <PageState display='flex' state='loading' imgWidth='25%' height='100vh'
+      text='로그인 중입니다.' />
   );
 };
-export default Login;
-
-const CommunityBox = styled.div`
-  height: 100%;
-  width: 390px;
-  overflow: auto;
-  @media (max-width: 540px) {
-    width: 100%;
-  }
-`;
-
-const ImageLoadingWrap = styled.div`
-  align-items: center;
-  align-content: center;
-  position: absolute;
-  display: flex;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-`;
+export default Google;

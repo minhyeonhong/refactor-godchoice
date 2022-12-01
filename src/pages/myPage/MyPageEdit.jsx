@@ -163,8 +163,7 @@ export default MyPageEdit;
 const MyProfile = styled.div`
   display: flex;
   flex-direction: column;
-
-  margin: 0px 10px 10px 10px;
+  /* margin: 0px 10px 10px 10px; */
   margin: 00px 20px 0px 20px;
 `;
 
@@ -176,6 +175,7 @@ const MyImgWrap = styled.div`
   height: 150px;
   margin-top: 40px;
 `;
+
 
 const MyImgBox = styled.div`
   display: flex;
@@ -191,7 +191,7 @@ const MyImgBox = styled.div`
   label {
     display: flex;
     position: absolute;
-    top: 186px;
+    top: 175px;
     left: 219px;
     width: 36px;
     height: 36px;
@@ -199,6 +199,11 @@ const MyImgBox = styled.div`
     align-items: center;
     justify-content: center;
     background-color: #eee;
+    @media screen and (min-width: 425px) and (max-width : 100vw) {
+    position: absolute;
+    left: calc(50% + 25px);
+    transform: translateX(-50%);
+  }
   }
 `;
 const LoginInfo = styled.div`
