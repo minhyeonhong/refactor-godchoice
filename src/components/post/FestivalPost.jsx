@@ -90,12 +90,13 @@ const FestivalPost = () => {
             if (festival.content === "") { return alert('내용을 입력하세요') }
 
             //링크 검사
-            const arr = festival.postLink.includes('http://') || festival.postLink.includes('https://')
+            const link = /(http|https):\/\//.test(festival.postLink)
             if (festival.postLink !== "") {
-                if (arr === false) {
-                    return alert("'https://'또는 'http://'가 포함된 링크를 입력해주세요.")
+                if (link === false) {
+                    return alert("'http://' 또는 'https://'가 포함된 링크를 입력해주세요.")
                 }
             }
+
             formData.append("eventPostReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
             dispatch(__addPost(formData));
         }
