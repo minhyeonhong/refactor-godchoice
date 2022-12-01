@@ -179,7 +179,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                         <AllTextarea style={{ height: "200px", marginTop: "14px", marginBottom: "14px" }} type="text" name="content" defaultValue={modPost.content || ""} onChange={modPostHandle} />
 
                         <label>행사장 링크</label><br />
-                        <STInput3 type="text" name="postLink" defaultValue={modPost.postLink} onChange={modPostHandle} style={{ width: "100%", marginBottom: "14px" }} />
+                        <STInput3 type="text" name="postLink" defaultValue={modPost.postLink} onChange={modPostHandle} style={{ width: "100%", marginBottom: "14px", height: "100px" }} />
 
                         <div>
 
@@ -224,8 +224,8 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                             <STIng style={{ marginTop: "14px", marginBottom: "14px" }}>
                                 <STImg>
                                     <div style={{ color: "#8B909F", flex: "8", marginLeft: "5px" }}>
-                                        <img src={Views} style={{ width: "20px", height: "20px", flex: "2" }} />
-                                        {post.viewCount}
+                                        <img src={Views} style={{ width: "20px", height: "20px", flex: "2", marginRight:"3px" }} />
+                                         {post.viewCount}
                                     </div>
                                     <PostScrap style={{ position: "absolute", right: "10px" }} bookMarkStatus={post.bookMarkStatus} />
                                 </STImg>
@@ -252,10 +252,10 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 </Carousel>
                             </div>
 
-                            <StContent style={{ marginBottom: "14px", paddingTop: "5px" }} value={post.content || ""} readOnly />
+                            <StContent style={{ marginBottom: "14px", padding: "5px", borderRadius:"10px" }} value={post.content || ""} readOnly />
 
                             <div>행사장 링크</div>
-                            <STInput style={{ marginBottom: "14px" }}>{post.postLink}</STInput>
+                            <STInput style={{ marginBottom: "14px", minHeight:"40px", padding:"5px" }}>{post.postLink}</STInput>
 
                             {
                                 modPost.postAddress && (
@@ -263,7 +263,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                         <div>행사장소</div>
                                         <div style={{ display: "flex", marginBottom: "8px" }}>
                                             <STAddressButton style={{ flex: "2" }}>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressButton>
-                                            <STInput style={{ flex: "8", marginLeft: "5px" }}>{post.postAddress}</STInput>
+                                            <STInput style={{ flex: "8", marginLeft: "5px" }}>{post.postAddress}</STInput  >
                                         </div>
                                     </>
                                 )

@@ -279,7 +279,7 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                     <STInput3 type="text" name="kakaoLink" defaultValue={modPost.kakaoLink} onChange={modPostHandle} style={{ width: "100%" }} />
                                 </div>
 
-                                <div style={{ marginBottom: "14px" }}>
+                                <div style={{ marginBottom: "14px"}}>
                                     <label>행사장 링크</label><br />
                                     <STInput3 type="text" name="postLink" defaultValue={modPost.postLink} onChange={modPostHandle} style={{ width: "100%" }} />
                                 </div>
@@ -353,14 +353,14 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 </STIng>
 
                                 <STBox2 style={{ marginBottom: "14px", display: "flex" }}>
-                                    <STButton style={{ width: "70px", flex: "2" }}>모집글</STButton>
-                                    <STButton style={{ width: "70px", flex: "2" }}>{post.category}</STButton>
-                                    <STButton2 style={{ color: "#424754", backgroundColor: "white", width: "208px", flex: "4" }}>약속날짜 | {post.date}</STButton2>
+                                    <STButton style={{ width: "70px", flex: "2", padding:"0 3px", fontSize:"15px" }}>모집글</STButton>
+                                    <STButton style={{ width: "70px", flex: "2", padding:"0 3px", fontSize:"15px"}}>{post.category}</STButton>
+                                    <STButton2 style={{ color: "#424754", backgroundColor: "white", width: "208px", flex: "4",padding:"0 3px", fontSize:"15px"}}>약속날짜 | {post.date}</STButton2>
                                 </STBox2>
                                 <STBox2 style={{ marginBottom: "14px", display: "flex" }}>
-                                    <STButton2 style={{ width: "159px", flex: "2" }}>모집인원 | {post.number}명</STButton2>
-                                    <STButton2 style={{ width: "67px", flex: "1" }}><img src={sexSvg} /></STButton2>
-                                    <STButton2 style={{ width: "162px", flex: "2" }}>나이대 | {post.startAge}~{post.endAge}</STButton2>
+                                    <STButton2 style={{ width: "159px", flex: "2", padding:"0 3px", fontSize:"15px" }}>모집인원 | {post.number}명</STButton2>
+                                    <STButton2 style={{ width: "67px", flex: "1", padding:"0 3px", fontSize:"15px" }}><img src={sexSvg} /></STButton2>
+                                    <STButton2 style={{ width: "162px", flex: "2",padding:"0 3px", fontSize:"15px" }}>나이대 | {post.startAge}~{post.endAge}</STButton2>
                                 </STBox2>
                                 <STInput style={{ marginBottom: "8px" }}>{post.title}</STInput>
 
@@ -378,13 +378,13 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                         }
                                     </Carousel>
                                 </div>
-                                <StContent style={{ marginBottom: "14px", paddingTop: "5px" }} value={post.content || ""} readOnly />
+                                <StContent style={{ marginBottom: "14px", padding: "5px", borderRadius:"10px" }} value={post.content || ""} readOnly />
 
                                 <div>카카오 링크</div>
                                 <STInput style={{ marginBottom: "14px" }}>{post.kakaoLink}</STInput>
 
                                 <div>행사장 링크</div>
-                                <STInput style={{ marginBottom: "14px" }}>{post.postLink}</STInput>
+                                <STInput style={{ marginBottom: "14px", minHeight:"40px" }}>{post.postLink}</STInput>
 
                                 {
                                     modPost.postAddress && (

@@ -87,7 +87,7 @@ const MyScrap = () => {
                     </ItemImg>
                     <ItemContainer>
                       <ItemTop>
-                        <p style={{ fontWeight: 500, fontSize: "20px" }}>{v.title.length > 15 ? v.title.substring(0, 9) + '...' : v.title}</p>
+                        <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 15 ? v.title.substring(0, 14) + '...' : v.title}</p>
                         <p>{v.category}</p>
                         <p>{v.content}</p>
                       </ItemTop>
@@ -113,7 +113,7 @@ const MyScrap = () => {
                       </ItemImg>
                       <ItemContainer>
                         <ItemTop>
-                          <p style={{ fontWeight: 500, fontSize: "20px" }}>{v.title.length > 15 ? v.title.substring(0, 9) + '...' : v.title}</p>
+                          <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 15 ? v.title.substring(0, 14) + '...' : v.title}</p>
                           <p>{v.category}</p>
                           <p>{v.content}</p>
                         </ItemTop>
@@ -145,7 +145,7 @@ const MyScrap = () => {
                       </ItemImg>
                       <ItemContainer>
                         <ItemTop style={{ marginBottom: "20px" }}>
-                          <p style={{ fontWeight: 500, fontSize: "20px" }}>{v.title.length > 15 ? v.title.substring(0, 9) + '...' : v.title}</p>
+                          <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 15 ? v.title.substring(0, 14) + '...' : v.title}</p>
                           <p>{v.category}</p>
                           <p>{v.content}</p>
                         </ItemTop>

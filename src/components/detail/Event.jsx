@@ -158,14 +158,14 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                         </STIng>
 
                         <STBox2 style={{ display: "flex" }}>
-                            <STButton style={{ width: "65px", flex: "2" }}>행사글</STButton>
-                            <STButton style={{ width: "70px", flex: "2" }}>{post.category}</STButton>
-                            <STButton style={{ width: "110px", flex: "3" }}>{post.startPeriod}</STButton>
+                            <STButton style={{ width: "65px", flex: "2", padding:"0 3px", fontSize:"15px" }}>행사글</STButton>
+                            <STButton style={{ width: "70px", flex: "2", padding:"0 3px",fontSize:"15px"   }}>{post.category}</STButton>
+                            <STButton style={{ width: "110px", flex: "3", padding:"0 3px",fontSize:"15px"   }}>{post.startPeriod}</STButton>
                             <span style={{ paddingTop: "8px" }}>~</span>
-                            <STButton style={{ width: "110px", flex: "3" }}>{post.endPeriod}</STButton>
+                            <STButton style={{ width: "110px", flex: "3", padding:"0 3px",fontSize:"15px" }}>{post.endPeriod}</STButton>
                         </STBox2>
 
-                        <div style={{ marginBottom: "14px" }}>
+                        <div style={{ margin: "10px 0" }}>
                             <img src={post.userImg} style={{ width: "36px", height: "36px", borderRadius: "30px" }} />
                             <STUsername>{post.username}</STUsername>
                         </div>
@@ -189,11 +189,11 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                     })}
                             </Carousel>
                         </StCarouselWrap>
-                        <StContent type='text' style={{ marginBottom: "14px", paddingTop: "5px" }} value={post.content || ""} readOnly />
+                        <StContent type='text' style={{ marginBottom: "14px", padding: "5px", borderRadius:"10px" }} value={post.content || ""} readOnly />
 
 
                         <div>행사장 링크</div>
-                        <STInput style={{ marginBottom: "14px" }}>{post.postLink}</STInput>
+                        <STInput style={{ marginBottom: "14px", minHeight:"40px" }}>{post.postLink}</STInput>
 
                         {
                             modPost.postAddress && (
@@ -201,7 +201,9 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                     <div>행사장소</div>
                                     <div style={{ display: "flex", marginBottom: "8px" }}>
                                         <STAddressButton style={{ flex: "2" }}>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressButton>
-                                        <STInput style={{ flex: "8", marginLeft: "5px" }}>{post.postAddress}</STInput>
+                                        <STInput style={{ flex: "8", marginLeft: "5px" }}>
+                                        {post.postAddress}
+                                        </STInput>
                                     </div>
                                 </>
                             )

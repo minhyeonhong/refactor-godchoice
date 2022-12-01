@@ -52,6 +52,7 @@ export const StSearchBox = styled.div`
 `
 export const AddressBox = styled.div`
     margin : 20px 20px 20px 20px;
+    /* margin : 20px 10px; */
 `
 
 export const AllButton = styled.button`

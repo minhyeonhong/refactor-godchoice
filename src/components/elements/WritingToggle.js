@@ -42,7 +42,14 @@ height: 160px;
 position: fixed;
 bottom: 45px;
 right:120px;
+/* left: 54%;
+transform: translateX(-50%); */
 text-align : center;
+@media screen and (min-width: 425px) and (max-width : 100vw) {
+    width: 100px;
+    left: calc(50% + 50px);
+    transform: translateX(-50%);
+  }
 img {
     width: 20px;
     height: 20px;
