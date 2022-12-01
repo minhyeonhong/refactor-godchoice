@@ -29,6 +29,7 @@ const TopButton = ({ modalOn, setModalOn }) => {
     }
   }, 200);
   return isTopButtonOn ? (
+    <TopBtnCtr>
     <StyledTopBtn height={"90px"}>
       <StyledTopBtnImg
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -43,7 +44,9 @@ const TopButton = ({ modalOn, setModalOn }) => {
         }}
       />
     </StyledTopBtn>
+    </TopBtnCtr>
   ) : (
+    <TopBtnCtr>
     <StyledTopBtn height={"50px"}>
       <StyledTopBtnImg
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -59,32 +62,48 @@ const TopButton = ({ modalOn, setModalOn }) => {
         }}
       />
     </StyledTopBtn>
+    </TopBtnCtr>
   );
 };
 export default TopButton;
+
+const TopBtnCtr = styled.div`
+  width: 100%;
+  display: flex;
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+  justify-content: flex-end;
+  z-index: 10;
+  @media screen and (max-width : 100vw) {
+    width: 425px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+`
 
 const StyledTopBtn = styled.button`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-
   width: 50px;
   height: ${(props) => props.height};
-  /* padding: 2px 0 2px 0; */
-
   z-index: 10;
-
   border: none;
   border-radius: 50px;
-
   background-color: grey;
   opacity: 0.7;
   box-shadow: 0px 0px 5px gray;
+  margin-right: 50px;
+  
 
-  position: fixed;
-  bottom: 4em;
-  right: 4em;
+  /* position: fixed; */
+  /* bottom: 4em; */
+  /* right: 4em; */
+  /* bottom: 50px;
+  right: 50px; */
+
 
   transition: all 0.2s;
 
@@ -95,11 +114,13 @@ const StyledTopBtn = styled.button`
   -khtml-user-select: none;
   -webkit-user-select: none;
   user-select: none;
-  @media screen and (max-width: 768px) {
+`
+  /* @media screen and (max-width: 768px) {
     bottom: 3em;
     right: 3em;
   }
-`;
+` */
+;
 const StyledTopBtnImg = styled.img`
   padding: ${(props) => (props.padding ? props.padding : "0")};
   width: ${(props) => props.width};

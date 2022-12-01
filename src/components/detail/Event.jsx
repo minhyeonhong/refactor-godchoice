@@ -151,11 +151,11 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                         </STIng>
 
                         <STBox2 style={{ display: "flex" }}>
-                            <STButton style={{ width: "65px", flex: "2" }}>행사글</STButton>
-                            <STButton style={{ width: "70px", flex: "2" }}>{post.category}</STButton>
-                            <STButton style={{ width: "110px", flex: "3" }}>{post.startPeriod}</STButton>
+                            <STButton style={{ width: "65px", flex: "2", padding: "0 3px", fontSize: "15px" }}>행사글</STButton>
+                            <STButton style={{ width: "70px", flex: "2", padding: "0 3px", fontSize: "15px" }}>{post.category}</STButton>
+                            <STButton style={{ width: "110px", flex: "3", padding: "0 3px", fontSize: "15px" }}>{post.startPeriod}</STButton>
                             <span style={{ paddingTop: "8px" }}>~</span>
-                            <STButton style={{ width: "110px", flex: "3" }}>{post.endPeriod}</STButton>
+                            <STButton style={{ width: "110px", flex: "3", padding: "0 3px", fontSize: "15px" }}>{post.endPeriod}</STButton>
                         </STBox2>
 
                         <div style={{ margin: "10px 0" }}>
@@ -186,7 +186,7 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
 
                         <div>행사장 링크</div>
-                        <STInput style={{ marginBottom: "14px" }}>{post.postLink}</STInput>
+                        <STInput style={{ marginBottom: "14px", minHeight: "40px" }}>{post.postLink}</STInput>
 
                         {
                             modPost.postAddress && (

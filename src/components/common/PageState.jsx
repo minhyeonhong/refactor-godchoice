@@ -49,7 +49,7 @@ export default PageState;
 
 const StBackground = styled.div`
 position: ${(props) => props.position}; //absolute
-width: 100vw;
+width: 100%;
 height: ${(props) => props.height};
 top: 0;
 left: 0;

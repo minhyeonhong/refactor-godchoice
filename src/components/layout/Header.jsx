@@ -39,6 +39,7 @@ export default Header;
 
 const StHeaderWrap = styled.div`
     position:sticky;
+    position: relative;
     top : 0;  
     z-index : 1;
     width : 100%;
@@ -55,22 +56,9 @@ const StHeaderWrap = styled.div`
         height : 48px;
     }
 `
-// const StBackBox = styled.div`
-//     .arrow-left {
-//         width: 1rem;
-//         height: 1rem;
-//         border: 2px solid #333;
-//         border-left: 0;
-//         border-top: 0;
-
-//         margin-left : 10px;
-//         transform: rotate(135deg);
-//     }
-// `
-
 
 const StLogoBox = styled.p`
-    position: fixed;
+    position: absolute;
     top : 0;
     left: 0;
     img {
@@ -78,7 +66,6 @@ const StLogoBox = styled.p`
         height: 48px;
         padding : 6px;
     }
-
 `
 
 const StRightBox = styled.div`

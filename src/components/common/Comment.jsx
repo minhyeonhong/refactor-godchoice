@@ -98,7 +98,7 @@ const Comment = ({ postId, kind, commentDtoList }) => {
         <StCommentWrap>
             <StCommentAddBox>
                 <h5>댓글</h5>
-                <StCommentInputBox>
+                <StCommentInputBox style={{ marginTop: "3px" }}>
                     <StUserImg src={localStorage.getItem('userImgUrl')} />
                     <div className='inputBox'>
                         <input type='text' name="content" value={comment.content || ""} onChange={commentHandle} />
@@ -224,9 +224,11 @@ const Comment = ({ postId, kind, commentDtoList }) => {
 export default Comment;
 
 const StCommentWrap = styled.div`
-    border-top : 1px solid grey;    
+    border-top : 1px solid #ccc;    
     display : flex;
     flex-direction : column;
+    margin: 25px 0;
+    padding: 20px 0;
 `
 const StCommentAddBox = styled.div`
     display : flex;
