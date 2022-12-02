@@ -4,21 +4,18 @@ import KakaoMap from '../common/KakaoMap';
 import Carousel from 'react-bootstrap/Carousel';
 import { StContent, STUsername, StCarouselWrap, STUploadButton, STIng, STImg2, STAddressButton, STEditButton, StSearchBox, StWrap, STInput, STContentTextarea, STInput3, STAddressDiv, ModalWrap } from '../styles/DetailPost.styled.js'
 
-import noImg from '../../assets/images/common/noImg.jpg'
-import { useDispatch } from 'react-redux';
 import SearchAddress from '../post/SearchAddress';
 import useImgUpload from "../../hooks/useImgUpload";
 import styled from 'styled-components';
-import { __putPost, __deletePost } from '../../redux/modules/postSlice3';
 import Views from '../../assets/icon/Views.svg'
 import { FiSearch } from 'react-icons/fi';
 // 스크랩
 import { __postScrap } from '../../redux/modules/postSlice';
 import PostScrap from './PostScrap';
+import { useMutation } from '@tanstack/react-query';
+import { postApis } from '../../api/api-functions/postApis';
 
 const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
-
-    const dispatch = useDispatch();
 
     //수정하기
     const [edit, setEdit] = useState(false);
@@ -33,6 +30,17 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
     //이미지 업로드 인풋돔 선택 훅
     const imgRef = useRef();
 
+    //게시글 수정
+    const putAskPost = useMutation({
+        mutationFn: obj => {
+            return postApis.putAskPostAx(obj);
+        },
+        onSuccess: res => {
+            if (res.data.status === 200) {
+                window.location.reload();
+            }
+        },
+    })
     //submit
     const onSubmitAsk = () => {
 
@@ -69,14 +77,9 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         formData.append("askPostPutRequestDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
 
         //Api 날리기
-        dispatch(__putPost({ postId, content: formData }));
+        putAskPost.mutate({ postId, content: formData });
     }
 
-    //슬라이드 자동으로 넘기는 부분
-    const [index, setIndex] = useState(0);
-    const handleSelect = (selectedIndex, e) => {
-        setIndex(selectedIndex);
-    };
 
     //기존글의 삭제할 이미지
     const delImgHandle = (imageId) => {
@@ -94,8 +97,20 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         }
     }, [postAddress])
 
+
+    //게시글 삭제
+    const deleteAskPost = useMutation({
+        mutationFn: obj => {
+            return postApis.deleteAskPostAx(obj);
+        },
+        onSuccess: res => {
+            if (res.data.status === 200) {
+                window.location.replace('/');
+            }
+        },
+    })
     const onAskDelete = (postId) => {
-        dispatch(__deletePost(postId))
+        deleteAskPost.mutate(postId);
     }
 
     //새로추가한 글 삭제할 이미지
@@ -122,10 +137,10 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
                             {/*이미지 올리기*/}
                             <StCarouselWrap>
-                                <Carousel activeIndex={index} onSelect={handleSelect}>
-                                    {delImg === "" || modPost.askPostImgList.length - delImg.length > 0 &&
+                                <Carousel>
+                                    {delImg === "" || modPost?.askPostImgList?.length - delImg?.length > 0 &&
                                         modPost.askPostImgList
-                                            .filter((item, i) => delImg.indexOf(item.postImgId) === -1)
+                                            .filter((item, i) => delImg?.indexOf(item.postImgId) === -1)
                                             .map((img, i) => {
                                                 return (
                                                     <Carousel.Item key={img.id}>
@@ -137,7 +152,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                                     </Carousel.Item>
                                                 )
                                             })}
-                                    {fileUrls && fileUrls.map((imgUrl, i) => {
+                                    {fileUrls?.map((imgUrl, i) => {
                                         return (
                                             <Carousel.Item key={i}>
                                                 <img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
@@ -151,7 +166,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
                                 </Carousel>
 
-                                {modPost.askPostImgList.map((img, i) => {
+                                {modPost?.askPostImgList?.map((img, i) => {
                                     return (
                                         img.postImgId &&
                                         // <button style={{ width: '60px', height: '60px', backgroundImage: `url(${imgInfo.postImgUrl})` }} ></button>
@@ -180,8 +195,8 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 {
                                     fileUrls && fileUrls.map((imgUrl, i) => {
                                         return (
-                                            <button key={imgUrl} onClick={() => deleteNewFile(index)}>
-                                                <img style={{ width: '60px', height: '60px' }} src={imgUrl} />
+                                            <button key={imgUrl} onClick={() => deleteNewFile(i)}>
+                                                <img style={{ width: '60px', height: '60px' }} src={imgUrl} alt="pre view" />
                                             </button>
                                         )
                                     })
@@ -275,7 +290,9 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                             <StContent style={{ marginBottom: "14px", padding: "5px", borderRadius: "10px" }} value={post.content || ""} readOnly />
 
                             <div>행사장 링크</div>
-                            <STInput style={{ marginBottom: "14px", minHeight: "40px", padding: "5px" }}>{post.postLink}</STInput>
+                            <STInput style={{ marginBottom: "14px", minHeight: "40px", padding: "5px" }}>
+                                <a href={post.postLink} target="_blank">{post.postLink}</a>
+                            </STInput>
 
                             {
                                 modPost.postAddress && (

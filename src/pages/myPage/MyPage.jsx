@@ -1,29 +1,48 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-
-// Redux import
-import { __getMyInfo } from '../../redux/modules/myPageSlice';
-import { __delAdminPost } from '../../redux/modules/postSlice';
-import { useDispatch, useSelector } from 'react-redux';
 
 // Component import 
 import Layout from '../../components/layout/Layout';
 import { flexColumn } from '../../components/styles/Flex';
-// import { ProfileImg } from '../../assets';
 import Button from '../../components/elements/Button';
-import { flexBetween, flexEvenly, flexRow } from '../../components/styles/Flex';
+import { flexRow } from '../../components/styles/Flex';
 import { BookmarkFill, Comment, MyPost } from '../../assets';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { myPageApis } from '../../api/api-functions/myPageApis';
+import { postApis } from '../../api/api-functions/postApis';
 
 const MyPage = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { userInfo } = useSelector((state) => state.myPage);
 
-  //유저 정보 받아오기
-  useEffect(() => {
-    dispatch(__getMyInfo());
-  }, []);
+  // 내정보 server state
+  const [myInfo, setMyInfo] = useState({});
+  //내정보 불러오기
+  useQuery(['getMyPage'],
+    () => myPageApis.getMyPageAX(), //fn
+    {//options
+      refetchOnWindowFocus: false, // react-query는 사용자가 사용하는 윈도우가 다른 곳을 갔다가 다시 화면으로 돌아오면 이 함수를 재실행합니다. 그 재실행 여부 옵션 입니다.
+      retry: 0, // 실패시 재호출 몇번 할지
+      onSuccess: res => {
+        if (res.data.status === 200) {
+          localStorage.setItem('userAddressTag', res.data.data.addressTag);
+          setMyInfo(res.data.data);
+        }
+      }
+    })
+
+  //관리자 배너 삭제
+  const deleteBanner = useMutation({
+    mutationFn: id => {
+      return postApis.deleteAdminPostAX(id);
+    },
+    onSuccess: res => {
+      if (res.data.status === 200) {
+        alert("삭제 성공");
+        window.location.reload();
+      }
+    },
+  })
 
   // 로그아웃
   const handleLogout = () => {
@@ -33,15 +52,11 @@ const MyPage = () => {
 
   return (
     <Layout>
-      {/* <div>
-                <h1>마이페이지</h1>
-            </div> */}
-
       <MyPageWrap>
         <MyProfileWrap>
           <MyImgContainer>
             <MyImgBox>
-              < img src={userInfo.userImg} alt={'ProfileImg'} />
+              < img src={myInfo.userImg} alt={'ProfileImg'} />
               {/* {userProfileImg()} */}
             </MyImgBox>
           </MyImgContainer>
@@ -50,7 +65,7 @@ const MyPage = () => {
           <NickBox>
 
             <div className="nickName">
-              {userInfo.nickName}
+              {myInfo.nickName}
             </div>
             <Btns>
               <Button btnType="submit" onClick={() => { navigate("/mypageedit") }}>프로필 수정</Button>
@@ -79,18 +94,17 @@ const MyPage = () => {
           </CateBox>
         </MyCateWrap>
         {/* MyCateWrap */}
+
+        {/* admin일때 배너리스트 */}
         <div>
-          {
-            userInfo.adminPage !== undefined &&
-            userInfo.adminPage !== null &&
-            userInfo.adminPage.map((post) => {
-              return (
-                <div key={post.id}>
-                  {post.title}
-                  <button onClick={() => { dispatch(__delAdminPost(post.id)) }}>삭제</button>
-                </div>
-              )
-            })
+          {myInfo?.adminPage?.map((post) => {
+            return (
+              <div key={post.id}>
+                {post.title}
+                <button onClick={() => { deleteBanner.mutate(post.id) }}>삭제</button>
+              </div>
+            )
+          })
           }
         </div>
 
