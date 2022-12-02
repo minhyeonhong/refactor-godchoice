@@ -11,7 +11,7 @@ import { CaretUp, CommentArrow, XBtn, ReComment } from '../../assets/index';
 import { commentApis } from "../../api/api-functions/commentApis"
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-const Comment = ({ postId, kind, commentDtoList }) => {
+const Comment = ({ postId, kind }) => {
 
     //댓글 server state
     const [comments, setComments] = useState([]);
