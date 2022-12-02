@@ -55,10 +55,6 @@ const Event = ({ postId, url }) => {
         }
     }, [postAddress])
 
-    useEffect(() => {
-        console.log("modPost", modPost);
-    }, [modPost])
-
     //이미지 업로드 훅
     const [files, fileUrls, uploadHandle, setImgFiles, setImgUrls] = useImgUpload(5, true, 0.5, 1000);
     const imgRef = useRef();
@@ -155,7 +151,6 @@ const Event = ({ postId, url }) => {
         deleteEventPost.mutate(postId);
     }
 
-    console.log(fileUrls.length);
     return (
         isLoading === true ?
             <PageState

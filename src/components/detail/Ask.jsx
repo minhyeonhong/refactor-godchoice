@@ -88,7 +88,6 @@ const Ask = ({ postId, url }) => {
             postAddress: modPost.postAddress + detail
         }
 
-        console.log("obj", obj);
         //폼 데이터에 글작성 데이터 넣기
         formData.append("askPostPutRequestDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
 
@@ -138,10 +137,6 @@ const Ask = ({ postId, url }) => {
         setImgFiles(imgdelete);
     }
 
-    useEffect(() => {
-        console.log("modPost", modPost);
-    }, [modPost])
-
     return (
         isLoading === true ?
             <PageState
@@ -166,7 +161,7 @@ const Ask = ({ postId, url }) => {
                                     {/*이미지 올리기*/}
                                     <StCarouselWrap>
                                         <Carousel>
-                                            {delImg === "" || modPost.askPostImgList.length - delImg.length > 0 && modPost.postImgInfo[0].postImgId !== null &&
+                                            {delImg === "" || modPost.askPostImgList.length - delImg.length > 0 && modPost.askPostImgList[0].postImgId !== null &&
                                                 modPost.askPostImgList
                                                     .filter((item, i) => delImg.indexOf(item.postImgId) === -1)
                                                     .map((img, i) => {
