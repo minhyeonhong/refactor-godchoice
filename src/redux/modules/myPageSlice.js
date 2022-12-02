@@ -94,7 +94,7 @@ export const __putMyInfo = createAsyncThunk(
 export const __getMyPost = createAsyncThunk(
     "myPage/__getMyPost", async (payload, thunkAPI) => {
         try {
-            const response = await myPageApis.getMyPostAX(payload)
+            const response = await myPageApis.getMyPostAX()
             return thunkAPI.fulfillWithValue(response.data.data)
         } catch (error) {
             return thunkAPI.rejectWithValue(error)

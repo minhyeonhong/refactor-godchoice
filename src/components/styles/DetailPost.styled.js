@@ -62,6 +62,7 @@ export const STInput = styled.div`
     font-weight: 500;
     padding : 12px 0px 6px 6px;
     margin-bottom: 14px ;
+    a { text-decoration:none; }
     /* height: 48px; */
 `
 

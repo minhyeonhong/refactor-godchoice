@@ -1,20 +1,20 @@
 import React, { useState, useRef } from 'react';
 import Layout from '../layout/Layout';
-import { useDispatch } from 'react-redux';
-import { __addPost3 } from "../../redux/modules/postSlice3"
 import { FiSearch } from 'react-icons/fi'
 import noImg from '../../assets/images/common/noImg.png'
 import { STInput, AllTextarea, StSearchBox, STInput3, STAddressButton, ModalWrap, AddressBox, AllButton } from '../styles/AddPost.styled'
-import useImgUpload from '../../hooks/useImgUpload';
 //kakao 주소 관련
 import SearchAddress from './SearchAddress';
 import KakaoMap from '../common/KakaoMap'
 //부트스트랩
 import Carousel from 'react-bootstrap/Carousel';
 
-const QuestionPost = () => {
+import useImgUpload from '../../hooks/useImgUpload';
+import useInput from '../../hooks/useInput';
+import { useMutation } from '@tanstack/react-query';
+import { postApis } from '../../api/api-functions/postApis';
 
-    const dispatch = useDispatch();
+const QuestionPost = () => {
 
     // 주소 API 팝업창 상태 관리
     const [postAddress, setPostAddress] = useState("")
@@ -25,26 +25,31 @@ const QuestionPost = () => {
     }
 
     //내용 onChange
-    const [question, setQuestion] = useState({
+    const [question, setQuestion, questionHandle] = useInput({
         title: "",
         content: "",
         postLink: "",
         detailAddress: ""
     })
 
-    const onChangeHandler = (e) => {
-        const { value, name } = e.target;
-        setQuestion({
-            ...question,
-            [name]: value
-        })
-    }
 
     //이미지 업로드 훅
     const [files, fileUrls, uploadHandle] = useImgUpload(5, true, 0.5, 1000);
 
     //이미지 업로드 인풋돔 선택 훅
     const imgRef = useRef();
+
+    //게시글 작성
+    const insertAskPost = useMutation({
+        mutationFn: obj => {
+            return postApis.addAskPostAx(obj);
+        },
+        onSuccess: res => {
+            if (res.data.status === 200) {
+                window.location.replace(`/askposts/${res.data.data.postId}`);
+            }
+        },
+    })
 
     const onSubmit = () => {
 
@@ -70,7 +75,7 @@ const QuestionPost = () => {
             formData.append("multipartFile", null);
         }
 
-        const obj3 = {
+        const obj = {
             title: question.title,
             content: question.content,
             postLink: question.postLink,
@@ -79,9 +84,9 @@ const QuestionPost = () => {
 
         formData.append(
             "askPostRequestDto",
-            new Blob([JSON.stringify(obj3)], { type: "application/json" })
+            new Blob([JSON.stringify(obj)], { type: "application/json" })
         );
-        dispatch(__addPost3(formData));
+        insertAskPost.mutate(formData);
     }
 
     //주소 앞에 두글자 따기
@@ -99,7 +104,7 @@ const QuestionPost = () => {
                 <div style={{ marginLeft: "10px", marginRight: "10px" }}>
                     <h4 style={{ textAlign: "center", marginTop: "18px", marginBottom: "18px" }}>질문글</h4>
 
-                    <STInput type="text" placeholder="제목" name="title" onChange={onChangeHandler}
+                    <STInput type="text" placeholder="제목" name="title" onChange={questionHandle}
                         style={{ width: "100%", marginBottom: "18px" }} />
 
                     {fileUrls.length === 0 && <img src={noImg} style={{ width: "100%" }} onClick={() => { imgRef.current.click() }} />}
@@ -131,11 +136,11 @@ const QuestionPost = () => {
 
                     <div style={{ marginBottom: "10px" }}>*이미지를 다시 업로드 하려면 사진을 클릭해주세요.</div>
 
-                    <AllTextarea type="text" placeholder="내용을 작성해주세요" name="content" onChange={onChangeHandler} style={{ width: "100%", height: "200px" }} />
+                    <AllTextarea type="text" placeholder="내용을 작성해주세요" name="content" onChange={questionHandle} style={{ width: "100%", height: "200px" }} />
 
                     <div style={{ marginBottom: "14px" }}>
                         <label>행사장 링크</label>
-                        <STInput type="text" placeholder="링크" name="postLink" onChange={onChangeHandler} style={{ width: "100%" }} />
+                        <STInput type="text" placeholder="링크" name="postLink" onChange={questionHandle} style={{ width: "100%" }} />
                     </div>
 
                 </div>
@@ -154,7 +159,7 @@ const QuestionPost = () => {
                                         <STAddressButton style={{ marginRight: "10px", flex: "2" }}>{"#" + region}</STAddressButton>
                                         <STInput3 type="text" defaultvalue={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{ flex: "8" }}>{postAddress}</STInput3>
                                     </div>
-                                    <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{ width: "78%", float: "right", marginBottom: "10px" }} /><br />
+                                    <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={questionHandle} style={{ width: "78%", float: "right", marginBottom: "10px" }} /><br />
                                     <KakaoMap address={postAddress} width="328px" height="300px" marginTop="10px" />
                                 </div>)
                         }

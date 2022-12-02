@@ -5,11 +5,8 @@ import {
     STLinkTextarea, STInput3, ModalWrap, StWrap, StCarouselWrap, STUploadButton, StTypeBox, STIng, STIngDiv, STUsername, STInput, STButton, STBox2, StContent, STAddressButton, STEditButton, STImg, SelTop, SelBottom, STSelect, STDateInput, STTitleInput, STContentTextarea, StSearchBox, STAddressDiv
 } from '../styles/DetailPost.styled.js'
 import useImgUpload from "../../hooks/useImgUpload";
-import { __deletePost, __putPost } from '../../redux/modules/postSlice';
-import { useDispatch } from 'react-redux';
 import Views from '../../assets/icon/Views.svg'
 import Carousel from 'react-bootstrap/Carousel';
-import noImg from '../../assets/images/common/noImg.jpg'
 //kakao 주소 관련
 import SearchAddress from '../post/SearchAddress';
 import KakaoMap from '../common/KakaoMap';
@@ -17,10 +14,10 @@ import KakaoMap from '../common/KakaoMap';
 // 스크랩
 import { __postScrap } from '../../redux/modules/postSlice';
 import PostScrap from './PostScrap';
+import { useMutation } from '@tanstack/react-query';
+import { postApis } from '../../api/api-functions/postApis';
 
 const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
-
-    const dispatch = useDispatch();
 
     //상세글 수정하기 상태
     const [mod, setMod] = useState(false);
@@ -48,7 +45,18 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
     //기존 프리뷰 지울 state
     const [delImg, setDelImg] = useState([]);
 
-    console.log(post)
+
+    //게시글 수정
+    const putEventPost = useMutation({
+        mutationFn: obj => {
+            return postApis.putEventPostAx(obj);
+        },
+        onSuccess: res => {
+            if (res.data.status === 200) {
+                window.location.reload();
+            }
+        },
+    })
 
     //submit
     const putPostSubmit = () => {
@@ -88,7 +96,7 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         formData.append("eventPostPutReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
 
         //Api 날리기
-        dispatch(__putPost({ postId, content: formData }));
+        putEventPost.mutate({ postId, content: formData });
     }
 
     const categoryOption = ['마라톤', '페스티벌', '전시회', '공연', '기타'];
@@ -111,10 +119,22 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
     }
 
     //게시글 삭제
+    const deleteEventPost = useMutation({
+        mutationFn: obj => {
+            return postApis.deleteEventPostAx(obj);
+        },
+        onSuccess: res => {
+            if (res.data.status === 200) {
+                window.location.replace('/');
+            }
+        },
+    })
+    //게시글 삭제
     const onEventDelete = (postId) => {
-        dispatch(__deletePost(postId))
+        deleteEventPost.mutate(postId);
     }
 
+    console.log(fileUrls.length);
     return (
         Object.keys(post).length < 1 ?
             <div>페이지 정보 없음</div>
@@ -186,7 +206,9 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
 
                         <div>행사장 링크</div>
-                        <STInput style={{ marginBottom: "14px", minHeight: "40px" }}>{post.postLink}</STInput>
+                        <STInput style={{ marginBottom: "14px", minHeight: "40px" }}>
+                            <a href={post.postLink} target="_blank">{post.postLink}</a>
+                        </STInput>
 
                         {
                             modPost.postAddress && (
@@ -219,7 +241,7 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                         <StCarouselWrap>
 
                             <Carousel>
-                                {delImg === "" || modPost.postImgInfo.length - delImg.length > 0 &&
+                                {delImg === "" || modPost?.postImgInfo?.length - delImg?.length > 0 &&
                                     modPost.postImgInfo
                                         .filter((item, i) => delImg.indexOf(item.postImgId) === -1)
                                         .map((imgInfo, i) => {
@@ -235,7 +257,7 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                             )
                                         })}
 
-                                {fileUrls && fileUrls.map((imgUrl, i) => {
+                                {fileUrls?.map((imgUrl, i) => {
                                     return (
                                         <Carousel.Item key={imgUrl.id}>
                                             <img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
@@ -248,7 +270,7 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 })}
                             </Carousel>
 
-                            {modPost.postImgInfo.map((imgInfo, i) => {
+                            {modPost?.postImgInfo?.map((imgInfo, i) => {
                                 return (
                                     imgInfo.postImgId &&
                                     <button style={{ display: delImg.indexOf(imgInfo.postImgId) > -1 ? "none" : "inline-block" }}
@@ -276,7 +298,7 @@ const Event = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 fileUrls && fileUrls.map((imgUrl, index) => {
                                     return (
                                         <button key={imgUrl} onClick={() => deleteNewFile(index)}>
-                                            <img style={{ width: '60px', height: '60px' }} src={imgUrl} alt="" />
+                                            <img style={{ width: '60px', height: '60px' }} src={imgUrl} alt="pre view" />
                                         </button>
                                     )
                                 })

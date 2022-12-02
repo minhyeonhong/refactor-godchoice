@@ -7,20 +7,19 @@ import Form from 'react-bootstrap/Form';
 import {
     STLinkTextarea, STTitleInput, ModalWrap, StWrap, STSelect, AllTextarea, StCarouselWrap, STUploadButton, STIng, STIngDiv, STInput, STButton, STButton2, STBox2, StContent, STAddressButton, STEditButton, STImg, SelectWrap, SelTop, SelBottom, STInput2, STInput3, StRadioBox, StSearchBox, STAddressDiv, STDiv, STCountButton
 } from '../styles/DetailPost.styled.js'
-import { useDispatch } from 'react-redux';
 import SearchAddress from '../post/SearchAddress';
 import useImgUpload from "../../hooks/useImgUpload";
-import { __deletePost, __putPost } from '../../redux/modules/PostSlice2'
 import PostScrap from './PostScrap';
 import Views from '../../assets/icon/Views.svg'
 //성별관련 svg import
 import GenderFemale from '../../assets/icon/GenderFemale.svg'
 import GenderIntersex from '../../assets/icon/GenderIntersex.svg'
 import GenderMale from '../../assets/icon/GenderMale.svg'
+import { useMutation } from '@tanstack/react-query';
+import { postApis } from '../../api/api-functions/postApis';
 
 const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
-    const dispatch = useDispatch();
 
     //수정하기
     const [edit, setEdit] = useState(false);
@@ -33,6 +32,17 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
     const [delImg, setDelImg] = useState([]);
     const imgRef = useRef();
 
+    //게시글 수정
+    const putGatherPost = useMutation({
+        mutationFn: obj => {
+            return postApis.putGatherPostAx(obj);
+        },
+        onSuccess: res => {
+            if (res.data.status === 200) {
+                window.location.reload();
+            }
+        },
+    })
     //submit
     const onSubmitGather = () => {
 
@@ -80,7 +90,7 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         }
 
         formData.append("gatherPostDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
-        dispatch(__putPost({ postId, content: formData }));
+        putGatherPost.mutate({ postId, content: formData });
     }
 
     //날짜 제한
@@ -115,12 +125,6 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
     const popupPostCode = () => { setIsPopupOpen(!isPopupOpen) }
     const [postAddress, setPostAddress] = useState(post.postAddress)
 
-    //슬라이드 자동으로 넘기는 부분
-    const [index, setIndex] = useState(0);
-    const handleSelect = (selectedIndex, e) => {
-        setIndex(selectedIndex);
-    };
-
     //기존글의 삭제할 이미지
     const delImgHandle = (postImgId) => {
         setDelImg((e) => [...e, postImgId]);
@@ -132,9 +136,20 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         }
     }, [postAddress])
 
+    //게시글 삭제
+    const deleteGatherPost = useMutation({
+        mutationFn: obj => {
+            return postApis.deleteGatherPostAx(obj);
+        },
+        onSuccess: res => {
+            if (res.data.status === 200) {
+                window.location.replace('/');
+            }
+        },
+    })
     //게시글 삭제하기
     const onGatherDelete = (postId) => {
-        dispatch(__deletePost(postId))
+        deleteGatherPost.mutate(postId);
     }
 
     const ingHandle = (e) => {
@@ -156,7 +171,7 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
     //성별에 맞는 svg 
     const sexSvg = sex === "남" ? GenderMale : (sex === "여" ? GenderFemale : GenderIntersex)
-    console.log(post)
+
     return (
         Object.keys(post).length < 1 ?
             <div>페이지 정보 없음</div>
@@ -174,11 +189,11 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
                                 {/*이미지 올리기*/}
                                 <StCarouselWrap>
-                                    <Carousel activeIndex={index} onSelect={handleSelect}>
+                                    <Carousel>
 
-                                        {delImg === "" || modPost.postImgInfo.length - delImg.length > 0 &&
+                                        {delImg === "" || modPost?.postImgInfo?.length - delImg?.length > 0 &&
                                             modPost.postImgInfo
-                                                .filter((item, i) => delImg.indexOf(item.postImgId) === -1)
+                                                .filter((item, i) => delImg?.indexOf(item.postImgId) === -1)
                                                 .map((imgInfo, i) => {
                                                     return (
                                                         <Carousel.Item key={imgInfo.id}>
@@ -190,7 +205,7 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                                         </Carousel.Item>
                                                     )
                                                 })}
-                                        {fileUrls && fileUrls.map((imgUrl, i) => {
+                                        {fileUrls?.map((imgUrl, i) => {
                                             return (
                                                 <Carousel.Item key={i}>
                                                     <img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
@@ -203,7 +218,7 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                         })}
                                     </Carousel>
 
-                                    {modPost.postImgInfo.map((imgInfo, i) => {
+                                    {modPost?.postImgInfo?.map((imgInfo, i) => {
                                         return (
                                             imgInfo.postImgId &&
                                             <button style={{ display: delImg.indexOf(imgInfo.postImgId) > -1 ? "none" : "inline-block" }}
@@ -230,8 +245,8 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                     {
                                         fileUrls && fileUrls.map((imgUrl, i) => {
                                             return (
-                                                <button key={imgUrl} onClick={() => deleteNewFile(index)}>
-                                                    <img style={{ width: '60px', height: '60px' }} src={imgUrl} key={i} />
+                                                <button key={imgUrl} onClick={() => deleteNewFile(i)}>
+                                                    <img style={{ width: '60px', height: '60px' }} src={imgUrl} alt="pre view" />
                                                 </button>
                                             )
                                         })
@@ -286,7 +301,7 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                     <STInput3 type="text" name="kakaoLink" defaultValue={modPost.kakaoLink} onChange={modPostHandle} />
                                 </div>
 
-                                <div style={{ marginBottom: "14px"}}>
+                                <div style={{ marginBottom: "14px" }}>
                                     <label>행사장 링크</label><br />
                                     <STLinkTextarea type="text" name="postLink" defaultValue={modPost.postLink} onChange={modPostHandle} />
                                 </div>
@@ -372,14 +387,14 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 </STIng>
 
                                 <STBox2 style={{ marginBottom: "14px", display: "flex" }}>
-                                    <STButton style={{ width: "70px", flex: "2", padding:"0 3px", fontSize:"15px" }}>모집글</STButton>
-                                    <STButton style={{ width: "70px", flex: "2", padding:"0 3px", fontSize:"15px"}}>{post.category}</STButton>
-                                    <STButton2 style={{ color: "#424754", backgroundColor: "white", width: "208px", flex: "4",padding:"0 3px", fontSize:"15px"}}>약속날짜 | {post.date}</STButton2>
+                                    <STButton style={{ width: "70px", flex: "2", padding: "0 3px", fontSize: "15px" }}>모집글</STButton>
+                                    <STButton style={{ width: "70px", flex: "2", padding: "0 3px", fontSize: "15px" }}>{post.category}</STButton>
+                                    <STButton2 style={{ color: "#424754", backgroundColor: "white", width: "208px", flex: "4", padding: "0 3px", fontSize: "15px" }}>약속날짜 | {post.date}</STButton2>
                                 </STBox2>
                                 <STBox2 style={{ marginBottom: "14px", display: "flex" }}>
-                                    <STButton2 style={{ width: "159px", flex: "2", padding:"0 3px", fontSize:"15px" }}>모집인원 | {post.number}명</STButton2>
-                                    <STButton2 style={{ width: "67px", flex: "1", padding:"0 3px", fontSize:"15px" }}><img src={sexSvg} /></STButton2>
-                                    <STButton2 style={{ width: "162px", flex: "2",padding:"0 3px", fontSize:"15px" }}>나이대 | {post.startAge}~{post.endAge}</STButton2>
+                                    <STButton2 style={{ width: "159px", flex: "2", padding: "0 3px", fontSize: "15px" }}>모집인원 | {post.number}명</STButton2>
+                                    <STButton2 style={{ width: "67px", flex: "1", padding: "0 3px", fontSize: "15px" }}><img src={sexSvg} /></STButton2>
+                                    <STButton2 style={{ width: "162px", flex: "2", padding: "0 3px", fontSize: "15px" }}>나이대 | {post.startAge}~{post.endAge}</STButton2>
                                 </STBox2>
                                 <STInput >{post.title}</STInput>
 
@@ -397,13 +412,17 @@ const Gather = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                         }
                                     </Carousel>
                                 </div>
-                                <StContent style={{ marginBottom: "14px", padding: "5px", borderRadius:"10px" }} value={post.content || ""} readOnly />
+                                <StContent style={{ marginBottom: "14px", padding: "5px", borderRadius: "10px" }} value={post.content || ""} readOnly />
 
                                 <div>카카오 링크</div>
-                                <STInput style={{ marginBottom: "14px" }}>{post.kakaoLink}</STInput>
+                                <STInput style={{ marginBottom: "14px" }}>
+                                    <a href={post.kakaoLink} target="_blank">{post.kakaoLink}</a>
+                                </STInput>
 
                                 <div>행사장 링크</div>
-                                <STInput style={{ marginBottom: "14px", minHeight:"40px" }}>{post.postLink}</STInput>
+                                <STInput style={{ marginBottom: "14px", minHeight: "40px" }}>
+                                    <a href={post.postLink} target="_blank">{post.postLink}</a>
+                                </STInput>
 
                                 {
                                     modPost.postAddress && (

@@ -1,6 +1,4 @@
 import React, { useState, useRef } from 'react';
-import { __addPost, __addAdminPost } from '../../redux/modules/postSlice';
-import { useDispatch } from 'react-redux';
 import {
     SelBottom, FestivalWrap, STSelect, StSearchBox, AddressBox, AllButton, AllTextarea, STAddressButton, STInput3, STInput, ModalWrap
 } from '../styles/AddPost.styled'
@@ -15,11 +13,13 @@ import Carousel from 'react-bootstrap/Carousel';
 import Col from 'react-bootstrap/Col';
 import Layout from '../layout/Layout'
 import noImg from '../../assets/images/common/noImg.png'
+
 import useImgUpload from '../../hooks/useImgUpload';
+import useInput from '../../hooks/useInput';
+import { useMutation } from '@tanstack/react-query';
+import { postApis } from '../../api/api-functions/postApis';
 
 const FestivalPost = () => {
-
-    const dispatch = useDispatch();
 
     //주소 API useState
     const [postAddress, setPostAddress] = useState("")
@@ -30,9 +30,8 @@ const FestivalPost = () => {
     //이미지 업로드 인풋돔 선택 훅
     const imgRef = useRef();
 
-    //2-1 게시글 작성 - 행사글
-
-    const [festival, setFestival] = useState({
+    //행사글
+    const [festival, setFestival, festivalHandle] = useInput({
         category: "",
         startPeriod: "",
         endPeriod: "",
@@ -42,13 +41,29 @@ const FestivalPost = () => {
         detailAddress: "" //상세 주소를 보내주기 위함
     })
 
-    const onChangeHandler = (e) => {
-        const { value, name } = e.target;
-        setFestival({
-            ...festival,
-            [name]: value
-        })
-    }
+    //게시글 작성
+    const insertEventPost = useMutation({
+        mutationFn: obj => {
+            return postApis.addEventPostAx(obj);
+        },
+        onSuccess: res => {
+            if (res.data.status === 200) {
+                window.location.replace(`/eventposts/${res.data.data.postId}`);
+            }
+        },
+    })
+
+    //관리자글 작성
+    const insertAdminPost = useMutation({
+        mutationFn: obj => {
+            return postApis.addAdminPostAX(obj);
+        },
+        onSuccess: res => {
+            if (res.data.status === 200) {
+                window.location.replace('/mypage');
+            }
+        },
+    })
 
     const onSubmit = () => {
         const formData = new FormData();
@@ -80,7 +95,7 @@ const FestivalPost = () => {
 
         if (isAdmin) {
             formData.append("adminPostReqDto", new Blob([JSON.stringify(adminObj)], { type: "application/json" }));
-            dispatch(__addAdminPost(formData));
+            insertAdminPost.mutate(formData);
         } else {
             //카테고리, 행사시작, 행사마감, 글작성, content 검사
             if (festival.category === "") { return alert('카테고리를 입력하세요') }
@@ -98,7 +113,7 @@ const FestivalPost = () => {
             }
 
             formData.append("eventPostReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
-            dispatch(__addPost(formData));
+            insertEventPost.mutate(formData);
         }
     }
 
@@ -138,7 +153,7 @@ const FestivalPost = () => {
                     <h4 style={{ textAlign: "center", marginTop: "8px", marginBottom: "18px" }}>행사글</h4>
 
                     <Form.Group className="mb-3" controlId="formGridAddress1" style={{ height: "auto" }}>
-                        <Form.Control type="text" placeholder="제목" name="title" onChange={onChangeHandler} style={{ width: "100%", height: "45px", border: "none", margin: "0 0 10px 0" }} />
+                        <Form.Control type="text" placeholder="제목" name="title" onChange={festivalHandle} style={{ width: "100%", height: "45px", border: "none", margin: "0 0 10px 0" }} />
                     </Form.Group>
 
                     {/*이미지 부분*/}
@@ -169,9 +184,9 @@ const FestivalPost = () => {
                     </div >
                     <div style={{ marginBottom: "10px" }}>*이미지를 다시 업로드 하려면 사진을 클릭해주세요.</div>
 
-                    <AllTextarea type="text" placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" name="content" onChange={onChangeHandler} maxLength={2500} />
+                    <AllTextarea type="text" placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" name="content" onChange={festivalHandle} maxLength={2500} />
 
-                    <STSelect style={{ width: "100%", marginBottom: "10px", padding: "10px" }} name="category" onChange={onChangeHandler}>
+                    <STSelect style={{ width: "100%", marginBottom: "10px", padding: "10px" }} name="category" onChange={festivalHandle}>
                         <option>카테고리</option>
                         <option value="마라톤">마라톤</option>
                         <option value="페스티벌">페스티벌</option>
@@ -184,19 +199,19 @@ const FestivalPost = () => {
                         <Row className="mb-3">
                             <Form.Group as={Col} controlId="formGridCity">
                                 <Form.Label>행사시작</Form.Label>
-                                <Form.Control type="date" name="startPeriod" onChange={onChangeHandler} min={today2} className="dateform"
+                                <Form.Control type="date" name="startPeriod" onChange={festivalHandle} min={today2} className="dateform"
                                 />
                             </Form.Group>
                             <Form.Group as={Col} controlId="formGridCity">
                                 <Form.Label>행사마감</Form.Label>
-                                <Form.Control type="date" name="endPeriod" onChange={onChangeHandler} min={today3} className="dateform" />
+                                <Form.Control type="date" name="endPeriod" onChange={festivalHandle} min={today3} className="dateform" />
                             </Form.Group>
                         </Row>
                     </SelBottom>
 
                     <Form.Group className="mb-3" controlId="formGridAddress1">
                         <Form.Label>행사장 링크</Form.Label>
-                        <Form.Control type="text" placeholder="링크" name="postLink" onChange={onChangeHandler} style={{ width: "100%", height: "45px", border: "none", margin: "0 0 10px 0" }} />
+                        <Form.Control type="text" placeholder="링크" name="postLink" onChange={festivalHandle} style={{ width: "100%", height: "45px", border: "none", margin: "0 0 10px 0" }} />
                     </Form.Group>
 
                     {/* 주소 부분 */}
@@ -211,11 +226,11 @@ const FestivalPost = () => {
                                     <>
                                         <div style={{ display: "flex", marginBottom: "10px" }}>
                                             <STAddressButton style={{ marginRight: "10px", flex: "2" }}>{"#" + region}</STAddressButton>
-                                            <STInput3 type="text" value={postAddress} style={{ flex: "8", padding:"5px",lineHeight:"20px", height:"auto", minHeight:"45px" }} readOnly>{postAddress}</STInput3>
+                                            <STInput3 type="text" value={postAddress} style={{ flex: "8", padding: "5px", lineHeight: "20px", height: "auto", minHeight: "45px" }} readOnly>{postAddress}</STInput3>
                                         </div>
-                                        <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler} style={{ marginBottom: "10px", padding:"5px",lineHeight:"20px", height:"auto", minHeight:"45px" }} />
+                                        <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={festivalHandle} style={{ marginBottom: "10px", padding: "5px", lineHeight: "20px", height: "auto", minHeight: "45px" }} />
 
-                    
+
                                         <KakaoMap address={postAddress} width="100%" height="300px" />
                                     </>)
                             }

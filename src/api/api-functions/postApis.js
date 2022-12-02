@@ -8,9 +8,9 @@ export const postApis = {
     getPostAX: (post) => instance.get(`${process.env.REACT_APP_API_URL}/${post.url}/${post.postId}`),
 
     /**좋아요 */
-    postScrapAx: (post) => instance.post(`likes/${post.kind}/${post.postId}`),
+    postScrapAx: (post) => instance.post(`${process.env.REACT_APP_API_URL}/likes/${post.kind}/${post.postId}`),
 
-    // 행사글 게시글 작성
+    // 행사글 게시글 작성    
     addEventPostAx: (post) => instance.post(`${process.env.REACT_APP_API_URL}/eventposts`, post),
     // 모집글 게시글 작성
     addGatherPostAx: (post) => instance.post(`${process.env.REACT_APP_API_URL}/gatherposts`, post),
@@ -19,11 +19,11 @@ export const postApis = {
 
 
     /**행사글 상세글 수정 */
-    putPostAx: (post) => instance.put(`${process.env.REACT_APP_API_URL}/eventposts/${post.postId}`, post.content),
+    putEventPostAx: (post) => instance.put(`${process.env.REACT_APP_API_URL}/eventposts/${post.postId}`, post.content),
     /*모집글 상세글 수정*/
     putGatherPostAx: (post) => instance.put(`${process.env.REACT_APP_API_URL}/gatherposts/${post.postId}`, post.content),
     /*질문글 상세글 수정*/
-    putGatherAskAx: (post) => instance.put(`${process.env.REACT_APP_API_URL}/askposts/${post.postId}`, post.content),
+    putAskPostAx: (post) => instance.put(`${process.env.REACT_APP_API_URL}/askposts/${post.postId}`, post.content),
 
     /* 행사글 상세글 삭제*/
     deleteEventPostAx: (id) => instance.delete(`${process.env.REACT_APP_API_URL}/eventposts/${id}`),
