@@ -45,7 +45,7 @@ export const __putPost = createAsyncThunk(
   "posts/__putPost",
   async (payload, thunkAPI) => {
     try {
-      postApis.putGatherAskAx(payload)
+      postApis.putAskPostAx(payload)
         .then((res) => {
           if (res.data.status === 200) {
             window.location.reload();

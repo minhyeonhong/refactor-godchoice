@@ -1,11 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import { __addPost2 } from "../../redux/modules/PostSlice2"
-import { useNavigate } from 'react-router-dom';
-import imageCompression from 'browser-image-compression';
 import { FiSearch } from 'react-icons/fi'
 import { StSearchBox, AddressBox, ModalWrap, STButton, STSelectButton, AllButton, STInput, AllTextarea, STSelect, STDiv, STInput2, STAddressButton, STInput3 } from '../styles/AddPost.styled'
-import useImgUpload from '../../hooks/useImgUpload';
 //kakao 주소 관련
 import SearchAddress from './SearchAddress';
 import KakaoMap from '../../components/common/KakaoMap'
@@ -17,10 +12,13 @@ import styled from 'styled-components';
 import Layout from '../layout/Layout'
 import noImg from '../../assets/images/common/noImg.png'
 
+import useImgUpload from '../../hooks/useImgUpload';
+import useInput from '../../hooks/useInput';
+import { useMutation } from '@tanstack/react-query';
+import { postApis } from '../../api/api-functions/postApis';
+
 
 const GatherPost = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate()
 
     //주소 API useState
     const [postAddress, setPostAddress] = useState("")
@@ -55,7 +53,7 @@ const GatherPost = () => {
     ];
 
     //나머지 내용
-    const [gatherPosts, setGatherPosts] = useState({
+    const [gatherPosts, setGatherPosts, gatherPostsHandle] = useInput({
         category: "",
         date: "",
         kakaoLink: "",
@@ -69,15 +67,20 @@ const GatherPost = () => {
         detailAddress: ""
     })
 
-    const onChangeHandler2 = (e) => {
-        const { value, name } = e.target;
-        setGatherPosts({
-            ...gatherPosts,
-            [name]: value
-        })
-    }
 
-    const onSubmit2 = () => {
+    //게시글 작성
+    const insertGatherPost = useMutation({
+        mutationFn: obj => {
+            return postApis.addGatherPostAx(obj);
+        },
+        onSuccess: res => {
+            if (res.data.status === 200) {
+                window.location.replace(`/gatherposts/${res.data.data.postId}`);
+            }
+        },
+    })
+
+    const onSubmit = () => {
 
         // //모집인원, 카테고리, 성비관련, 행사시작, 연령대, 제목, 내용, 카카오링크
         if (counter < 1) { return alert('모집인원을 입력하세요') }
@@ -108,7 +111,7 @@ const GatherPost = () => {
             formData.append("multipartFile", null);
         }
 
-        const obj2 = {
+        const obj = {
 
             category: gatherPosts.category,
             date: gatherPosts.date,
@@ -122,8 +125,8 @@ const GatherPost = () => {
             postLink: gatherPosts.postLink,
             postAddress: postAddress + gatherPosts.detailAddress,
         }
-        formData.append("gatherPostDto", new Blob([JSON.stringify(obj2)], { type: "application/json" }));
-        dispatch(__addPost2(formData));
+        formData.append("gatherPostDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
+        insertGatherPost.mutate(formData);
     }
 
 
@@ -155,7 +158,7 @@ const GatherPost = () => {
 
 
                     <div style={{ marginBottom: "14px" }}>
-                        <STInput type="text" placeholder="제목" name="title" onChange={onChangeHandler2} style={{ width: "100%" }} />
+                        <STInput type="text" placeholder="제목" name="title" onChange={gatherPostsHandle} style={{ width: "100%" }} />
                     </div>
 
                     {fileUrls.length === 0 && <img src={noImg} style={{ width: "100%" }} onClick={() => { imgRef.current.click() }} />}
@@ -187,10 +190,10 @@ const GatherPost = () => {
                     </div >
                     <div style={{ marginBottom: "10px" }}>*이미지를 다시 업로드 하려면 사진을 클릭해주세요.</div>
 
-                    <AllTextarea type="text" placeholder="소개글" name="content" onChange={onChangeHandler2} style={{}} />
+                    <AllTextarea type="text" placeholder="소개글" name="content" onChange={gatherPostsHandle} style={{}} />
 
                     <div style={{ display: "flex", marginBottom: "14px", gap: "10px" }}>
-                        <STSelect name="category" onChange={onChangeHandler2} style={{ flex: "0.9", textAlign: "center" }} >
+                        <STSelect name="category" onChange={gatherPostsHandle} style={{ flex: "0.9", textAlign: "center" }} >
                             <option>카테고리</option>
                             <option value="마라톤">마라톤</option>
                             <option value="페스티벌">페스티벌</option>
@@ -207,9 +210,9 @@ const GatherPost = () => {
 
                     <label style={{ marginLeft: "3px" }}>연령대</label><br />
                     <div style={{ flex: "1", display: "flex", marginTop: "5px" }}>
-                        <STInput2 type="text" placeholder='나이' style={{ width: "50%", textAlign: "center" }} name="startAge" onChange={onChangeHandler2} />
+                        <STInput2 type="text" placeholder='나이' style={{ width: "50%", textAlign: "center" }} name="startAge" onChange={gatherPostsHandle} />
                         <p style={{ paddingTop: "13px" }}>~</p>
-                        <STInput2 type="text" placeholder='나이' style={{ width: "50%", textAlign: "center" }} name="endAge" onChange={onChangeHandler2} />
+                        <STInput2 type="text" placeholder='나이' style={{ width: "50%", textAlign: "center" }} name="endAge" onChange={gatherPostsHandle} />
                     </div>
 
                     <div style={{ display: "flex", marginTop: "10px", marginLeft: "3px" }}>
@@ -218,7 +221,7 @@ const GatherPost = () => {
                     </div>
 
                     <div style={{ display: "flex", marginTop: "5px" }}>
-                        <STInput2 type="date" name="date" onChange={onChangeHandler2} min={today2} style={{ flex: "0.8", textAlign: "center" }} />
+                        <STInput2 type="date" name="date" onChange={gatherPostsHandle} min={today2} style={{ flex: "0.8", textAlign: "center" }} />
                         <div style={{ flex: "1", marginLeft: "10px" }}>
                             <ButtonGroup className="mb-2" >
                                 {sexs.map((radio, idx) => (
@@ -242,12 +245,12 @@ const GatherPost = () => {
 
                     <div style={{ marginTop: "14px", marginBottom: "14px" }}>
                         <label>카카오 링크</label><br />
-                        <STInput type="text" placeholder="링크" name="kakaoLink" onChange={onChangeHandler2} style={{ width: "100%" }} />
+                        <STInput type="text" placeholder="링크" name="kakaoLink" onChange={gatherPostsHandle} style={{ width: "100%" }} />
                     </div>
 
                     <div style={{ marginBottom: "14px" }}>
                         <label>행사장 링크</label><br />
-                        <STInput type="text" placeholder="링크" name="postLink" onChange={onChangeHandler2} style={{ width: "100%" }} />
+                        <STInput type="text" placeholder="링크" name="postLink" onChange={gatherPostsHandle} style={{ width: "100%" }} />
                     </div>
 
                 </div>
@@ -264,7 +267,7 @@ const GatherPost = () => {
                                         <STAddressButton style={{ marginRight: "10px", flex: "2" }}>{"#" + region}</STAddressButton>
                                         <STInput3 type="text" value={postAddress} style={{ flex: "8" }} readOnly>{postAddress}</STInput3>
                                     </div>
-                                    <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler2} style={{ width: "78%", marginBottom: "10px", float: "right" }} />
+                                    <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={gatherPostsHandle} style={{ width: "78%", marginBottom: "10px", float: "right" }} />
                                     <KakaoMap address={postAddress} width="328px" height="300px" />
                                 </>)
                         }
@@ -277,7 +280,7 @@ const GatherPost = () => {
                 )}
 
                 <div>
-                    <AllButton style={{ background: "#3556E1", color: "white" }} onClick={onSubmit2}>등록하기</AllButton>
+                    <AllButton style={{ background: "#3556E1", color: "white" }} onClick={onSubmit}>등록하기</AllButton>
                 </div>
             </Layout>
 
