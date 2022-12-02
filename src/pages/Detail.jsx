@@ -50,9 +50,13 @@ const Detail = () => {
             <PageState display={detail?.isSuccess ? 'none' : 'flex'}
                 flexDirection='column' state='notFound' imgWidth='25%' height='100vh'
                 text='해당 페이지를 찾을 수 없습니다.' />
-            {detail?.isSuccess && url === 'eventposts' && <Event post={detail.data.data.data} postId={postId} modPost={modPost} setmodPost={setmodPost} modPostHandle={modPostHandle} />}
+            {/* {detail?.isSuccess && url === 'eventposts' && <Event post={detail.data.data.data} postId={postId} modPost={modPost} setmodPost={setmodPost} modPostHandle={modPostHandle} />}
             {detail?.isSuccess && url === 'gatherposts' && <Gather post={detail.data.data.data} postId={postId} modPost={modPost} setmodPost={setmodPost} modPostHandle={modPostHandle} />}
-            {detail?.isSuccess && url === 'askposts' && <Ask post={detail.data.data.data} postId={postId} modPost={modPost} setmodPost={setmodPost} modPostHandle={modPostHandle} />}
+            {detail?.isSuccess && url === 'askposts' && <Ask post={detail.data.data.data} postId={postId} modPost={modPost} setmodPost={setmodPost} modPostHandle={modPostHandle} />} */}
+
+            {url === 'eventposts' && <Event postId={postId} url={url} />}
+            {url === 'gatherposts' && <Gather postId={postId} url={url} />}
+            {url === 'askposts' && <Ask postId={postId} url={url} />}
 
         </Layout>
     );
