@@ -1,75 +1,53 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useMemo } from "react";
 
 import Layout from "../components/layout/Layout";
 import List from "../components/home/List";
 import Search from "../components/home/Search";
 import Carousel from "react-bootstrap/Carousel";
 import styled from "styled-components";
-import useInput from "../hooks/useInput";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import TopButton from "../components/elements/TopButton";
 import ScrollToTop from "../components/elements/ScrollToTop";
-// import AddPostButton from '../components/home/AddPostButton'
-// import { useLocation } from "react-router-dom";
 import WritingToggle from "../components/elements/WritingToggle";
-import noImg from '../assets/images/common/noImg.jpg'
 
-import { useDispatch, useSelector } from "react-redux";
-import {
-    putSearchState,
-    putSearchStatePage,
-    __getAllPostList,
-    __postList,
-    __getAdminPost
-} from "../redux/modules/postSlice";
-import { useMemo } from 'react';
 import PageState from "../components/common/PageState";
 
 import { postApis } from "../api/api-functions/postApis"
 import { useQuery } from "@tanstack/react-query";
+import useInput from "../hooks/useInput";
 
 const Home = () => {
-    const dispatch = useDispatch();
-
-    //store state
-    const { adminPosts, searchState, posts, istLastPage, isLoading, isResetSearch } = useSelector((state) => state.postSlice);
-    const [page, setPage] = useState(0);
-
-
-    //검색 상태 업데이트
-    const updateSearchInfo = (searchInfo) => {
-        dispatch(putSearchState({ main: searchState.main === undefined ? 'event' : searchState.main, ...searchInfo }));
-    }
-    const [modalOn, setModalOn] = useState(false);
-    //페이지 업데이트
-    useMemo(() => {
-        dispatch(putSearchStatePage(page));
-    }, [page])
-
-    //리스트 불러오기
-    useMemo(() => {
-        if (Object.keys(searchState).length > 0) {
-            dispatch(__getAllPostList(searchState));
-        }
-    }, [searchState])
 
     //배너 가져오기
-    const banner = useQuery(['banner'], () => postApis.getAdminPostAX(), { refetchOnWindowFocus: false })
+    const banner = useQuery(['banner'], () => postApis.getAdminPostAX(), { refetchOnWindowFocus: false, retry: 0 })
 
-    // const result = useQuery(['todos', searchState], () => postApis.searchPostAX(searchState), { refetchOnWindowFocus: false })
+    //유저 지역정보 가져오기
+    const userAddressTag = localStorage.getItem('userAddressTag');
+    //client 검색 state
+    const [searchState, setSearchState] = useState({
+        main: "event",
+        tag: userAddressTag !== null && userAddressTag !== 'null' ? [userAddressTag] : [],
+        progress: '진행중',
+        sort: '최신순',
+        search: '',
+    });
+    //검색어 state
+    const [search, setSearch, searchHandle] = useInput({ search: '' });
+    //검색어로 검색후 검색어를 지웠을때 처리
+    useMemo(() => {
+        if (search.search === "") {
+            setSearchState({ ...searchState, search: search.search });
+        }
+    }, [search.search])
 
-    // console.log("result", result);
+    //모달
+    const [modalOn, setModalOn] = useState(false);
 
     return (
 
         <Layout>
-            <PageState
-                display={isLoading ? 'flex' : 'none'}
-                state='loading' imgWidth='25%' height='100vh'
-                text='잠시만 기다려 주세요.' />
-
-            <StHomeWrap display={isLoading ? 'none' : 'block'}>
+            <StHomeWrap>
                 <>
                     <ScrollToTop />
                     {modalOn && <WritingToggle modalOn={modalOn} setModalOn={setModalOn} />}
@@ -104,7 +82,7 @@ const Home = () => {
                 </StCarouselWrap>
 
                 {/* 검색 */}
-                <Search updateSearchInfo={updateSearchInfo} searchState={searchState} />
+                <Search searchState={searchState} setSearchState={setSearchState} search={search} searchHandle={searchHandle} />
 
                 {/* 리스트 */}
                 <StTabBox>
@@ -112,7 +90,7 @@ const Home = () => {
                         defaultActiveKey="event"
                         id="justify-tab-example"
                         activeKey={searchState.main}
-                        onSelect={(key) => dispatch(putSearchState({ ...searchState, main: key, page: 0 }))}
+                        onSelect={(key) => setSearchState({ ...searchState, main: key, page: 0 })}
                         className="tabs"
                         justify
                     >
@@ -121,7 +99,7 @@ const Home = () => {
                         <Tab eventKey="ask" title="질문글" />
                     </Tabs>
                     {/* 리스트 */}
-                    <List posts={posts} main={searchState.main} isLoading={isLoading} setPage={setPage} istLastPage={istLastPage} />
+                    <List searchState={searchState} />
                     <Deletes />
                 </StTabBox>
             </StHomeWrap>
@@ -145,9 +123,9 @@ const StCarouselWrap = styled.div`
     width: 3px;
     border-radius: 50%;
   }
-  .carousel a {
+  /* .carousel a {
     display: none;
-  }
+  } */
   .carousel-caption {
     right: 0%;
     text-align: inherit;

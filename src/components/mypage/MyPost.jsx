@@ -1,11 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { __getMyPost, saveCategory } from "../../redux/modules/myPageSlice";
 import Button from "../elements/Button";
-import { __postScrap } from "../../redux/modules/postSlice";
-import PostScrap from "../detail/PostScrap";
 import { BookmarkFill, Views } from "../../assets";
 import { myPageApis } from "../../api/api-functions/myPageApis";
 import { useQuery } from "@tanstack/react-query";
