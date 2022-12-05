@@ -17,6 +17,24 @@ import { postApis } from "../api/api-functions/postApis"
 import { useQuery } from "@tanstack/react-query";
 import useInput from "../hooks/useInput";
 
+// 가이드 모달
+import { flexColumn, flexRow } from "../components/styles/Flex";
+import { Swiper, SwiperSlide } from "swiper/react";
+import SwiperCore, { Autoplay, Navigation, Pagination } from "swiper";
+import "swiper/swiper-bundle.min.css";
+import "swiper/swiper.min.css"
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+
+
+import guide01 from "../assets/images/banner/guide/guide_01.jpg"
+import guide02 from "../assets/images/banner/guide/guide_02.jpg"
+import guide03 from "../assets/images/banner/guide/guide_03.jpg"
+import guide04 from "../assets/images/banner/guide/guide_04.jpg"
+
+SwiperCore.use([Pagination, Autoplay, Navigation]);
+// ------------- 여기까지 ---------------
+
 const Home = () => {
 
     //배너 가져오기
@@ -44,6 +62,11 @@ const Home = () => {
     //모달
     const [modalOn, setModalOn] = useState(false);
 
+    // 가이드 모달
+    const [guideOn, setGuideOn] = useState(false);
+    const guides = [guide01, guide02, guide03, guide04];
+    // ------------- 여기까지 ---------------
+
     return (
 
         <Layout>
@@ -52,6 +75,58 @@ const Home = () => {
                     <ScrollToTop />
                     {modalOn && <WritingToggle modalOn={modalOn} setModalOn={setModalOn} />}
                     <TopButton modalOn={modalOn} setModalOn={setModalOn} />
+
+                    {/* 임시 배너 모달! -- 수정할 것 */}
+                    <BannerModal
+                        onClick={() => {
+                            setGuideOn(!guideOn);
+                            console.log("guideOn ===> ", guideOn);
+                        }}
+                    >
+                        배너 모달
+                    </BannerModal>
+
+                    {guideOn && (
+                        <Dim
+                            onClick={() => {
+                                setGuideOn(!guideOn);
+                            }}
+                        >
+                            <StyleGuide onClick={(e) => e.stopPropagation()}>
+                                <StyledSwiper
+                                    className="swipe"
+                                    spaceBetween={0}
+                                    slidesPerView={1}
+                                    scrollbar={{ draggable: true }}
+                                    navigation
+                                    pagination={{ clickable: true }}
+                                    autoplay={{ delay: 15000, disableOnInteraction: false }}
+                                    loop={true}
+                                    centeredSlides={true}
+                                    style={{ backgroundColor: "pink" }}
+                                >
+                                    {guides?.map((guide, i) => {
+                                        return (
+                                            <SwiperSlide key={i}>
+                                                <ItemDetailImg src={guide} />
+                                            </SwiperSlide>
+                                        );
+                                    })}
+                                </StyledSwiper>
+                                {/* StyledSwiper */}
+
+                                <button
+                                    onClick={() => {
+                                        setGuideOn(!guideOn);
+                                    }}
+                                >
+                                    X
+                                </button>
+                            </StyleGuide>
+                        </Dim>
+                    )}
+
+                    {/* ---------- 여기까지 ---------- */}
                 </>
                 {/* 슬라이드 */}
                 <StCarouselWrap>
@@ -115,8 +190,7 @@ width: 100%;
 
 const StHomeWrap = styled.div`
     display : ${(props) => props.display}
-  //background-color: #FEFCF8;
-`;
+;`
 
 const StCarouselWrap = styled.div`
   .carousel-indicators [data-bs-target] {
@@ -149,3 +223,70 @@ const StTabBox = styled.div`
     border-bottom: 2px solid #3556e1;
   }
 `;
+
+/* 배너 모달 버튼 -- 수정할 것 */
+const BannerModal = styled.div`
+  background-color: red;
+  width: 50px;
+  height : 50px;
+  `;
+
+export const StyledSwiper = styled(Swiper)`
+    background: red;
+    ${flexRow}
+    justify-content: center;
+    width: 370px;
+    /* @media screen and (max-width: 425px)  {
+        width: 95%;
+        border-radius: 20px;
+    } */
+`;
+
+const StyleGuide = styled.div`
+  ${flexRow}
+  justify-content: center;
+  width: 370px;
+  height: auto;
+  .swipe {
+    width: 100%;
+  }
+`;
+
+const Dim = styled.div`
+  ${flexRow}
+  z-index: 99;
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  button {
+    z-index: 100;
+    display: flex;
+    position: fixed;
+    right: 13.2%;
+    top: 3.6%;
+    width: 120px;
+    height: 30px;
+    justify-content: center;
+    background-color: aliceblue;
+    border: 1px solid lightgray;
+    :hover {
+      cursor: pointer;
+      background-color: beige;
+    }
+    /* @media screen and (max-width: 425px) {
+      width: 80px;
+      right: 11%;
+      top: 30%;
+    } */
+  }
+`;
+
+export const ItemDetailImg = styled.img`
+  width: 100%;
+  height: 90%;
+`;
+

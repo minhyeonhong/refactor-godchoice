@@ -227,9 +227,10 @@ export const StWrap = styled.div`
 export const ModalWrap = styled.div`
   position: fixed;
   bottom: 0;
-  left: 0;
-  width: 100%;
+  left: 50%;
+  width: 425px;
   height: 100%;
+  transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;

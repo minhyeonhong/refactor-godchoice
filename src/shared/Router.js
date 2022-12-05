@@ -21,6 +21,7 @@ const QuestionPost = lazy(() => import("../components/post/QuestionPost"))
 const EventSurvey = lazy(() => import("../components/home/EventSurvey"))
 const Alram = lazy(() => import("../components/home/Alram"))
 
+
 const Router = () => {
     return (
         <BrowserRouter>
@@ -62,7 +63,6 @@ const Router = () => {
                     <Route path="/mypagescrap" element={<MyPageScrap />} />
 
                     <Route path="/eventsurvey" element={<EventSurvey />} />
-
                 </Routes>
             </Suspense>
         </BrowserRouter>
