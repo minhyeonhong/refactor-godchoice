@@ -1,8 +1,5 @@
 import { myPageApis } from "../../api/api-functions/myPageApis";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { setCookie } from "../../cookie/cookie";
-import { Navigate } from "react-router-dom";
-
 
 
 // user 정보 가져오기

@@ -2,16 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import Comment from '../common/Comment';
 import KakaoMap from '../common/KakaoMap';
 import Carousel from 'react-bootstrap/Carousel';
-import {
-    StWrap,
-    StTitleBox,
-    StImgBox,
-    StContentBox,
-    StEventLinkBox,
-    StEventPlaceBox,
-    StButtonBox
-} from '../styles/Detail.styled'
-import { ModalWrap, AllInput } from '../styles/GatherDetail.styled'
+import { StContent, STUsername, StCarouselWrap, STUploadButton, STIng, STImg2, STAddressButton, STEditButton, StSearchBox, StWrap, STInput, STContentTextarea, STInput3, STAddressDiv, ModalWrap } from '../styles/DetailPost.styled.js'
+
 import noImg from '../../assets/images/common/noImg.jpg'
 import { useDispatch } from 'react-redux';
 import SearchAddress from '../post/SearchAddress';
@@ -34,7 +26,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
 
     //이미지 업로드 훅
-    const [files, fileUrls, uploadHandle] = useImgUpload(5, true, 0.5, 1000);
+    const [files, fileUrls, uploadHandle, setImgFiles, setImgUrls] = useImgUpload(5, true, 0.5, 1000);
     //기존 프리뷰 지울 state
     const [delImg, setDelImg] = useState([]);
 
@@ -55,10 +47,10 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         }
 
         //링크 검사(행사장링크 필수 아님)
-        const arr = modPost.postLink.indexOf("https://") !== -1
+        const link = /(http|https):\/\//.test(modPost.postLink)
         if (modPost.postLink !== "") {
-            if (arr === false) {
-                return (alert('https://가 포함된 링크를 입력해주세요'))
+            if (link === false) {
+                return alert("'http://' 또는 'https://'가 포함된 링크를 입력해주세요.")
             }
         }
 
@@ -106,8 +98,14 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
         dispatch(__deletePost(postId))
     }
 
+    //새로추가한 글 삭제할 이미지
+    function deleteNewFile(e) {
+        const imgurls = fileUrls.filter((imgUrl, index) => index !== e);
+        setImgUrls(imgurls);
 
-
+        const imgdelete = files.filter((file, index) => index !== e);
+        setImgFiles(imgdelete);
+    }
 
     return (
         Object.keys(post).length < 1 ?
@@ -125,17 +123,32 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                             {/*이미지 올리기*/}
                             <StCarouselWrap>
                                 <Carousel activeIndex={index} onSelect={handleSelect}>
-                                    {modPost.askPostImgList.map((img, i) => {
+                                    {delImg === "" || modPost.askPostImgList.length - delImg.length > 0 &&
+                                        modPost.askPostImgList
+                                            .filter((item, i) => delImg.indexOf(item.postImgId) === -1)
+                                            .map((img, i) => {
+                                                return (
+                                                    <Carousel.Item key={img.id}>
+                                                        <img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
+                                                            className="d-block w-100"
+                                                            src={img.postImgUrl}
+                                                            alt={`slide${i + 1}`}
+                                                        />
+                                                    </Carousel.Item>
+                                                )
+                                            })}
+                                    {fileUrls && fileUrls.map((imgUrl, i) => {
                                         return (
-                                            <Carousel.Item key={img.id}>
+                                            <Carousel.Item key={i}>
                                                 <img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
                                                     className="d-block w-100"
-                                                    src={img.postImgUrl}
+                                                    src={imgUrl}
                                                     alt={`slide${i + 1}`}
                                                 />
                                             </Carousel.Item>
                                         )
                                     })}
+
                                 </Carousel>
 
                                 {modPost.askPostImgList.map((img, i) => {
@@ -167,27 +180,28 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 {
                                     fileUrls && fileUrls.map((imgUrl, i) => {
                                         return (
-                                            <img style={{ width: '60px', height: '60px' }} src={imgUrl} key={i} />
+                                            <button key={imgUrl} onClick={() => deleteNewFile(index)}>
+                                                <img style={{ width: '60px', height: '60px' }} src={imgUrl} />
+                                            </button>
                                         )
                                     })
                                 }
 
                             </StCarouselWrap>
-
+                            <div>* '+'버튼 옆에 있는 사진을 클릭하면 삭제됩니다.</div>
                         </div>
 
-                        <AllTextarea style={{ height: "200px", marginTop: "14px", marginBottom: "14px" }} type="text" name="content" defaultValue={modPost.content || ""} onChange={modPostHandle} />
+                        <STContentTextarea style={{ height: "200px", marginTop: "14px", marginBottom: "14px" }} type="text" name="content" defaultValue={modPost.content || ""} onChange={modPostHandle} />
 
                         <label>행사장 링크</label><br />
-                        <STInput3 type="text" name="postLink" defaultValue={modPost.postLink} onChange={modPostHandle} style={{ width: "100%", marginBottom: "14px" }} />
+                        <STInput3 type="text" name="postLink" defaultValue={modPost.postLink} onChange={modPostHandle} style={{ width: "100%", marginBottom: "14px", height: "100px" }} />
 
                         <div>
 
-                            <div>행사장소</div>
                             <StSearchBox style={{ background: "#E1E3EC" }} onClick={popupPostCode}>
-                                <button style={{ color: "#8B909F" }}><FiSearch style={{ width: '20px', height: '20px', color: '#424754', marginLeft: "10px", marginRight: "10px" }} />주소검색</button>
+                                <button style={{ color: "#8B909F" }}><FiSearch style={{ width: '20px', height: '20px', color: '#424754', marginLeft: "10px", marginRight: "10px" }} />주소를 검색하려면 클릭해주세요</button>
                             </StSearchBox>
-                            {/*<button onClick={popupPostCode}> 주소 검색하기</button>*/}
+
                             {isPopupOpen && (
                                 <ModalWrap onClick={popupPostCode}>
                                     <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
@@ -221,21 +235,27 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                     :
                     (
                         <>
-                            <STIng style={{ marginTop: "14px", marginBottom: "14px" }}>
-                                <STImg>
-                                    <div style={{ color: "#8B909F", flex: "8", marginLeft: "5px" }}>
-                                        <img src={Views} style={{ width: "20px", height: "20px", flex: "2" }} />
-                                        {post.viewCount}
-                                    </div>
+                            <STIng style={{ margin: "14px 0" }}>
+                                <div>
+                                    <STImg2>
+                                        <div style={{ margin: "0 5px 0 18px", paddingTop: "10px" }}>
+                                            <img src={Views} style={{ width: "20px", height: "20px", flex: "2", marginRight: "4px" }} />
+                                        </div>
+                                        <div style={{ margin: "10px 20px 0 0 " }}> {post.viewCount}</div>
+
+                                    </STImg2>
+                                </div>
+                                <div>
                                     <PostScrap style={{ position: "absolute", right: "10px" }} bookMarkStatus={post.bookMarkStatus} />
-                                </STImg>
+                                </div>
+
                             </STIng>
                             <div style={{ marginBottom: "14px" }}>
                                 <img src={post.userImg} style={{ width: "36px", height: "36px", borderRadius: "30px" }} />
                                 <STUsername>{post.userName}</STUsername>
                             </div>
 
-                            <STInput style={{ marginBottom: "8px" }}>{post.title}</STInput>
+                            <STInput style={{ height: "48px", marginBottom: "8px" }}>{post.title}</STInput>
 
                             <div>
                                 <Carousel >
@@ -252,10 +272,10 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                 </Carousel>
                             </div>
 
-                            <StContent style={{ marginBottom: "14px", paddingTop: "5px" }} value={post.content || ""} readOnly />
+                            <StContent style={{ marginBottom: "14px", padding: "5px", borderRadius: "10px" }} value={post.content || ""} readOnly />
 
                             <div>행사장 링크</div>
-                            <STInput style={{ marginBottom: "14px" }}>{post.postLink}</STInput>
+                            <STInput style={{ marginBottom: "14px", minHeight: "40px", padding: "5px" }}>{post.postLink}</STInput>
 
                             {
                                 modPost.postAddress && (
@@ -263,7 +283,7 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
                                         <div>행사장소</div>
                                         <div style={{ display: "flex", marginBottom: "8px" }}>
                                             <STAddressButton style={{ flex: "2" }}>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressButton>
-                                            <STInput style={{ flex: "8", marginLeft: "5px" }}>{post.postAddress}</STInput>
+                                            <STInput style={{ flex: "8", marginLeft: "5px" }}>{post.postAddress}</STInput  >
                                         </div>
                                     </>
                                 )
@@ -287,191 +307,6 @@ const Ask = ({ post, postId, modPost, setmodPost, modPostHandle }) => {
 
 export default Ask;
 
-
-const StCarouselWrap = styled.div`
-    .carousel-indicators [data-bs-target]{
-        width:3px;
-        border-radius : 50%;
-    }
-`
-const STUploadButton = styled.button`
-    margin-left:10px;
-    width : 60px;
-    height : 60px;
-    background-color: #F4F4F4;
-    color : #5E5E5E;
-    float : left;
-    font-size: 40px;
-    vertical-align : middle;
-    height : 100%;
-    border-radius: 10px;
-    border : transparent;
-`
-
-const LikeBox = styled.div`
-    width:100%;
-    height:50px;
-`
-
-
-//---------------------
-
-const STIng = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 0px;
-    gap: 206px;
-    width: 100%;
-    height: 44px;
-`
-
-const STIngDiv = styled.p`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    text-align: center;
-    vertical-align: center;
-    /* padding: 14px 16px 14px 18px; */
-    /* gap: 10px; */
-    justify-content: center;
-    width: 85px;
-    height: 44px;
-    background: #15DD95;
-    color: #FFFFFF;
-
-    /* line-height: 44px; */
-`
-const STUsername = styled.span`
-    color : #424754;
-    margin-left: 12px;
-`
-const STInput = styled.div`
-    width: 100%;
-    //height: 36px;
-    background: white;
-    border-radius: 10px;
-    font-weight: 500;
-    padding-top: 6px;
-    padding-left: 6px;
-    padding-bottom: 6px;
-    word-break: break-all;
-`
-
-const STButton = styled.p`
-    background: #DDE1FF;
-    border-radius: 100px;
-    height: 44px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    color :#00105C;
-`
-
-const STButton2 = styled.p`
-    background: white;
-    border-radius: 100px;
-    height: 44px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    color: #424754; 
-`
-
-const STBox2 = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    padding: 0px;
-    gap: 4px;
-    width: 100%;
-    height: 44px;
-    font-size: 17px;
-`
-
-const StContent = styled.textarea`
-    width: 100%;
-    height: 144px;
-    border : transparent;
-    background: #FFFFFF;
-    padding-top: 6px;
-    padding-left: 6px;
-`
-
-const STAddressButton = styled.div`
-    width: 64px;
-    height: 36px;
-    background-color: #DCE0F1;
-    border-radius: 30px;
-    text-align: center;
-    padding-top: 6px;
-`
-
-const STEditButton = styled.button`
-    width: 67px;
-    height: 40px;
-    background: #B8C4FF;
-    border-radius: 100px;
-    float: right;
-    
-    border : transparent;
-`
-
-const STImg = styled.div`
-    width : 94%;
-    display : flex;
-    justify-content : space-between;
-    //background-color: black;
-    position: absolute;
-
-    //margin-left: 10px;
-`
-
-const STInput3 = styled.input`
-    width: 100%;
-    height: 36px;
-    background: white;
-    border-radius: 10px;
-    font-weight: 500;
-    padding-top: 6px;
-    padding-left: 6px;
-    padding-bottom: 6px;
-    border:transparent;
-    `
-
-const AllTextarea = styled.textarea`
-    border-radius: 10px;
-    border: transparent;
-    width :100%;
-    background-color: white;
-    padding-left: 10px;
-    padding-top:10px;
-`
-const StSearchBox = styled.div`
-    background: #EEEAE3;
-    box-shadow: inset 0px 2px 2px rgba(0, 0, 0, 0.1);
-    border-radius : 30px;
-    display : flex;
-    flex-direction : row;
-    margin : 0px 10px;
-    height : 36px;
-    button{
-        background-color : transparent;
-        border : none;
-        border-radius :  30px 0 0 30px ; 
-    }
-`
-
-const STAddressDiv = styled.div`
-    width: 64px;
-    height: 36px;
-    background-color: #DCE0F1;
-    border-radius: 30px;
-    text-align: center;
-    padding-top: 6px;
-`
 const Img = styled.img`
     z-index : 1 !important;
 `

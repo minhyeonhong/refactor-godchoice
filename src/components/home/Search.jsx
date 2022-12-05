@@ -112,6 +112,7 @@ const StSearchBox = styled.div`
     flex-direction : row;
     margin : 0px 10px;
     height : 36px;
+
     input{
         margin-right : 20px;
         width : 100%;

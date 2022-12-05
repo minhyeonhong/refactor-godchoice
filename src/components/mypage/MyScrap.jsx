@@ -6,7 +6,6 @@ import styled from "styled-components";
 import { BookmarkFill, Image, Views } from "../../assets";
 import { saveCategory, __getMyScrap } from "../../redux/modules/myPageSlice";
 import Button from "../elements/Button";
-// import noImg from "../../assets/images/common/noImg.png"
 
 import { __postScrap } from "../../redux/modules/postSlice";
 import PostScrap from "../detail/PostScrap";
@@ -88,7 +87,7 @@ const MyScrap = () => {
                     </ItemImg>
                     <ItemContainer>
                       <ItemTop>
-                        <p style={{ fontWeight: 500, fontSize: "20px" }}>{v.title}</p>
+                        <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 15 ? v.title.substring(0, 14) + '...' : v.title}</p>
                         <p>{v.category}</p>
                         <p>{v.content}</p>
                       </ItemTop>
@@ -114,12 +113,12 @@ const MyScrap = () => {
                       </ItemImg>
                       <ItemContainer>
                         <ItemTop>
-                          <p style={{ fontWeight: 500, fontSize: "20px" }}>{v.title}</p>
+                          <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 15 ? v.title.substring(0, 14) + '...' : v.title}</p>
                           <p>{v.category}</p>
                           <p>{v.content}</p>
                         </ItemTop>
                         <ItemBottom>
-                          <p>~ {v.endPeriod}</p>
+                          <p>{v.date}</p>
                           <p> <Views style={{ height: "19px" }} /> {v.viewCount}</p>
                         </ItemBottom>
                       </ItemContainer>
@@ -146,7 +145,7 @@ const MyScrap = () => {
                       </ItemImg>
                       <ItemContainer>
                         <ItemTop style={{ marginBottom: "20px" }}>
-                          <p style={{ fontWeight: 500, fontSize: "20px" }}>{v.title}</p>
+                          <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 15 ? v.title.substring(0, 14) + '...' : v.title}</p>
                           <p>{v.category}</p>
                           <p>{v.content}</p>
                         </ItemTop>

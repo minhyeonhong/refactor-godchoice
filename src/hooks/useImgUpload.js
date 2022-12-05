@@ -78,7 +78,7 @@ const useImgUpload = (limitCount = 0, isComp = false, imgMaxSize = 1, imgMaxWidt
         });
 
     }
-    return [imgFiles, imgUrls, handler];
+    return [imgFiles, imgUrls, handler, setImgFiles, setImgUrls];
 };
 
 export default useImgUpload;

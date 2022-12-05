@@ -4,6 +4,8 @@ import { __addPost2 } from "../../redux/modules/PostSlice2"
 import { useNavigate } from 'react-router-dom';
 import imageCompression from 'browser-image-compression';
 import { FiSearch } from 'react-icons/fi'
+import { StSearchBox, AddressBox, ModalWrap, STButton, STSelectButton, AllButton, STInput, AllTextarea, STSelect, STDiv, STInput2, STAddressButton, STInput3 } from '../styles/AddPost.styled'
+import useImgUpload from '../../hooks/useImgUpload';
 //kakao 주소 관련
 import SearchAddress from './SearchAddress';
 import KakaoMap from '../../components/common/KakaoMap'
@@ -12,7 +14,6 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Carousel from 'react-bootstrap/Carousel';
 import styled from 'styled-components';
-import { STNumber, STButton, STSelectButton, AllButton, AllInput, StSearchBox, RegionButton, AddressBox, AddressInput, ModalWrap } from '../styles/GatherDetail.styled'
 import Layout from '../layout/Layout'
 import noImg from '../../assets/images/common/noImg.png'
 
@@ -24,46 +25,11 @@ const GatherPost = () => {
     //주소 API useState
     const [postAddress, setPostAddress] = useState("")
 
-    //1.이미지 업로드 부분
-    const [imgFile, setImgFile] = useState([]);
-    const [imgUrl, setImgUrl] = useState([]);
+    //이미지 업로드 훅
+    const [files, fileUrls, uploadHandle] = useImgUpload(5, true, 0.5, 1000);
+
+    //이미지 업로드 인풋돔 선택 훅
     const imgRef = useRef();
-
-    const onChangeImage = (e) => {
-        const files = e.currentTarget.files;
-
-        if ([...files].length > 5) {
-            alert('이미지는 최대 5개까지 업로드가 가능합니다.');
-            return;
-        }
-
-        //선택한 이미지 파일 반복문 돌리기
-        [...files].forEach(file => {
-
-            //이미지 압축 지정 
-            const options = {
-                maxSizeMB: 0.5,
-                maxWidthOrHeight: 1000,
-                useWebWorker: true,
-            };
-
-            //압축 관련 내용
-            imageCompression(file, options)
-                .then((res) => {
-
-                    setImgFile(imgs => [...imgs, new File([res], res.name, { type: "image/" + res.name.split(".")[1] })]);
-                    const reader = new FileReader();
-
-                    reader.onload = () => {
-                        setImgUrl(imgUrl => [...imgUrl, reader.result]);
-                    };
-                    reader.readAsDataURL(res);
-                })
-                .catch((error) => {
-                    console.log("파일 압축 실패", error);
-                })
-        });
-    }
 
     //2-2 게시글 작성 - 모집글
 
@@ -114,27 +80,28 @@ const GatherPost = () => {
     const onSubmit2 = () => {
 
         // //모집인원, 카테고리, 성비관련, 행사시작, 연령대, 제목, 내용, 카카오링크
-        if (counter < 1) { return (alert('모집인원을 입력하세요')) }
-        if (gatherPosts.category === "") { return (alert('카테고리를 입력하세요')) }
+        if (counter < 1) { return alert('모집인원을 입력하세요') }
+        if (gatherPosts.category === "") { return alert('카테고리를 입력하세요') }
         if (sexValue === "") { return (alert('성비를 선택하세요')) }
-        if (gatherPosts.startAge === "" || gatherPosts.endAge === "") { return (alert('연령대를 입력하세요')) }
-        if (gatherPosts.title === "") { return (alert('제목을 입력하세요')) }
-        if (gatherPosts.content === "") { return (alert('내용을 입력하세요')) }
-        if (gatherPosts.date === "") { return (alert('행사시작 일자를 입력하세요')) }
-        if (gatherPosts.kakaoLink === "") { return (alert('연락할 카카오 링크를 입력하세요')) }
-        if (postAddress === "") { return (alert('함께 만날 주소를 입력해주세요')) }
+        if (gatherPosts.startAge === "" || gatherPosts.endAge === "") { return alert('연령대를 입력하세요') }
+        if (gatherPosts.title === "") { return alert('제목을 입력하세요') }
+        if (gatherPosts.content === "") { return alert('내용을 입력하세요') }
+        if (gatherPosts.date === "") { return alert('행사시작 일자를 입력하세요') }
+        if (gatherPosts.kakaoLink === "") { return alert('연락할 카카오 링크를 입력하세요') }
+        if (postAddress === "") { return alert('함께 만날 주소를 입력해주세요') }
+
         // //링크 검사(행사장링크 필수 아님)
-        const arr = gatherPosts.postLink.indexOf("https://") !== -1
+        const link = /(http|https):\/\//.test(gatherPosts.postLink)
         if (gatherPosts.postLink !== "") {
-            if (arr === false) {
-                return (alert('https://가 포함된 링크를 입력해주세요'))
+            if (link === false) {
+                return alert("'http://' 또는 'https://'가 포함된 링크를 입력해주세요.")
             }
         }
 
         const formData = new FormData();
 
-        if (imgFile.length > 0) {
-            imgFile.forEach((file) => {
+        if (files.length > 0) {
+            files.forEach((file) => {
                 formData.append("multipartFile", file);
             })
         } else {
@@ -157,7 +124,6 @@ const GatherPost = () => {
         }
         formData.append("gatherPostDto", new Blob([JSON.stringify(obj2)], { type: "application/json" }));
         dispatch(__addPost2(formData));
-        //window.location.replace('/')
     }
 
 
@@ -182,11 +148,7 @@ const GatherPost = () => {
 
     return (
         <>
-            {isPopupOpen && (
-                <ModalWrap onClick={popupPostCode}>
-                    <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
-                </ModalWrap>
-            )}
+
             <Layout style={{ height: "100%" }}>
                 <div style={{ paddingLeft: "10px", paddingRight: "10px", height: "100%" }}>
                     <h4 style={{ textAlign: "center", marginTop: "18px", marginBottom: "18px" }}>모집글</h4>
@@ -196,23 +158,23 @@ const GatherPost = () => {
                         <STInput type="text" placeholder="제목" name="title" onChange={onChangeHandler2} style={{ width: "100%" }} />
                     </div>
 
-                    {imgUrl.length === 0 && <img src={noImg} style={{ width: "100%" }} onClick={() => { imgRef.current.click() }} />}
+                    {fileUrls.length === 0 && <img src={noImg} style={{ width: "100%" }} onClick={() => { imgRef.current.click() }} />}
 
                     <div >
-                        <label htmlFor="imgFile">
+                        <label htmlFor="files">
                             <input
                                 style={{ display: "none" }}
                                 type="file"
-                                id="imgFile"
-                                onChange={onChangeImage}
+                                id="files"
+                                onChange={uploadHandle}
                                 accept="image/*"
                                 ref={imgRef}
-                                name="imgFile"
+                                name="files"
                                 multiple />
 
                             <Carousel>
                                 {
-                                    imgUrl && imgUrl.map((img) => {
+                                    fileUrls && fileUrls.map((img) => {
                                         return (
                                             <Carousel.Item key={img.id}>
                                                 <img style={{ width: '100%', height: "396px", objectFit: "contain" }} onClick={() => { imgRef.current.click() }} src={img} />
@@ -223,6 +185,7 @@ const GatherPost = () => {
                             </Carousel>
                         </label>
                     </div >
+                    <div style={{ marginBottom: "10px" }}>*이미지를 다시 업로드 하려면 사진을 클릭해주세요.</div>
 
                     <AllTextarea type="text" placeholder="소개글" name="content" onChange={onChangeHandler2} style={{}} />
 
@@ -245,7 +208,7 @@ const GatherPost = () => {
                     <label style={{ marginLeft: "3px" }}>연령대</label><br />
                     <div style={{ flex: "1", display: "flex", marginTop: "5px" }}>
                         <STInput2 type="text" placeholder='나이' style={{ width: "50%", textAlign: "center" }} name="startAge" onChange={onChangeHandler2} />
-                        <p style={{ paddingTop: "5px" }}>~</p>
+                        <p style={{ paddingTop: "13px" }}>~</p>
                         <STInput2 type="text" placeholder='나이' style={{ width: "50%", textAlign: "center" }} name="endAge" onChange={onChangeHandler2} />
                     </div>
 
@@ -288,7 +251,7 @@ const GatherPost = () => {
                     </div>
 
                 </div>
-                <div>
+                <div style={{ marginLeft: "10px", marginRight: "10px" }}>
                     <StSearchBox style={{ background: "#E1E3EC" }} onClick={popupPostCode}>
                         <button style={{ color: "#8B909F" }}><FiSearch style={{ width: '20px', height: '20px', color: '#424754', marginLeft: "10px", marginRight: "10px" }} />주소검색</button>
                     </StSearchBox>
@@ -301,12 +264,17 @@ const GatherPost = () => {
                                         <STAddressButton style={{ marginRight: "10px", flex: "2" }}>{"#" + region}</STAddressButton>
                                         <STInput3 type="text" value={postAddress} style={{ flex: "8" }} readOnly>{postAddress}</STInput3>
                                     </div>
-                                    <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler2} style={{ width: "80%", marginBottom: "10px", float: "right" }} />
+                                    <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={onChangeHandler2} style={{ width: "78%", marginBottom: "10px", float: "right" }} />
                                     <KakaoMap address={postAddress} width="328px" height="300px" />
                                 </>)
                         }
                     </AddressBox >
                 </div>
+                {isPopupOpen && (
+                    <ModalWrap onClick={popupPostCode}>
+                        <SearchAddress setPostAddres={setPostAddress} popupPostCode={popupPostCode} />
+                    </ModalWrap>
+                )}
 
                 <div>
                     <AllButton style={{ background: "#3556E1", color: "white" }} onClick={onSubmit2}>등록하기</AllButton>
@@ -322,77 +290,9 @@ export default GatherPost;
 const STSelectButton2 = styled(ToggleButton)`
     background-color: white;
     border : transparent;
-    height : 40px;
+    height : 48px;
     color: black;
     font-size: 14px;
-    border-radius: 10px;
-    padding-top: 10px;
-`
-const STInput = styled.input`
-    width: 100%;
-    height: 36px;
-    background: white;
-    border-radius: 10px;
-    font-weight: 500;
-    padding-top: 6px;
-    padding-left: 6px;
-    padding-bottom: 6px;
-    border:transparent;
-`
-const AllTextarea = styled.textarea`
-    border-radius: 10px;
-    border: transparent;
-    width : 100%;
-     height: 200px;
-    margin-bottom:14px;
-    padding-left: 10px;
-    padding-top: 10px;
-`
-const STSelect = styled.select`
-    height : 40px;
-    font-size: 14px;
-    background-color: #FFF;
-    border-radius: 10px;
-    padding:12px 16px;
-    border: transparent;
-    /* flex : 1; */
-`
-
-const STDiv = styled.div`
-    height : 40px;
-    font-size: 14px;
-    background-color: #FFF;
-    border-radius: 10px;
-    /* padding:12px 16px; */
-    border: transparent;
-    position: relative;
-    /* line-height: 40px; */
-    /* flex : 1; */
-`
-
-const STInput2 = styled.input`
-    height : 40px;
-    font-size: 14px;
-    background-color: #FFF;
-    border-radius: 10px;
-    padding:12px 16px;
-    border: transparent;
-`
-const STAddressButton = styled.div`
-    width: 64px;
-    height: 36px;
-    background-color: #DCE0F1;
-    border-radius: 30px;
-    text-align: center;
-    padding-top: 6px;
-`
-const STInput3 = styled.div`
-    width: 100%;
-    /* height: 36px; */
-    background: white;
-    border-radius: 10px;
-    font-weight: 500;
-    padding-top: 6px;
-    padding-left: 6px;
-    border : transparent;
+    border-radius: 5px;
+    padding-top: 13px;
 `

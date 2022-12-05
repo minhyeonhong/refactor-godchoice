@@ -4,8 +4,9 @@ import Button from "../elements/Button";
 import { GOOGLE_AUTH_URL, KAKAO_AUTH_URL, NAVER_AUTH_URL } from "../../api/login";
 import { flexColumn } from "../styles/Flex";
 import { GoogleBtn, KakaoBtn, NaverBtn } from "../../assets";
+import { Link } from "react-router-dom";
 
-import logo from "../../assets/images/common/logo.png"
+import home_logo from "../../assets/images/common/home_logo.png"
 
 
 
@@ -24,28 +25,10 @@ const Login = () => {
     <>
       <LoginWrap>
         <Container>
-          <Logo> <img src={logo} alt="logo" /> </Logo>
-          {/* <Button btnType="login" onClick={() => onClickHandler("k")}>
-            <div>
-              <img src={kakao} alt="kakao_img" />
-            </div>
-            <LoginText>카카오 로그인</LoginText>
-          </Button>
-          <Button btnType="login" onClick={() => onClickHandler("n")}>
-            <div>
-              <img src={naver} alt="naver_img" />
-            </div>
-            <LoginText>네이버 로그인</LoginText>
-          </Button>
-          <Button btnType="login" onClick={() => onClickHandler("g")}>
-            <div>
-              <img src={google} alt="google_img" />
-            </div>
-            <LoginText>구글 로그인</LoginText>
-          </Button> */}
-          <KakaoBtn style={{width : "100%"}} onClick={() => onClickHandler("k")} />
-          <NaverBtn style={{width : "100%"}} onClick={() => onClickHandler("n")} />
-          <GoogleBtn style={{width : "100%"}} onClick={() => onClickHandler("g")} />
+          <Link to='/' > <Logo style={{cursor:"pointer"}}> <img src={home_logo} alt="logo" /> </Logo></Link>
+          <KakaoBtn style={{width : "100%", cursor:"pointer"}} onClick={() => onClickHandler("k")} />
+          <NaverBtn style={{width : "100%", cursor:"pointer"}} onClick={() => onClickHandler("n")} />
+          <GoogleBtn style={{width : "100%", cursor:"pointer"}} onClick={() => onClickHandler("g")} />
         </Container>
       </LoginWrap>
     </>
@@ -65,15 +48,18 @@ const Logo = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 210px;
-  height: 130px;
-  margin: 100px auto;
+  width: 75%;
+  /* height: 130px; */
+  margin: 150px auto 100px auto;
+  img {
+    width: 100%;
+  }
 `;
 const Container = styled.div`
   width: 100%;
   ${flexColumn}
   align-items: center;
-  gap: 12px;
+  gap: 15px;
   box-sizing: border-box;
   padding: 0 20px;
   text-align: center;
