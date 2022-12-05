@@ -12,7 +12,6 @@ import SearchAddress from '../post/SearchAddress';
 import KakaoMap from '../common/KakaoMap';
 
 // 스크랩
-import { __postScrap } from '../../redux/modules/postSlice';
 import PostScrap from './PostScrap';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { postApis } from '../../api/api-functions/postApis';

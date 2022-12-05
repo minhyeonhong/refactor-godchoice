@@ -83,13 +83,13 @@ const GatherPost = () => {
     const onSubmit = () => {
 
         // //모집인원, 카테고리, 성비관련, 행사시작, 연령대, 제목, 내용, 카카오링크
-        if (counter < 1) { return alert('모집인원을 입력하세요') }
-        if (gatherPosts.category === "") { return alert('카테고리를 입력하세요') }
-        if (sexValue === "") { return (alert('성비를 선택하세요')) }
-        if (gatherPosts.startAge === "" || gatherPosts.endAge === "") { return alert('연령대를 입력하세요') }
         if (gatherPosts.title === "") { return alert('제목을 입력하세요') }
         if (gatherPosts.content === "") { return alert('내용을 입력하세요') }
-        if (gatherPosts.date === "") { return alert('행사시작 일자를 입력하세요') }
+        if (gatherPosts.category === "") { return alert('카테고리를 입력하세요') }
+        if (counter < 1) { return alert('모집인원을 입력하세요') }
+        if (gatherPosts.startAge === "" || gatherPosts.endAge === "") { return alert('연령대를 입력하세요') }
+        if (sexValue === "") { return (alert('성비를 선택하세요')) }
+        if (gatherPosts.date === "") { return alert('만날 날짜를 입력하세요') }
         if (gatherPosts.kakaoLink === "") { return alert('연락할 카카오 링크를 입력하세요') }
         if (postAddress === "") { return alert('함께 만날 주소를 입력해주세요') }
 

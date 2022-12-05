@@ -6,7 +6,6 @@ import Gather from '../components/detail/Gather';
 import Ask from '../components/detail/Ask';
 import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import { __getPost } from '../redux/modules/postSlice';
 
 const Detail = () => {
     const { url, postId } = useParams();

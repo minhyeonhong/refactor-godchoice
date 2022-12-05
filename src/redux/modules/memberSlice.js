@@ -1,7 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
-import React from "react";
 import axios from "axios";
-import { setCookie } from "../../cookie/cookie";
 
 // 카카오로그인
 export const __kakaoLogin = createAsyncThunk(

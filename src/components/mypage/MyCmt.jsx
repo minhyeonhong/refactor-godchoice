@@ -1,12 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { saveCategory, __getMyCmt } from "../../redux/modules/myPageSlice";
 import Button from "../elements/Button";
-import { __postScrap } from "../../redux/modules/postSlice";
-import PostScrap from "../detail/PostScrap";
 import { BookmarkFill, Views } from "../../assets";
 import { useQuery } from "@tanstack/react-query";
 import { myPageApis } from "../../api/api-functions/myPageApis";

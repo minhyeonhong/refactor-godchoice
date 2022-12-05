@@ -1,7 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 import { postApis } from "../../api/api-functions/postApis"
-import { getCookie } from "../../cookie/cookie";
 
 //관리자글 조회
 export const __getAdminPost = createAsyncThunk(

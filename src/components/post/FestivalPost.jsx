@@ -103,6 +103,8 @@ const FestivalPost = () => {
             if (festival.endPeriod === "") { return alert('행사마감 일자를 입력하세요') }
             if (festival.title === "") { return alert('제목을 입력하세요') }
             if (festival.content === "") { return alert('내용을 입력하세요') }
+            if (festival.postLink === "") { return alert('행사장 링크를 입력하세요') }
+            if (postAddress === "") { return alert('주소를 등록하세요') }
 
             //링크 검사
             const link = /(http|https):\/\//.test(festival.postLink)
