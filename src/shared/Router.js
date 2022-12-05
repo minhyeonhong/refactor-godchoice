@@ -18,6 +18,8 @@ const MyPageScrap = lazy(() => import("../pages/myPage/MyPageScrap"))
 const FestivalPost = lazy(() => import("../components/post/FestivalPost"))
 const GatherPost = lazy(() => import("../components/post/GatherPost"))
 const QuestionPost = lazy(() => import("../components/post/QuestionPost"))
+const EventSurvey = lazy(() => import("../components/home/EventSurvey"))
+const Alram = lazy(() => import("../components/home/Alram"))
 
 const Router = () => {
     return (
@@ -39,8 +41,6 @@ const Router = () => {
                     {/* 구글 로그인 --- Redirect_URI 경로로 넣기*/}
                     <Route path="/member/signup/google" element={<Google />} />
 
-
-
                     {/* 디테일 페이지 */}
                     <Route path="/:url/:postId" element={<Detail />} />
                     {/* 행사글 페이지*/}
@@ -60,6 +60,8 @@ const Router = () => {
                     <Route path="/mypagecomment" element={<MyPageCmt />} />
                     {/* 마이페이지 스크랩 */}
                     <Route path="/mypagescrap" element={<MyPageScrap />} />
+
+                    <Route path="/eventsurvey" element={<EventSurvey />} />
 
                 </Routes>
             </Suspense>
