@@ -47,7 +47,7 @@ const Header = () => {
 
             eventSource.onmessage = (event) => {
                 console.log("result", event);
-                console.log("result", JSON.parse(event.data));
+                // console.log("result", JSON.parse(event.data));
                 setData(old => [...old, event.data]);
                 setValue(event.data);
             };
@@ -75,33 +75,36 @@ const Header = () => {
     }
 
     return (
-        <StHeaderWrap>
-            <StLogoBox> <Link to="/"> <img src={logo} style={{ width: '166px' }} /></Link></StLogoBox>
-            <StRightBox>
+        <>
+            <StHeaderWrap>
+                <StLogoBox> <Link to="/"> <img src={logo} style={{ width: '166px' }} /></Link></StLogoBox>
+                <StRightBox>
 
-                <Bell style={{ height: "48px", marginRight: "15px", padding: "2px" }} onClick={popUpNotice} />
-                {
-                    notice ? (
-
-                        <Alram popUpNotice={popUpNotice} />
-
-                    ) : (
-                        ""
-                    )
-                }
+                    <Bell style={{ height: "48px", marginRight: "15px", padding: "2px" }} onClick={popUpNotice} />
 
 
-                {/* <Link to="/alram"><Bell style={{ height: "48px", marginRight: "15px", padding: "2px" }} /></Link> */}
-                {localStorage.getItem("token") === null ?
-                    <RiLoginBoxLine style={{ width: '32px', height: "48px", marginRight: "15px", padding: "2px", color: '#00208F' }}
-                        onClick={() => { navigate("/login") }} />
-                    :
-                    <MyPage style={{ height: "48px", marginRight: "5px", padding: "2px" }}
-                        onClick={() => { navigate("/mypage") }} />
-                }
 
-            </StRightBox>
-        </StHeaderWrap>
+                    {/* <Link to="/alram"><Bell style={{ height: "48px", marginRight: "15px", padding: "2px" }} /></Link> */}
+                    {localStorage.getItem("token") === null ?
+                        <RiLoginBoxLine style={{ width: '32px', height: "48px", marginRight: "15px", padding: "2px", color: '#00208F' }}
+                            onClick={() => { navigate("/login") }} />
+                        :
+                        <MyPage style={{ height: "48px", marginRight: "5px", padding: "2px" }}
+                            onClick={() => { navigate("/mypage") }} />
+                    }
+
+
+                </StRightBox>
+
+            </StHeaderWrap>
+
+            {
+                notice ? (
+                    <Alram popUpNotice={popUpNotice} />
+                ) : (
+                    ""
+                )
+            }</>
     );
 };
 
