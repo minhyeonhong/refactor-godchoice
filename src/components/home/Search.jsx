@@ -1,66 +1,47 @@
-import React, { useEffect, useMemo } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Form from 'react-bootstrap/Form';
 import { FiSearch } from 'react-icons/fi';
-import useInput from '../../hooks/useInput';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 
-const Search = ({ updateSearchInfo, searchState }) => {
+//const Search = ({ updateSearchInfo, searchState }) => {
+const Search = ({ searchState, setSearchState, search, searchHandle }) => {
 
     const tagList = ['서울', '인천', '세종', '대구', '부산', '울산', '광주', '대전', '제주도', '경기도', '강원도', '충청도', '경상도', '전라도'];
 
-    const userAddressTag = localStorage.getItem('userAddressTag');
-
-    //검색정보 state
-    const [searchInfo, setSearchInfo, searchInfoHandle] = useInput({
-        tag: userAddressTag !== null && userAddressTag !== 'null' ? [userAddressTag] : [],
-        progress: '진행중',
-        sort: '최신순',
-        search: '',
-        page: 0
-    });
-    //검색어 state
-    const [search, setSearch, searchHandle] = useInput({ search: '' });
     //진행중 마감 핸들
     const stateHandle = (e) => {
         if (e.target.checked) {
-            setSearchInfo({ ...searchInfo, progress: "진행중" });
+            setSearchState({ ...searchState, progress: "진행중" });
         } else {
-            setSearchInfo({ ...searchInfo, progress: "마감" });
+            setSearchState({ ...searchState, progress: "마감" });
         }
     }
     //태그 핸들
     const tagHandle = (val) => {
-        setSearchInfo({ ...searchInfo, tag: val })
+        setSearchState({ ...searchState, tag: val });
     }
-    //검색정보 state 바뀔때마다 api요청
-    useEffect(() => {
-        updateSearchInfo(searchInfo);
-    }, [searchInfo])
-
-    //검색어로 검색후 검색어를 지웠을때 처리
-    useMemo(() => {
-        if (search.search === "") {
-            setSearchInfo({ ...searchInfo, search: search.search });
-        }
-    }, [search.search])
+    //정렬 핸들
+    const sortHandle = (e) => {
+        setSearchState({ ...searchState, [e.target.name]: e.target.value });
+    }
 
     return (
         <StSearchWrap>
             <StSearchBox>
-                <button onClick={() => setSearchInfo({ ...searchInfo, search: search.search })}>
+                <button onClick={() => setSearchState({ ...searchState, search: search.search })}>
                     <FiSearch style={{ width: '24px', height: '24px', color: '#3556E1' }} />
                 </button>
                 <input name='search' placeholder="검색어를 입력해주세요" value={search.search || ""} onChange={searchHandle}
                     onKeyPress={(e) => {
                         if (e.key === 'Enter') {
-                            setSearchInfo({ ...searchInfo, search: search.search })
+                            setSearchState({ ...searchState, search: search.search })
                         }
                     }} />
             </StSearchBox>
             <StTagBox>
-                <ToggleButtonGroup type="checkbox" value={searchInfo.tag} onChange={tagHandle}>
+                <ToggleButtonGroup type="checkbox" value={searchState.tag} onChange={tagHandle}>
                     {searchState.main !== 'ask' &&
                         tagList.map((tag, i) => {
                             return (
@@ -73,7 +54,7 @@ const Search = ({ updateSearchInfo, searchState }) => {
             </StTagBox>
             <StFilterBox>
                 <div>
-                    <select name='sort' onChange={searchInfoHandle}>
+                    <select name='sort' onChange={sortHandle}>
                         <option value="최신순">최신순</option>
                         <option value="인기순">인기순</option>
                     </select>
@@ -84,10 +65,10 @@ const Search = ({ updateSearchInfo, searchState }) => {
                             <Form.Check
                                 type="switch"
                                 id="custom-switch"
-                                checked={searchInfo.progress === '진행중' ? true : false}
+                                checked={searchState.progress === '진행중' ? true : false}
                                 onChange={stateHandle}
                             />
-                            <label>{searchInfo.progress}</label>
+                            <label>{searchState.progress}</label>
                         </>
                     }
                 </StRadioBox>

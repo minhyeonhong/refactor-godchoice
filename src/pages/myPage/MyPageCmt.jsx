@@ -5,11 +5,9 @@ import MyCmt from "../../components/mypage/MyCmt";
 const MyPageCmt = () => {
 
     return (
-        <>
-       <Layout>
-        <MyCmt />
-       </Layout>
-       </>
+        <Layout>
+            <MyCmt />
+        </Layout>
     )
 }
 

@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { __insertComment, __deleteComment, setCommentList, __getComment } from '../../redux/modules/commentSlice'
 import useInput from '../../hooks/useInput';
 
 import Button from '../elements/Button';
@@ -11,7 +9,7 @@ import { CaretUp, CommentArrow, XBtn, ReComment } from '../../assets/index';
 import { commentApis } from "../../api/api-functions/commentApis"
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-const Comment = ({ postId, kind, commentDtoList }) => {
+const Comment = ({ postId, kind }) => {
 
     //댓글 server state
     const [comments, setComments] = useState([]);

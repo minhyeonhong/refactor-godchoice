@@ -25,14 +25,14 @@ const Login = () => {
     <>
       <LoginWrap>
         <Container>
-          <Link to='/' > <Logo style={{cursor:"pointer"}}> <img src={home_logo} alt="logo" /> </Logo></Link>
-          <KakaoBtn style={{width : "100%", cursor:"pointer"}} onClick={() => onClickHandler("k")} />
-          <NaverBtn style={{width : "100%", cursor:"pointer"}} onClick={() => onClickHandler("n")} />
-          <GoogleBtn style={{width : "100%", cursor:"pointer"}} onClick={() => onClickHandler("g")} />
+          <Link to='/' > <Logo style={{ cursor: "pointer" }}> <img src={home_logo} alt="logo" /> </Logo></Link>
+          <KakaoBtn style={{ width: "100%", cursor: "pointer" }} onClick={() => onClickHandler("k")} />
+          <NaverBtn style={{ width: "100%", cursor: "pointer" }} onClick={() => onClickHandler("n")} />
+          <GoogleBtn style={{ width: "100%", cursor: "pointer" }} onClick={() => onClickHandler("g")} />
         </Container>
       </LoginWrap>
     </>
-  ); 
+  );
 };
 export default Login;
 

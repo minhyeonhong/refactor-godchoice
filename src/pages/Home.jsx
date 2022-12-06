@@ -1,30 +1,21 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useMemo } from "react";
 
 import Layout from "../components/layout/Layout";
 import List from "../components/home/List";
 import Search from "../components/home/Search";
 import Carousel from "react-bootstrap/Carousel";
 import styled from "styled-components";
-import useInput from "../hooks/useInput";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import TopButton from "../components/elements/TopButton";
 import ScrollToTop from "../components/elements/ScrollToTop";
 import WritingToggle from "../components/elements/WritingToggle";
 
-import { useDispatch, useSelector } from "react-redux";
-import {
-  putSearchState,
-  putSearchStatePage,
-  __getAllPostList,
-  __postList,
-  __getAdminPost,
-} from "../redux/modules/postSlice";
-import { useMemo } from "react";
 import PageState from "../components/common/PageState";
 
 import { postApis } from "../api/api-functions/postApis";
 import { useQuery } from "@tanstack/react-query";
+import useInput from "../hooks/useInput";
 
 // 가이드 모달
 import { flexColumn, flexRow } from "../components/styles/Flex";
@@ -44,75 +35,47 @@ SwiperCore.use([Pagination, Autoplay, Navigation]);
 // ------------- 여기까지 ---------------
 
 const Home = () => {
-  const dispatch = useDispatch();
 
-  //store state
-  const {
-    adminPosts,
-    searchState,
-    posts,
-    istLastPage,
-    isLoading,
-    isResetSearch,
-  } = useSelector((state) => state.postSlice);
-  const [page, setPage] = useState(0);
+    //배너 가져오기
+    const banner = useQuery(['banner'], () => postApis.getAdminPostAX(), { refetchOnWindowFocus: false, retry: 0 })
 
-  //검색 상태 업데이트
-  const updateSearchInfo = (searchInfo) => {
-    dispatch(
-      putSearchState({
-        main: searchState.main === undefined ? "event" : searchState.main,
-        ...searchInfo,
-      })
-    );
-  };
-  const [modalOn, setModalOn] = useState(false);
+    //유저 지역정보 가져오기
+    const userAddressTag = localStorage.getItem('userAddressTag');
+    //client 검색 state
+    const [searchState, setSearchState] = useState({
+        main: "event",
+        tag: userAddressTag !== null && userAddressTag !== 'null' ? [userAddressTag] : [],
+        progress: '진행중',
+        sort: '최신순',
+        search: '',
+    });
+    //검색어 state
+    const [search, setSearch, searchHandle] = useInput({ search: '' });
+    //검색어로 검색후 검색어를 지웠을때 처리
+    useMemo(() => {
+        if (search.search === "") {
+            setSearchState({ ...searchState, search: search.search });
+        }
+    }, [search.search])
 
-  // 가이드 모달
-  const [guideOn, setGuideOn] = useState(false);
-  const guides = [guide01, guide02, guide03, guide04];
-  // ------------- 여기까지 ---------------
+    //모달
+    const [modalOn, setModalOn] = useState(false);
 
-  //페이지 업데이트
-  useMemo(() => {
-    dispatch(putSearchStatePage(page));
-  }, [page]);
+    // 가이드 모달
+    const [guideOn, setGuideOn] = useState(false);
+    const guides = [guide01, guide02, guide03, guide04];
+    // ------------- 여기까지 ---------------
 
-  //리스트 불러오기
-  useMemo(() => {
-    if (Object.keys(searchState).length > 0) {
-      dispatch(__getAllPostList(searchState));
-    }
-  }, [searchState]);
+    return (
 
-  //배너 가져오기
-  const banner = useQuery(["banner"], () => postApis.getAdminPostAX(), {
-    refetchOnWindowFocus: false,
-  });
+        <Layout>
+            <StHomeWrap>
+                <>
+                    <ScrollToTop />
+                    {modalOn && <WritingToggle modalOn={modalOn} setModalOn={setModalOn} />}
+                    <TopButton modalOn={modalOn} setModalOn={setModalOn} />
 
-  // const result = useQuery(['todos', searchState], () => postApis.searchPostAX(searchState), { refetchOnWindowFocus: false })
-
-  // console.log("result", result);
-
-  return (
-    <Layout>
-      <PageState
-        display={isLoading ? "flex" : "none"}
-        state="loading"
-        imgWidth="25%"
-        height="100vh"
-        text="잠시만 기다려 주세요."
-      />
-
-      <StHomeWrap display={isLoading ? "none" : "block"}>
-        <>
-          <ScrollToTop />
-          {modalOn && (
-            <WritingToggle modalOn={modalOn} setModalOn={setModalOn} />
-          )}
-          <TopButton modalOn={modalOn} setModalOn={setModalOn} />
-
-          {/* 임시 배너 모달! -- 수정할 것 */}
+                   {/* 임시 배너 모달! -- 수정할 것 */}
           <BannerModal
             onClick={() => {
               setGuideOn(!guideOn);
@@ -128,30 +91,30 @@ const Home = () => {
                 setGuideOn(!guideOn);
               }}
             >
-              <StyleGuide onClick={(e) => e.stopPropagation()}>
-                <StyledSwiper
-                  className="swipe"
-                  spaceBetween={0}
-                  slidesPerView={1}
-                  scrollbar={{ draggable: true }}
-                  navigation
-                  pagination={{ clickable: true }}
-                  autoplay={{ delay: 15000, disableOnInteraction: false }}
-                  loop={true}
-                  centeredSlides={true}
-                  style={{ backgroundColor: "pink" }}
-                >
-                  {guides?.map((guide, i) => {
-                    return (
-                      <SwiperSlide key={i}>
-                        <ItemDetailImg src={guide} />
-                      </SwiperSlide>
-                    );
-                  })}
-                </StyledSwiper>
-                {/* StyledSwiper */}
+                            <StyleGuide onClick={(e) => e.stopPropagation()}>
+                                <StyledSwiper
+                                    className="swipe"
+                                    spaceBetween={0}
+                                    slidesPerView={1}
+                                    scrollbar={{ draggable: true }}
+                                    // navigation
+                                    pagination={{ clickable: true }}
+                                    autoplay={{ delay: 15000, disableOnInteraction: false }}
+                                    loop={true}
+                                    centeredSlides={true}
+                                    style={{ backgroundColor: "transparent" }}
+                                >
+                                    {guides?.map((guide, i) => {
+                                        return (
+                                            <SwiperSlide key={i}>
+                                                <ItemDetailImg src={guide} />
+                                            </SwiperSlide>
+                                        );
+                                    })}
+                                </StyledSwiper>
+                                {/* StyledSwiper */}
 
-                <button
+                                <button
                     onClick={() => {
                       setGuideOn(!guideOn);
                     }}
@@ -162,79 +125,60 @@ const Home = () => {
             </Bg>
           )}
 
-          {/* ---------- 여기까지 ---------- */}
-        </>
+                    {/* ---------- 여기까지 ---------- */}
+                </>
+                {/* 슬라이드 */}
+                <StCarouselWrap>
+                    <Carousel >
+                        {banner?.data?.data?.data?.length === 0 ?
+                            <Carousel.Item>
+                                <PageState
+                                    display='flex'
+                                    state='notFound' imgWidth='25%' height='180px'
+                                    text='등록된 배너가 없습니다.' />
+                            </Carousel.Item>
+                            :
+                            banner?.data?.data?.data?.map((post) => {
+                                return (
+                                    <Carousel.Item key={post.id} onClick={() => { window.open(post.postLink, post.title) }}>
+                                        <img style={{ height: "180px" }}
+                                            className="d-block w-100"
+                                            src={post.imgLink}
+                                            alt="First slide"
+                                        />
+                                        <Carousel.Caption>
+                                            <h3>{post.title}</h3>
+                                        </Carousel.Caption>
+                                    </Carousel.Item>
+                                )
+                            })}
+                    </Carousel>
+                </StCarouselWrap>
 
-        {/* 슬라이드 */}
-        <StCarouselWrap>
-          <Carousel>
-            {banner?.data?.data?.data?.length === 0 ? (
-              <Carousel.Item>
-                <PageState
-                  display="flex"
-                  state="notFound"
-                  imgWidth="25%"
-                  height="180px"
-                  text="등록된 배너가 없습니다."
-                />
-              </Carousel.Item>
-            ) : (
-              banner?.data?.data?.data?.map((post) => {
-                return (
-                  <Carousel.Item
-                    key={post.id}
-                    onClick={() => {
-                      window.open(post.postLink, post.title);
-                    }}
-                  >
-                    <img
-                      style={{ height: "180px" }}
-                      className="d-block w-100"
-                      src={post.imgLink}
-                      alt="First slide"
-                    />
-                    <Carousel.Caption>
-                      <h3>{post.title}</h3>
-                    </Carousel.Caption>
-                  </Carousel.Item>
-                );
-              })
-            )}
-          </Carousel>
-        </StCarouselWrap>
+                {/* 검색 */}
+                <Search searchState={searchState} setSearchState={setSearchState} search={search} searchHandle={searchHandle} />
 
-        {/* 검색 */}
-        <Search updateSearchInfo={updateSearchInfo} searchState={searchState} />
-
-        {/* 리스트 */}
-        <StTabBox>
-          <Tabs
-            defaultActiveKey="event"
-            id="justify-tab-example"
-            activeKey={searchState.main}
-            onSelect={(key) =>
-              dispatch(putSearchState({ ...searchState, main: key, page: 0 }))
-            }
-            className="tabs"
-            justify
-          >
-            <Tab eventKey="event" title="행사글" />
-            <Tab eventKey="gather" title="모집글" />
-            <Tab eventKey="ask" title="질문글" />
-          </Tabs>
-          {/* 리스트 */}
-          <List
-            posts={posts}
-            main={searchState.main}
-            isLoading={isLoading}
-            setPage={setPage}
-            istLastPage={istLastPage}
-          />
-          <Deletes />
-        </StTabBox>
-      </StHomeWrap>
-    </Layout>
-  );
+                {/* 리스트 */}
+                <StTabBox>
+                    <Tabs
+                        defaultActiveKey="event"
+                        id="justify-tab-example"
+                        activeKey={searchState.main}
+                        onSelect={(key) => setSearchState({ ...searchState, main: key, page: 0 })}
+                        className="tabs"
+                        justify
+                    >
+                        <Tab eventKey="event" title="행사글" />
+                        <Tab eventKey="gather" title="모집글" />
+                        <Tab eventKey="ask" title="질문글" />
+                    </Tabs>
+                    {/* 리스트 */}
+                    <List searchState={searchState} />
+                    <Deletes />
+                </StTabBox>
+            </StHomeWrap>
+        </Layout >
+    );
 };
 
 export default Home;
@@ -252,9 +196,9 @@ const StCarouselWrap = styled.div`
     width: 3px;
     border-radius: 50%;
   }
-  .carousel a {
+  /* .carousel a {
     display: none;
-  }
+  } */
   .carousel-caption {
     right: 0%;
     text-align: inherit;
@@ -331,14 +275,15 @@ const Bg = styled.div`
     z-index: 100;
     display: flex;
     position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 50px;
-    width: 50px;
-    height: 50px;
-    line-height: 50px;
-    border-radius: 50%;
-    background-color: #ffffff8b;
+    /* left: 50%;
+    transform: translateX(-50%); */
+    right: 10px;
+    top: 10px;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 10px;
+    background-color: #ffffffeb;
     justify-content: center;
     border: none;
     /* border-radius: 10px; */

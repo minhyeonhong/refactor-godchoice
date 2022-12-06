@@ -1,7 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 import { postApis } from "../../api/api-functions/postApis"
-import { getCookie } from "../../cookie/cookie";
 
 //관리자글 조회
 export const __getAdminPost = createAsyncThunk(
@@ -106,7 +104,7 @@ export const __putPost = createAsyncThunk(
     "posts/__putPost",
     async (payload, thunkAPI) => {
         try {
-            postApis.putPostAx(payload)
+            postApis.putEventPostAx(payload)
                 .then((res) => {
                     if (res.data.status === 200) {
                         window.location.reload();

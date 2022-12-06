@@ -1,34 +1,39 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { __getMyPost, saveCategory } from "../../redux/modules/myPageSlice";
 import Button from "../elements/Button";
-import { __postScrap } from "../../redux/modules/postSlice";
-import PostScrap from "../detail/PostScrap";
 import { BookmarkFill, Views } from "../../assets";
+import { myPageApis } from "../../api/api-functions/myPageApis";
+import { useQuery } from "@tanstack/react-query";
 
 
 const MyPost = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [categoryTab, setCategoryTab] = useState("event");
-  useEffect(() => {
-    dispatch(__getMyPost());
-    setCategoryTab(saveCategoryTab);
-  }, []);
 
-  const { myPostList } = useSelector((state) => state.myPage);
+
+  // 내가 작성한 글 server state
+  const [myPostList, setMyPostList] = useState({});
+  const { eventPost, gatherPost, askPost } = myPostList;
+
+  //내가 작성한 글 불러오기
+  useQuery(['getMyPostList'],
+    () => myPageApis.getMyPostAX(), //fn
+    {//options
+      refetchOnWindowFocus: false, // react-query는 사용자가 사용하는 윈도우가 다른 곳을 갔다가 다시 화면으로 돌아오면 이 함수를 재실행합니다. 그 재실행 여부 옵션 입니다.
+      retry: 0, // 실패시 재호출 몇번 할지
+      onSuccess: res => {
+        if (res.data.status === 200) {
+          setMyPostList(res.data.data);
+        }
+      }
+    })
 
   const onClickCategory = (tab) => {
     setCategoryTab(tab);
-    dispatch(saveCategory(tab));
   };
-
-  const { saveCategoryTab } = useSelector((state) => state.myPage);
-  const { eventPost, gatherPost, askPost } = myPostList
 
   return (
     <>

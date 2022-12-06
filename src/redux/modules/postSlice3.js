@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { notificationApis } from "../../api/api-functions/notificationApis";
 import { postApis } from "../../api/api-functions/postApis"
 
 
@@ -45,7 +46,7 @@ export const __putPost = createAsyncThunk(
   "posts/__putPost",
   async (payload, thunkAPI) => {
     try {
-      postApis.putGatherAskAx(payload)
+      postApis.putAskPostAx(payload)
         .then((res) => {
           if (res.data.status === 200) {
             window.location.reload();
@@ -69,6 +70,43 @@ export const __deletePost = createAsyncThunk(
       postApis.deleteEventPostAx(payload)
         .then((res) => {
           window.location.replace('/');
+        })
+
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const __deleteAlram = createAsyncThunk(
+  "comment/__deleteAlram",
+  async (payload, thunkAPI) => {
+    try {
+      notificationApis.deleteNotificationAX(payload)
+        .then((res) => {
+          // console.log(res)
+        })
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+)
+
+export const __putAlram = createAsyncThunk(
+  "comment/__putAlram",
+  async (payload, thunkAPI) => {
+    console.log(payload)
+    try {
+      notificationApis.putNotificationAX(payload)
+        .then((res) => {
+          if (res.data.status === 200) {
+            console.log(res.data.msg)
+            window.location.replace(res.data.msg)
+          } else {
+            console.log(res.data);
+          }
+        }).catch((error) => {
+
         })
 
     } catch (error) {
