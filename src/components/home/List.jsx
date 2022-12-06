@@ -32,6 +32,7 @@ const List = ({ searchState }) => {
         getNextPageParam: ({ isLastPage, nextPage }) => {
             if (!isLastPage) return nextPage;
         },
+        cacheTime: 3000,
         refetchOnWindowFocus: false,
         retry: 1,
     })
