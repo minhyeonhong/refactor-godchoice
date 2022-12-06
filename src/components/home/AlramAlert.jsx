@@ -6,17 +6,17 @@ function AlramAlert({ newNotice }) {
     const [alert, setAlert] = useState(true);
 
     useEffect(() => {
-        const timer = setTimeout(() => { setAlert(false) }, 4000);
-        return () => { clearTimeout(timer) };
-    }, [alert, newNotice])
+        //if (newNotice.title !== undefined) {
+        setTimeout(() => { setAlert(false) }, 4000);
+        //}
+    }, [alert, newNotice.message])
 
-    console.log("newNotice", newNotice)
     return (
         <>
             {
-                alert === true ? (
+                newNotice.title !== undefined && alert === true ? (
                     <STBox>
-                        💬 <b>안녕</b>님이 댓글을 입력하셨습니다.
+                        💬 <b>{newNotice.title}</b>님이 댓글을 입력하셨습니다.
                     </STBox>
                 ) : null
             }

@@ -40,7 +40,7 @@ const Header = () => {
         })
 
     //sse handle
-    const [newNotice, setNewNotice] = useState([])
+    const [newNotice, setNewNotice] = useState({})
 
     let eventSource = undefined;
     useEffect(() => {
@@ -79,7 +79,7 @@ const Header = () => {
                     //실시간 알림 데이터
                     const obj = JSON.parse(event.data);
                     console.log("JSON.parse obj", obj);
-                    //setNewNotice(arr => [...arr, event.data])
+                    setNewNotice(obj);
                 }
             };
 

@@ -36,54 +36,44 @@ SwiperCore.use([Pagination, Autoplay, Navigation]);
 
 const Home = () => {
 
-    //배너 가져오기
-    const banner = useQuery(['banner'], () => postApis.getAdminPostAX(), { refetchOnWindowFocus: false, retry: 0 })
+  //배너 가져오기
+  const banner = useQuery(['banner'], () => postApis.getAdminPostAX(), { refetchOnWindowFocus: false, retry: 0 })
 
-    //유저 지역정보 가져오기
-    const userAddressTag = localStorage.getItem('userAddressTag');
-    //client 검색 state
-    const [searchState, setSearchState] = useState({
-        main: "event",
-        tag: userAddressTag !== null && userAddressTag !== 'null' ? [userAddressTag] : [],
-        progress: '진행중',
-        sort: '최신순',
-        search: '',
-    });
-    //검색어 state
-    const [search, setSearch, searchHandle] = useInput({ search: '' });
-    //검색어로 검색후 검색어를 지웠을때 처리
-    useMemo(() => {
-        if (search.search === "") {
-            setSearchState({ ...searchState, search: search.search });
-        }
-    }, [search.search])
+  //유저 지역정보 가져오기
+  const userAddressTag = localStorage.getItem('userAddressTag');
+  //client 검색 state
+  const [searchState, setSearchState] = useState({
+    main: "event",
+    tag: userAddressTag !== null && userAddressTag !== 'null' ? [userAddressTag] : [],
+    progress: '진행중',
+    sort: '최신순',
+    search: '',
+  });
+  //검색어 state
+  const [search, setSearch, searchHandle] = useInput({ search: '' });
+  //검색어로 검색후 검색어를 지웠을때 처리
+  useMemo(() => {
+    if (search.search === "") {
+      setSearchState({ ...searchState, search: search.search });
+    }
+  }, [search.search])
 
-    //모달
-    const [modalOn, setModalOn] = useState(false);
+  //모달
+  const [modalOn, setModalOn] = useState(false);
 
-    // 가이드 모달
-    const [guideOn, setGuideOn] = useState(false);
-    const guides = [guide01, guide02, guide03, guide04];
-    // ------------- 여기까지 ---------------
+  // 가이드 모달
+  const [guideOn, setGuideOn] = useState(false);
+  const guides = [guide01, guide02, guide03, guide04];
+  // ------------- 여기까지 ---------------
 
-    return (
+  return (
 
-        <Layout>
-            <StHomeWrap>
-                <>
-                    <ScrollToTop />
-                    {modalOn && <WritingToggle modalOn={modalOn} setModalOn={setModalOn} />}
-                    <TopButton modalOn={modalOn} setModalOn={setModalOn} />
-
-                   {/* 임시 배너 모달! -- 수정할 것 */}
-          <BannerModal
-            onClick={() => {
-              setGuideOn(!guideOn);
-              console.log("guideOn ===> ", guideOn);
-            }}
-          >
-            배너 모달
-          </BannerModal>
+    <Layout>
+      <StHomeWrap>
+        <>
+          <ScrollToTop />
+          {modalOn && <WritingToggle modalOn={modalOn} setModalOn={setModalOn} />}
+          <TopButton modalOn={modalOn} setModalOn={setModalOn} />
 
           {guideOn && (
             <Bg
@@ -91,94 +81,100 @@ const Home = () => {
                 setGuideOn(!guideOn);
               }}
             >
-                            <StyleGuide onClick={(e) => e.stopPropagation()}>
-                                <StyledSwiper
-                                    className="swipe"
-                                    spaceBetween={0}
-                                    slidesPerView={1}
-                                    scrollbar={{ draggable: true }}
-                                    // navigation
-                                    pagination={{ clickable: true }}
-                                    autoplay={{ delay: 15000, disableOnInteraction: false }}
-                                    loop={true}
-                                    centeredSlides={true}
-                                    style={{ backgroundColor: "transparent" }}
-                                >
-                                    {guides?.map((guide, i) => {
-                                        return (
-                                            <SwiperSlide key={i}>
-                                                <ItemDetailImg src={guide} />
-                                            </SwiperSlide>
-                                        );
-                                    })}
-                                </StyledSwiper>
-                                {/* StyledSwiper */}
+              <StyleGuide onClick={(e) => e.stopPropagation()}>
+                <StyledSwiper
+                  className="swipe"
+                  spaceBetween={0}
+                  slidesPerView={1}
+                  scrollbar={{ draggable: true }}
+                  // navigation
+                  pagination={{ clickable: true }}
+                  autoplay={{ delay: 15000, disableOnInteraction: false }}
+                  loop={true}
+                  centeredSlides={true}
+                  style={{ backgroundColor: "transparent" }}
+                >
+                  {guides?.map((guide, i) => {
+                    return (
+                      <SwiperSlide key={i}>
+                        <ItemDetailImg src={guide} />
+                      </SwiperSlide>
+                    );
+                  })}
+                </StyledSwiper>
+                {/* StyledSwiper */}
 
-                                <button
-                    onClick={() => {
-                      setGuideOn(!guideOn);
-                    }}
-                  >
-                    ✕
-                  </button>
+                <button
+                  onClick={() => {
+                    setGuideOn(!guideOn);
+                  }}
+                >
+                  ✕
+                </button>
               </StyleGuide>
             </Bg>
           )}
 
-                    {/* ---------- 여기까지 ---------- */}
-                </>
-                {/* 슬라이드 */}
-                <StCarouselWrap>
-                    <Carousel >
-                        {banner?.data?.data?.data?.length === 0 ?
-                            <Carousel.Item>
-                                <PageState
-                                    display='flex'
-                                    state='notFound' imgWidth='25%' height='180px'
-                                    text='등록된 배너가 없습니다.' />
-                            </Carousel.Item>
-                            :
-                            banner?.data?.data?.data?.map((post) => {
-                                return (
-                                    <Carousel.Item key={post.id} onClick={() => { window.open(post.postLink, post.title) }}>
-                                        <img style={{ height: "180px" }}
-                                            className="d-block w-100"
-                                            src={post.imgLink}
-                                            alt="First slide"
-                                        />
-                                        <Carousel.Caption>
-                                            <h3>{post.title}</h3>
-                                        </Carousel.Caption>
-                                    </Carousel.Item>
-                                )
-                            })}
-                    </Carousel>
-                </StCarouselWrap>
+          {/* ---------- 여기까지 ---------- */}
+        </>
+        {/* 슬라이드 */}
+        <StCarouselWrap>
+          <Carousel >
+            {banner?.data?.data?.data?.length === 0 ?
+              <Carousel.Item>
+                <PageState
+                  display='flex'
+                  state='notFound' imgWidth='25%' height='180px'
+                  text='등록된 배너가 없습니다.' />
+              </Carousel.Item>
+              :
+              banner?.data?.data?.data?.map((post) => {
+                return (
+                  <Carousel.Item key={post.id} onClick={() => {
+                    if (post.postLink === "https://이용방법") {
+                      setGuideOn(!guideOn);
+                    } else {
+                      window.open(post.postLink, post.title)
+                    }
+                  }}>
+                    <img style={{ height: "180px" }}
+                      className="d-block w-100"
+                      src={post.imgLink}
+                      alt="First slide"
+                    />
+                    <Carousel.Caption>
+                      <h3>{post.title}</h3>
+                    </Carousel.Caption>
+                  </Carousel.Item>
+                )
+              })}
+          </Carousel>
+        </StCarouselWrap>
 
-                {/* 검색 */}
-                <Search searchState={searchState} setSearchState={setSearchState} search={search} searchHandle={searchHandle} />
+        {/* 검색 */}
+        <Search searchState={searchState} setSearchState={setSearchState} search={search} searchHandle={searchHandle} />
 
-                {/* 리스트 */}
-                <StTabBox>
-                    <Tabs
-                        defaultActiveKey="event"
-                        id="justify-tab-example"
-                        activeKey={searchState.main}
-                        onSelect={(key) => setSearchState({ ...searchState, main: key, page: 0 })}
-                        className="tabs"
-                        justify
-                    >
-                        <Tab eventKey="event" title="행사글" />
-                        <Tab eventKey="gather" title="모집글" />
-                        <Tab eventKey="ask" title="질문글" />
-                    </Tabs>
-                    {/* 리스트 */}
-                    <List searchState={searchState} />
-                    <Deletes />
-                </StTabBox>
-            </StHomeWrap>
-        </Layout >
-    );
+        {/* 리스트 */}
+        <StTabBox>
+          <Tabs
+            defaultActiveKey="event"
+            id="justify-tab-example"
+            activeKey={searchState.main}
+            onSelect={(key) => setSearchState({ ...searchState, main: key, page: 0 })}
+            className="tabs"
+            justify
+          >
+            <Tab eventKey="event" title="행사글" />
+            <Tab eventKey="gather" title="모집글" />
+            <Tab eventKey="ask" title="질문글" />
+          </Tabs>
+          {/* 리스트 */}
+          <List searchState={searchState} />
+          <Deletes />
+        </StTabBox>
+      </StHomeWrap>
+    </Layout >
+  );
 };
 
 export default Home;
