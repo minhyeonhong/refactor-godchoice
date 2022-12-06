@@ -19,7 +19,7 @@ const WritingToggle = ({ modalOn, setModalOn }) => {
 
     return (
         <WritingToggleWrap>
-            <img src={X} onClick={() => { setModalOn(!modalOn) }} />
+            {/* <img src={X} onClick={() => { setModalOn(!modalOn) }} /> */}
 
             <Cate onClick={() => writePost("/festivalpost")} style={{ marginTop: "17px" }}>행사글</Cate>
             <Cate onClick={() => writePost("/gatherpost")}>모집글</Cate>
@@ -32,33 +32,39 @@ export default WritingToggle;
 
 const WritingToggleWrap = styled.div`
 z-index : 999;
-background-color: gray;
-opacity : 0.8;
+/* background-color: gray;
+opacity : 0.8; */
+background: #00208F;
+opacity: 80%;
 color : #fff;
-border-radius : 20px;
-padding : 10px;
-width: 100px;
-height: 160px;
+border-radius : 10px;
+/* padding : 10px; */
+width: 80px;
+height: 112px;
 position: fixed;
 bottom: 45px;
-right:120px;
+right:27%;
 /* left: 54%;
 transform: translateX(-50%); */
 text-align : center;
 @media screen and (min-width: 425px) and (max-width : 100vw) {
-    width: 100px;
+    width: 80px;
     left: calc(50% + 50px);
     transform: translateX(-50%);
-  }
-img {
+  }`
+/* img {
     width: 20px;
     height: 20px;
     position:absolute;
     right: 10px;
-}`
+}` */
 
 const Cate = styled.div`
     cursor : pointer;
-    padding: 8px;
+    height: 33.3333%;
+    flex: 1;
+    align-items: center;
+    text-align: center;
+    line-height: 33.3333%;
 `
 
