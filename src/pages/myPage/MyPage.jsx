@@ -72,7 +72,6 @@ const MyPage = () => {
 
     },
     onSuccess: res => {
-      console.log("logout res", res);
       if (res.data.status === 200) {
         localStorage.clear();
         navigate("/");

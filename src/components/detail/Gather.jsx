@@ -38,7 +38,6 @@ const Gather = ({ postId, url }) => {
                 }
             },
             onError: res => {
-                console.log("error", res);
                 alert("잘못된 경로입니다.");
                 window.location.replace("/");
             }

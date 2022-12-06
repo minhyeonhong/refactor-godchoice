@@ -29,7 +29,6 @@ const Naver = () => {
         }
       },
       onError: res => {
-        console.log("error", res);
         alert("로그인 실패");
         window.location.replace("/")
       }

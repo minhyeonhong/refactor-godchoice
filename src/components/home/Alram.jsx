@@ -51,12 +51,6 @@ function Alram() {
         deleteNotice.mutate(id);
     }
 
-    useEffect(() => {
-        console.log("noticeList", noticeList);
-    }, [noticeList])
-
-    console.log(noticeList)
-
     return (
         <>
             {noticeList === null ?

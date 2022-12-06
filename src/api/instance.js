@@ -23,14 +23,12 @@ export const instance = axios.create({
 instance.interceptors.response.use(function (response) {
     // 2xx 범위에 있는 상태 코드는 이 함수를 트리거 합니다.
     // 응답 데이터가 있는 작업 수행
-    console.log("인터셉터 response", response);
     return response;
 }, async function (error) {
     // 2xx 외의 범위에 있는 상태 코드는 이 함수를 트리거 합니다.
     // 응답 오류가 있는 작업 수행
-    switch (error.response.data.status) {
+    switch (error.response?.data.status) {
         case 400:
-            console.log("인터셉터 400 error", error);
             break;
         case 403:
             // console.log("인터셉터 403 error", error);
@@ -55,13 +53,10 @@ instance.interceptors.response.use(function (response) {
 
             break;
         case 404:
-            console.log("인터셉터 404 error", error);
             break;
         case 500:
-            console.log("인터셉터 500 error", error);
             break;
         default:
-            console.log("인터셉터 나머지 error", error);
             break;
     }
 

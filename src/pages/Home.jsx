@@ -37,7 +37,7 @@ SwiperCore.use([Pagination, Autoplay, Navigation]);
 const Home = () => {
 
   //배너 가져오기
-  const banner = useQuery(['banner'], () => postApis.getAdminPostAX(), { refetchOnWindowFocus: false, retry: 0 })
+  const banner = useQuery(['banner'], () => postApis.getAdminPostAX(), { cacheTime: 3000, refetchOnWindowFocus: false, retry: 0 })
 
   //유저 지역정보 가져오기
   const userAddressTag = localStorage.getItem('userAddressTag');

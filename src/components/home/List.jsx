@@ -33,7 +33,7 @@ const List = ({ searchState }) => {
             if (!isLastPage) return nextPage;
         },
         refetchOnWindowFocus: false,
-        retry: 0,
+        retry: 1,
     })
 
     useEffect(() => {
@@ -47,10 +47,6 @@ const List = ({ searchState }) => {
         //검색상태가 바뀌면 server state refetch
         if (!result.isFetching) result.refetch(searchState, 0);
     }, [searchState])
-
-    useEffect(() => {
-        console.log("main result", result);
-    }, [result])
 
     return (
         <StCardWrap>

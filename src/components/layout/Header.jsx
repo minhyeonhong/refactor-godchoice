@@ -56,14 +56,12 @@ const Header = () => {
             //sse 연결
             eventSource.onopen = (event) => {
                 if (event.status === 200) {
-                    console.log('connection opened', event)
                     setListening(true);
                 }
             };
 
             //sse 받는 처리
             eventSource.onmessage = (event) => {
-                console.log('onmessage', event)
 
                 const isJson = (str) => {
                     try {
@@ -78,14 +76,12 @@ const Header = () => {
                     refetch();
                     //실시간 알림 데이터
                     const obj = JSON.parse(event.data);
-                    console.log("JSON.parse obj", obj);
                     setNewNotice(obj);
                 }
             };
 
             //sse 에러
             eventSource.onerror = event => {
-                console.log("sse onerror", event);
                 if (eventSource !== undefined) {
                     eventSource.close();
                     setListening(false);
@@ -108,7 +104,6 @@ const Header = () => {
         setNotice(!notice)
     }
 
-    useEffect(() => { console.log("newNotice", newNotice) }, [newNotice])
     return (
         <>
 
@@ -133,7 +128,7 @@ const Header = () => {
             </StHeaderWrap>
             {/* 알림 리스트 모달 */}
             {notice && <Alram />}
-            <AlramAlert newNotice={newNotice} />
+            <AlramAlert newNotice={newNotice} setNewNotice={setNewNotice} />
         </>
     );
 };
