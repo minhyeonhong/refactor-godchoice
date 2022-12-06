@@ -54,11 +54,13 @@ function Alram({ popUpNotice }) {
         console.log("noticeList", noticeList);
     }, [noticeList])
 
+    console.log(noticeList)
+
     return (
         <>
-            {noticeList.length === 0 ?
+            {noticeList === null ?
                 (<STDiv>
-                    <div style={{ marginTop: "100px" }}>알림 내용이 없습니다 💦 </div>
+                    <STContent>알림 내용이 없습니다❗</STContent>
                 </STDiv>) :
                 (
                     <STDiv>
@@ -174,4 +176,16 @@ const STComment = styled.div`
     width :70%;
     margin:auto;
     border: 1px solid rgba(106, 106, 106, 0.3);
+`
+const STContent = styled.div`
+    text-align: center;
+    margin:60px 0px;
+    margin-left: 15px;
+    font-size:15px;
+    background-color: rgba(220, 224, 241, 0.9);
+    border-radius: 15px;
+    height: 70px;
+    padding-top: 25px;
+    width: 88%;
+
 `

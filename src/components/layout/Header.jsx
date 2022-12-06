@@ -11,6 +11,7 @@ import { NativeEventSource, EventSourcePolyfill } from 'event-source-polyfill';
 // import { useQuery } from 'react-query';
 import { notificationApis } from '../../api/api-functions/notificationApis';
 import Alram from '../home/Alram';
+import AlramAlert from '../home/AlramAlert';
 // import axios from 'axios';
 const Header = () => {
 
@@ -20,6 +21,8 @@ const Header = () => {
     const [listening, setListening] = useState(false);
     //로그인 여부
     const isLogin = localStorage.getItem('token') !== null;
+
+    const [newNotice, setNewNotice] = useState([])
 
     let eventSource = undefined;
     useEffect(() => {
@@ -44,6 +47,7 @@ const Header = () => {
             eventSource.onmessage = (event) => {
                 console.log("result onmessage", event);
                 //console.log("result", JSON.parse(event.data));
+                setNewNotice(arr => [...arr, event.data])
             };
 
             //sse 에러
@@ -75,9 +79,12 @@ const Header = () => {
         setNotice(!notice)
     }
 
+    useEffect(() => { console.log("newNotice", newNotice) }, [newNotice])
     return (
         <>
+
             <StHeaderWrap>
+
                 <StLogoBox> <Link to="/"> <img src={logo} style={{ width: '166px' }} /></Link></StLogoBox>
                 <StRightBox>
 
@@ -105,7 +112,10 @@ const Header = () => {
                 ) : (
                     ""
                 )
-            }</>
+            }
+            <AlramAlert newNotice={newNotice} />
+        </>
+
     );
 };
 
