@@ -119,19 +119,18 @@ const QuestionPost = () => {
                                 ref={imgRef}
                                 name="files"
                                 multiple />
-
-
-                            <Carousel>
-                                {fileUrls && fileUrls.map((img, index) => {
-                                    return (
-                                        <Carousel.Item key={index}>
-                                            <img src={img} style={{ width: '396px', height: "396px", objectFit: "contain" }} onClick={() => { imgRef.current.click() }} />
-                                        </Carousel.Item>
-                                    )
-                                })
-                                }
-                            </Carousel>
                         </label>
+
+                        <Carousel>
+                            {fileUrls && fileUrls.map((img, index) => {
+                                return (
+                                    <Carousel.Item key={index}>
+                                        <img src={img} style={{ width: '396px', height: "396px", objectFit: "contain" }} onClick={() => { imgRef.current.click() }} />
+                                    </Carousel.Item>
+                                )
+                            })
+                            }
+                        </Carousel>
                     </div >
 
                     <div style={{ marginBottom: "10px" }}>*이미지를 다시 업로드 하려면 사진을 클릭해주세요.</div>

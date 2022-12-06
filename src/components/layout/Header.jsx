@@ -9,6 +9,7 @@ import { EventSourcePolyfill } from 'event-source-polyfill';
 
 import { notificationApis } from '../../api/api-functions/notificationApis';
 import Alram from '../home/Alram';
+import AlramAlert from '../home/AlramAlert';
 import { useQuery } from '@tanstack/react-query';
 const Header = () => {
 
@@ -39,6 +40,8 @@ const Header = () => {
         })
 
     //sse handle
+    const [newNotice, setNewNotice] = useState([])
+
     let eventSource = undefined;
     useEffect(() => {
         if (!listening && isLogin) {
@@ -61,6 +64,7 @@ const Header = () => {
             //sse 받는 처리
             eventSource.onmessage = (event) => {
                 console.log('onmessage', event)
+
                 const isJson = (str) => {
                     try {
                         const json = JSON.parse(str);
@@ -75,6 +79,7 @@ const Header = () => {
                     //실시간 알림 데이터
                     const obj = JSON.parse(event.data);
                     console.log("JSON.parse obj", obj);
+                    //setNewNotice(arr => [...arr, event.data])
                 }
             };
 
@@ -103,9 +108,12 @@ const Header = () => {
         setNotice(!notice)
     }
 
+    useEffect(() => { console.log("newNotice", newNotice) }, [newNotice])
     return (
         <>
+
             <StHeaderWrap>
+
                 <StLogoBox> <Link to="/"> <img src={logo} style={{ width: '166px' }} /></Link></StLogoBox>
                 <StRightBox>
                     {localStorage.getItem("token") === null ?
@@ -125,6 +133,7 @@ const Header = () => {
             </StHeaderWrap>
             {/* 알림 리스트 모달 */}
             {notice && <Alram />}
+            <AlramAlert newNotice={newNotice} />
         </>
     );
 };

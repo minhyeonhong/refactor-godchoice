@@ -72,7 +72,7 @@ const List = ({ searchState }) => {
                                 <div className='contentBox'>{post.content}</div>
                                 <div className='dtateBox'>
                                     <div>{post.endPeriod}{post.date}</div>
-                                    <div className='lookBox'>{post.viewCount}&nbsp;<BsEye style={{ width: '16px', height: '16px' }} /></div>
+                                    <div className='lookBox'>{post.viewCount}&nbsp;<BsEye style={{ width: '16px', height: '16px', marginTop: '2px' }} /></div>
                                 </div>
                             </StContentBox>
                         </StCardItem>

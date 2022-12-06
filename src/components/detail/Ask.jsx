@@ -322,10 +322,14 @@ const Ask = ({ postId, url }) => {
 
                                     <StContent style={{ marginBottom: "14px", padding: "5px", borderRadius: "10px" }} value={post.content || ""} readOnly />
 
-                                    <div>행사장 링크</div>
-                                    <STInput style={{ marginBottom: "14px", minHeight: "40px", padding: "5px" }}>
-                                        <a href={post.postLink} target="_blank">{post.postLink}</a>
-                                    </STInput>
+
+                                    {post.postLink !== "" &&
+                                        <div>
+                                            <div>행사장 링크</div>
+                                            <STInput style={{ marginBottom: "14px", minHeight: "40px", padding: "5px" }}>
+                                                <a href={post.postLink} target="_blank">{post.postLink}</a>
+                                            </STInput>
+                                        </div>}
 
                                     {
                                         modPost.postAddress && (
@@ -335,12 +339,10 @@ const Ask = ({ postId, url }) => {
                                                     <STAddressButton style={{ flex: "2" }}>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressButton>
                                                     <STInput style={{ flex: "8", marginLeft: "5px" }}>{post.postAddress}</STInput  >
                                                 </div>
+                                                <KakaoMap address={post.postAddress} width='100%' height='144px' />
                                             </>
                                         )
                                     }
-
-
-                                    <KakaoMap address={post.postAddress} width='100%' height='144px' />
 
                                     {localStorage.getItem('userId') === post.userId.toString() &&
                                         (<div>
