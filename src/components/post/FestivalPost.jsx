@@ -25,7 +25,7 @@ const FestivalPost = () => {
     const [postAddress, setPostAddress] = useState("")
 
     //이미지 업로드 훅
-    const [files, fileUrls, uploadHandle] = useImgUpload(5, true, 0.5, 1000);
+    const [files, fileUrls, uploadHandle, setImgFiles, setImgUrls, originFiles] = useImgUpload(5, true, 0.5, 1000);
 
     //이미지 업로드 인풋돔 선택 훅
     const imgRef = useRef();
@@ -68,13 +68,7 @@ const FestivalPost = () => {
     const onSubmit = () => {
         const formData = new FormData();
 
-        if (files.length > 0) {
-            files.forEach((file) => {
-                formData.append("multipartFile", file);
-            })
-        } else {
-            formData.append("multipartFile", null);
-        }
+
 
         const obj = {
             category: festival.category,
@@ -94,6 +88,14 @@ const FestivalPost = () => {
 
 
         if (isAdmin) {
+            if (originFiles.length > 0) {
+                originFiles.forEach((file) => {
+                    formData.append("multipartFile", file);
+                })
+            } else {
+                formData.append("multipartFile", null);
+            }
+
             formData.append("adminPostReqDto", new Blob([JSON.stringify(adminObj)], { type: "application/json" }));
             insertAdminPost.mutate(formData);
         } else {
@@ -112,6 +114,14 @@ const FestivalPost = () => {
                 if (link === false) {
                     return alert("'http://' 또는 'https://'가 포함된 링크를 입력해주세요.")
                 }
+            }
+
+            if (files.length > 0) {
+                files.forEach((file) => {
+                    formData.append("multipartFile", file);
+                })
+            } else {
+                formData.append("multipartFile", null);
             }
 
             formData.append("eventPostReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));

@@ -4,20 +4,21 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { notificationApis } from '../../api/api-functions/notificationApis';
 import { useNavigate } from 'react-router-dom';
 
-function Alram({ popUpNotice }) {
+function Alram() {
 
     const navigate = useNavigate();
-    //업데이트 인풋
+    //알림 server state
     const [noticeList, setNoticeList] = useState([]);
-    //디테일 페이지 server state
-    const { isSuccess, isLoading, refetch } = useQuery(['getNoticeList'], //key
+    //알림 리스트
+    const { refetch } = useQuery(['getNoticeList'], //key
         () => notificationApis.getNotificationAX(),
         {//options
             refetchOnWindowFocus: false, // react-query는 사용자가 사용하는 윈도우가 다른 곳을 갔다가 다시 화면으로 돌아오면 이 함수를 재실행합니다. 그 재실행 여부 옵션 입니다.
             retry: 0, // 실패시 재호출 몇번 할지
             onSuccess: res => { // 성공시 호출
-                console.log("res.data", res.data);
-                setNoticeList(res.data.data);
+                if (res.data.status === 200) {
+                    setNoticeList(res.data.data);
+                }
             }
         })
     //알림 읽고 해당 게시물로 이동
@@ -62,37 +63,44 @@ function Alram({ popUpNotice }) {
                 </STDiv>) :
                 (
                     <STDiv>
-                        {noticeList?.map((comment, index) => {
-                            return (
-                                <div key={index}>
-                                    {comment.readStatus === false && <STBox onClick={() => onClickPut(comment.notificationId)}>
-                                        <STDelete onClick={(e) => {
-                                            e.stopPropagation()
-                                            onDeleteAlram(comment.notificationId)
-                                        }}>✖</STDelete>
-                                        <p> <b>{comment.title}</b>님이
-                                            <br />댓글을 입력하셨습니다.
-                                        </p>
-                                        <STComment>💬{comment.message.length > 6 ? (comment.message.slice(0, 6) + "...") : (comment.message)} </STComment>
-                                        <STCreatAT>{comment.createdAt}</STCreatAT>
+                        {noticeList?.filter((filterList) => filterList.readStatus === false)
+                            .map((comment, index) => {
+                                return (
+                                    <div key={index}>
+                                        <STBox onClick={() => onClickPut(comment.notificationId)}>
+                                            <STDelete onClick={(e) => {
+                                                e.stopPropagation()
+                                                onDeleteAlram(comment.notificationId)
+                                            }}>✖</STDelete>
+                                            <p> <b>{comment.title}</b>님이
+                                                <br />댓글을 입력하셨습니다.
+                                            </p>
+                                            <STComment>💬{comment.message.length > 6 ? (comment.message.slice(0, 6) + "...") : (comment.message)} </STComment>
+                                            <STCreatAT>{comment.createdAt}</STCreatAT>
 
-                                    </STBox>}
-                                    {comment.readStatus === true && <STBox2 onClick={() => onClickPut(comment.notificationId)}>
-                                        <STDelete onClick={(e) => {
-                                            e.stopPropagation()
-                                            onDeleteAlram(comment.notificationId)
-                                        }}>✖</STDelete>
-                                        <p> <b>{comment.title}</b>님이
-                                            <br />댓글을 입력하셨습니다.
-                                        </p>
-                                        <STComment>{comment.message.length > 6 ? (comment.message.slice(0, 6) + "...") : (comment.message)} </STComment>
-                                        <STCreatAT>{comment.createdAt}</STCreatAT>
+                                        </STBox>
+                                    </div>
+                                )
+                            })}
+                        {noticeList?.filter((filterList) => filterList.readStatus === true)
+                            .map((comment, index) => {
+                                return (
+                                    <div key={index}>
+                                        <STBox2 onClick={() => onClickPut(comment.notificationId)}>
+                                            <STDelete onClick={(e) => {
+                                                e.stopPropagation()
+                                                onDeleteAlram(comment.notificationId)
+                                            }}>✖</STDelete>
+                                            <p> <b>{comment.title}</b>님이
+                                                <br />댓글을 입력하셨습니다.
+                                            </p>
+                                            <STComment>{comment.message.length > 6 ? (comment.message.slice(0, 6) + "...") : (comment.message)} </STComment>
+                                            <STCreatAT>{comment.createdAt}</STCreatAT>
 
-                                    </STBox2>}
-                                </div>
-
-                            )
-                        })}
+                                        </STBox2>
+                                    </div>
+                                )
+                            })}
                     </STDiv>
                 )
             }
