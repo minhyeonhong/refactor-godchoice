@@ -61,7 +61,7 @@ const Router = () => {
                     <Route path="/mypagecomment" element={<MyPageCmt />} />
                     {/* 마이페이지 스크랩 */}
                     <Route path="/mypagescrap" element={<MyPageScrap />} />
-
+                    {/* 이벤트 페이지 */}
                     <Route path="/eventsurvey" element={<EventSurvey />} />
                 </Routes>
             </Suspense>

@@ -5,22 +5,24 @@ import { instance } from "../instance";
 export const myPageApis = {
 
     //마이페이지 조회
-    getMyPageAX: () => instance.get(`${process.env.REACT_APP_API_URL}/mypage/user`),
+    getMyPageAX: () => instance.get(`/mypage/user`),
 
     //마이페이지 수정
-    putMyPageAX: (payload) => instance.put(`${process.env.REACT_APP_API_URL}/mypage`, payload),
+    putMyPageAX: (payload) => instance.put(`/mypage`, payload),
 
     // 내글 불러오기
-    getMyPostAX: () => instance.get(`${process.env.REACT_APP_API_URL}/mypage/mypost`),
+    getMyPostAX: () => instance.get(`/mypage/mypost`),
 
     //  댓글 단 글
-    getMyCmtAX: () => instance.get(`${process.env.REACT_APP_API_URL}/mypage/mycomment`),
+    getMyCmtAX: () => instance.get(`/mypage/mycomment`),
 
     // 스크랩
-    getMyScrapAX: () => instance.get(`${process.env.REACT_APP_API_URL}/mypage/myscrap`),
+    getMyScrapAX: () => instance.get(`/mypage/myscrap`),
 
     // 로그아웃
-    logoutAX: (domain) => instance.post(`${process.env.REACT_APP_API_URL}/member/signup/${domain}`),
+    kakaologoutAX: (domain) => instance.post(`/member/signup/${domain}`),
+
+    logoutAX: () => instance.post(`/member/signup/logout`),
 
 
     // 회원탈퇴
