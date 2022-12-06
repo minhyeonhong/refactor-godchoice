@@ -38,7 +38,6 @@ const Gather = ({ postId, url }) => {
                 }
             },
             onError: res => {
-                console.log("error", res);
                 alert("잘못된 경로입니다.");
                 window.location.replace("/");
             }
@@ -455,11 +454,14 @@ const Gather = ({ postId, url }) => {
                                             <a href={post.kakaoLink} target="_blank">{post.kakaoLink}</a>
                                         </STInput>
 
-                                        <div>행사장 링크</div>
-                                        <STInput style={{ marginBottom: "14px", minHeight: "40px" }}>
-                                            <a href={post.postLink} target="_blank">{post.postLink}</a>
-                                        </STInput>
-
+                                        {
+                                            post.postLink !== "" &&
+                                            <>  <div>행사장 링크</div>
+                                                <STInput style={{ marginBottom: "14px", minHeight: "40px" }}>
+                                                    <a href={post.postLink} target="_blank">{post.postLink}</a>
+                                                </STInput>
+                                            </>
+                                        }
                                         {
                                             modPost.postAddress && (
                                                 <>
@@ -468,23 +470,20 @@ const Gather = ({ postId, url }) => {
                                                         <STAddressButton style={{ flex: "1" }}>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressButton>
                                                         <STInput style={{ marginLeft: "5px", flex: "4" }}>{post.postAddress}</STInput>
                                                     </div>
+                                                    <KakaoMap address={post.postAddress} width='100%' height='144px' />
                                                 </>
                                             )
                                         }
 
-                                        <KakaoMap address={post.postAddress} width='100%' height='144px' />
-
-
                                         {localStorage.getItem('userId') === post.userId.toString() &&
                                             (<div style={{ float: "right", marginTop: "10px" }}>
-                                                <STEditButton style={{ background: "#515466", marginRight: "5px" }} onClick={() => { onGatherDelete(postId); }}>삭제</STEditButton>
+                                                <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={() => { onGatherDelete(postId); }}>삭제</STEditButton>
                                                 <STEditButton onClick={toggleEdit}>수정</STEditButton>
                                             </div>)}
 
                                     </>
                                 )
                     }
-
 
                     <Comment postId={postId} kind='gather' style={{ marginTop: "20px" }} />
 

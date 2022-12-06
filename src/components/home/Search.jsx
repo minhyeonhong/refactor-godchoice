@@ -108,44 +108,64 @@ const StSearchBox = styled.div`
         border : none;
         border-radius :  30px 0 0 30px ;
         
-    }
-`
+    }`
+
 
 const StTagBox = styled.div`
-    overflow : scroll;
-    display :flex;
-    flex-direction : row;
-    margin : 0 10px;
-    /* 가로 스크롤 */
-    overflow: auto;
-    white-space: nowrap;
-    ::-webkit-scrollbar{
-        display: none; 
-    }
-    .btn-group {
-        gap : 5px;
-    }
-    .btn-primary {
-        font-weight : bold;
-        color : black;
-        --bs-btn-color: black;
-        --bs-btn-bg : #DCE0F1;
-        --bs-btn-border-color :#DCE0F1; 
-        /*  */
-        --bs-btn-active-bg : #2D4FDA;
-        --bs-btn-active-color :  white;
-    }
-    .btn-group > .btn:not(:last-child):not(.dropdown-toggle) {
-        border : none;
-        border-radius :  50px ;
-        z-index : 0;
-    }
-    .btn-group > :not(.btn-check:first-child) + .btn {
-        border : none;
-        border-radius :  50px ;
-        z-index : 0;
-    }
-`
+  overflow: scroll;
+  display: flex;
+  flex-direction: row;
+  margin: 0 10px;
+  /* 가로 스크롤 */
+  overflow: auto;
+  white-space: nowrap;
+  ::-webkit-scrollbar {
+    display: none; 
+  }
+  @media all and (min-width:769px) {
+    ::-webkit-scrollbar {
+    display: block; 
+    height: 7px;
+  }
+  ::-webkit-scrollbar-tranck {
+    background-color: #e4e4e4;
+    border-radius: 100px;
+    /* background-color:#dce0f1; */
+  }
+  ::-webkit-scrollbar-thumb {
+    /* border-radius: 100px;
+    background-image: linear-gradient(180deg, #d0368a 0%, #708ad4 99%); */
+    background-color:#dce0f1; /*스크롤바의 색상*/
+    border-radius: 50px;
+    box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
+  }
+}
+
+  .btn-group {
+    gap: 5px;
+    margin: 5px 0 ;
+  }
+  .btn-primary {
+    font-weight: bold;
+    color: black;
+    --bs-btn-color: black;
+    --bs-btn-bg: #dce0f1;
+    --bs-btn-border-color: #dce0f1;
+    /*  */
+    --bs-btn-active-bg: #2d4fda;
+    --bs-btn-active-color: white;
+  }
+  .btn-group > .btn:not(:last-child):not(.dropdown-toggle) {
+    border: none;
+    border-radius: 50px;
+    z-index: 0;
+  }
+  .btn-group > :not(.btn-check:first-child) + .btn {
+    border: none;
+    border-radius: 50px;
+    z-index: 0;
+  }
+`;
 
 const StFilterBox = styled.div`
     display :flex;

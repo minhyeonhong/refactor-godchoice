@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import styled from "styled-components";
 import writing from "../../assets/images/common/writing.png";
 import topBtn from "../../assets/images/common/topBtn.png";
-import writingToggle from "./WritingToggle";
+import X from "../../assets/images/common/X.png";
 
 const TopButton = ({ modalOn, setModalOn }) => {
   const [isTopButtonOn, setIsTopButtonOn] = useState(false);
@@ -30,38 +30,74 @@ const TopButton = ({ modalOn, setModalOn }) => {
   }, 200);
   return isTopButtonOn ? (
     <TopBtnCtr>
-    <StyledTopBtn height={"90px"}>
-      <StyledTopBtnImg
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        src={topBtn}
-        width={"40px"}
-      />
-      <StyledTopBtnImg
+      <StyledTopBtn height={"90px"}>
+        <StyledTopBtnImg
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          src={topBtn}
+          width={"40px"}
+        />
+        {/* <StyledTopBtnImg
         src={writing}
         padding={"6px 6px 10px 6px"}
         onClick={() => {
           setModalOn(!modalOn);
         }}
-      />
-    </StyledTopBtn>
+      /> */}
+        {modalOn === false ? (
+          <StyledTopBtnImg
+            src={writing}
+            padding={"6px 6px 10px 6px"}
+            onClick={() => {
+              setModalOn(true);
+            }}
+          />
+        ) : (
+          <StyledTopBtnImg
+            src={X}
+            padding={"6px 6px 10px 6px"}
+            width={"40px"}
+            onClick={() => {
+              setModalOn(false);
+            }}
+          />
+        )}
+      </StyledTopBtn>
     </TopBtnCtr>
   ) : (
     <TopBtnCtr>
-    <StyledTopBtn height={"50px"}>
-      <StyledTopBtnImg
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        src={topBtn}
-        width={"0px"}
-        height={"40px"}
-      />
-      <StyledTopBtnImg
-        src={writing}
-        padding={"6px 6px 10px 6px"}
-        onClick={() => {
-          setModalOn(!modalOn);
-        }}
-      />
-    </StyledTopBtn>
+      <StyledTopBtn height={"50px"}>
+        <StyledTopBtnImg
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          src={topBtn}
+          width={"0px"}
+          height={"40px"}
+        />
+        {/* <StyledTopBtnImg
+          src={writing}
+          padding={"6px 6px 10px 6px"}
+          onClick={() => {
+            setModalOn(!modalOn);
+          }}
+        /> */}
+        {modalOn === false ? (
+          <StyledTopBtnImg
+            src={writing}
+            padding={"6px 6px 10px 6px"}
+            onClick={() => {
+              setModalOn(true);
+            }}
+          />
+        ) : (
+          <StyledTopBtnImg
+            src={X}
+            padding={"6px 6px 10px 6px"}
+            width={"40px"}
+            onClick={() => {
+              setModalOn(false);
+            }}
+          />
+        )}
+      </StyledTopBtn>
     </TopBtnCtr>
   );
 };
@@ -92,9 +128,9 @@ const StyledTopBtn = styled.button`
   z-index: 10;
   border: none;
   border-radius: 50px;
-  background-color: grey;
-  opacity: 0.7;
-  box-shadow: 0px 0px 5px gray;
+  background-color: #3556E1;
+  /* opacity: 0.7; */
+  /* box-shadow: 0px 0px 5px gray; */
   margin-right: 50px;
   
 

@@ -48,10 +48,12 @@ const MyPage = () => {
   // 로그아웃
   const handleLogout = () => {
     if (window.confirm("로그아웃 하시겠습니까?")) {
+      //logout.mutate(myInfo.domain);
+
       if (myInfo.domain === 'kakako') {
         logout.mutate(myInfo.domain);
       } else {
-        //네이버 구글 똥같애
+        //네이버 구글 
         localStorage.clear();
         navigate("/");
       }
@@ -62,7 +64,12 @@ const MyPage = () => {
   //로그아웃
   const logout = useMutation({
     mutationFn: domain => {
-      return myPageApis.logoutAX(domain);
+      if (domain === 'kakao') {
+        return myPageApis.kakaologoutAX(domain);
+      } else {
+        return myPageApis.logoutAX();
+      }
+
     },
     onSuccess: res => {
       if (res.data.status === 200) {
@@ -99,17 +106,17 @@ const MyPage = () => {
         {/* MyProfileWrap */}
 
         <MyCateWrap>
-          <CateBox onClick={() => navigate("/mypagepost")}>
+          <CateBox onClick={() => navigate("/mypagepost")} style={{ cursor: "pointer" }}>
             <div className='title'>내가 쓴 글</div>
             <MyPost />
 
           </CateBox>
-          <CateBox onClick={() => navigate("/mypagecomment")}>
+          <CateBox onClick={() => navigate("/mypagecomment")} style={{ cursor: "pointer" }}>
             <div className='title'>댓글 단 글</div>
             <Comment />
 
           </CateBox>
-          <CateBox onClick={() => navigate("/mypagescrap")}>
+          <CateBox onClick={() => navigate("/mypagescrap")} style={{ cursor: "pointer" }}>
             <div className='title'>스크랩</div>
             <BookmarkFill />
 

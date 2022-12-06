@@ -33,7 +33,7 @@ const List = ({ searchState }) => {
             if (!isLastPage) return nextPage;
         },
         refetchOnWindowFocus: false,
-        retry: 0,
+        retry: 1,
     })
 
     useEffect(() => {
@@ -47,10 +47,6 @@ const List = ({ searchState }) => {
         //검색상태가 바뀌면 server state refetch
         if (!result.isFetching) result.refetch(searchState, 0);
     }, [searchState])
-
-    useEffect(() => {
-        console.log("main result", result);
-    }, [result])
 
     return (
         <StCardWrap>
@@ -72,7 +68,7 @@ const List = ({ searchState }) => {
                                 <div className='contentBox'>{post.content}</div>
                                 <div className='dtateBox'>
                                     <div>{post.endPeriod}{post.date}</div>
-                                    <div className='lookBox'>{post.viewCount}&nbsp;<BsEye style={{ width: '16px', height: '16px' }} /></div>
+                                    <div className='lookBox'>{post.viewCount}&nbsp;<BsEye style={{ width: '16px', height: '16px', marginTop: '2px' }} /></div>
                                 </div>
                             </StContentBox>
                         </StCardItem>

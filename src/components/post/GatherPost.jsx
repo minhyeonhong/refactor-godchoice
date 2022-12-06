@@ -174,19 +174,19 @@ const GatherPost = () => {
                                 ref={imgRef}
                                 name="files"
                                 multiple />
-
-                            <Carousel>
-                                {
-                                    fileUrls && fileUrls.map((img) => {
-                                        return (
-                                            <Carousel.Item key={img.id}>
-                                                <img style={{ width: '100%', height: "396px", objectFit: "contain" }} onClick={() => { imgRef.current.click() }} src={img} />
-                                            </Carousel.Item>
-                                        )
-                                    })
-                                }
-                            </Carousel>
                         </label>
+                        <Carousel>
+                            {
+                                fileUrls && fileUrls.map((img) => {
+                                    return (
+                                        <Carousel.Item key={img.id}>
+                                            <img style={{ width: '100%', height: "396px", objectFit: "contain" }} onClick={() => { imgRef.current.click() }} src={img} />
+                                        </Carousel.Item>
+                                    )
+                                })
+                            }
+                        </Carousel>
+
                     </div >
                     <div style={{ marginBottom: "10px" }}>*이미지를 다시 업로드 하려면 사진을 클릭해주세요.</div>
 
