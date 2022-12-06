@@ -13,7 +13,7 @@ import WritingToggle from "../components/elements/WritingToggle";
 
 import PageState from "../components/common/PageState";
 
-import { postApis } from "../api/api-functions/postApis"
+import { postApis } from "../api/api-functions/postApis";
 import { useQuery } from "@tanstack/react-query";
 import useInput from "../hooks/useInput";
 
@@ -22,15 +22,14 @@ import { flexColumn, flexRow } from "../components/styles/Flex";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Autoplay, Navigation, Pagination } from "swiper";
 import "swiper/swiper-bundle.min.css";
-import "swiper/swiper.min.css"
+import "swiper/swiper.min.css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-
-import guide01 from "../assets/images/banner/guide/guide_01.jpg"
-import guide02 from "../assets/images/banner/guide/guide_02.jpg"
-import guide03 from "../assets/images/banner/guide/guide_03.jpg"
-import guide04 from "../assets/images/banner/guide/guide_04.jpg"
+import guide01 from "../assets/images/banner/guide/guide_01.jpg";
+import guide02 from "../assets/images/banner/guide/guide_02.jpg";
+import guide03 from "../assets/images/banner/guide/guide_03.jpg";
+import guide04 from "../assets/images/banner/guide/guide_04.jpg";
 
 SwiperCore.use([Pagination, Autoplay, Navigation]);
 // ------------- 여기까지 ---------------
@@ -76,34 +75,34 @@ const Home = () => {
                     {modalOn && <WritingToggle modalOn={modalOn} setModalOn={setModalOn} />}
                     <TopButton modalOn={modalOn} setModalOn={setModalOn} />
 
-                    {/* 임시 배너 모달! -- 수정할 것 */}
-                    <BannerModal
-                        onClick={() => {
-                            setGuideOn(!guideOn);
-                            console.log("guideOn ===> ", guideOn);
-                        }}
-                    >
-                        배너 모달
-                    </BannerModal>
+                   {/* 임시 배너 모달! -- 수정할 것 */}
+          <BannerModal
+            onClick={() => {
+              setGuideOn(!guideOn);
+              console.log("guideOn ===> ", guideOn);
+            }}
+          >
+            배너 모달
+          </BannerModal>
 
-                    {guideOn && (
-                        <Dim
-                            onClick={() => {
-                                setGuideOn(!guideOn);
-                            }}
-                        >
+          {guideOn && (
+            <Bg
+              onClick={() => {
+                setGuideOn(!guideOn);
+              }}
+            >
                             <StyleGuide onClick={(e) => e.stopPropagation()}>
                                 <StyledSwiper
                                     className="swipe"
                                     spaceBetween={0}
                                     slidesPerView={1}
                                     scrollbar={{ draggable: true }}
-                                    navigation
+                                    // navigation
                                     pagination={{ clickable: true }}
                                     autoplay={{ delay: 15000, disableOnInteraction: false }}
                                     loop={true}
                                     centeredSlides={true}
-                                    style={{ backgroundColor: "pink" }}
+                                    style={{ backgroundColor: "transparent" }}
                                 >
                                     {guides?.map((guide, i) => {
                                         return (
@@ -116,15 +115,15 @@ const Home = () => {
                                 {/* StyledSwiper */}
 
                                 <button
-                                    onClick={() => {
-                                        setGuideOn(!guideOn);
-                                    }}
-                                >
-                                    X
-                                </button>
-                            </StyleGuide>
-                        </Dim>
-                    )}
+                    onClick={() => {
+                      setGuideOn(!guideOn);
+                    }}
+                  >
+                    ✕
+                  </button>
+              </StyleGuide>
+            </Bg>
+          )}
 
                     {/* ---------- 여기까지 ---------- */}
                 </>
@@ -185,12 +184,12 @@ const Home = () => {
 export default Home;
 
 const Deletes = styled.div`
-width: 100%;
-`
+  width: 100%;
+`;
 
 const StHomeWrap = styled.div`
-    display : ${(props) => props.display}
-;`
+  display: ${(props) => props.display};
+`;
 
 const StCarouselWrap = styled.div`
   .carousel-indicators [data-bs-target] {
@@ -228,15 +227,15 @@ const StTabBox = styled.div`
 const BannerModal = styled.div`
   background-color: red;
   width: 50px;
-  height : 50px;
-  `;
+  height: 50px;
+`;
 
 export const StyledSwiper = styled(Swiper)`
-    background: red;
-    ${flexRow}
-    justify-content: center;
-    width: 370px;
-    /* @media screen and (max-width: 425px)  {
+  background: red;
+  ${flexRow}
+  justify-content: center;
+  width: 370px;
+  /* @media screen and (max-width: 425px)  {
         width: 95%;
         border-radius: 20px;
     } */
@@ -245,48 +244,56 @@ export const StyledSwiper = styled(Swiper)`
 const StyleGuide = styled.div`
   ${flexRow}
   justify-content: center;
-  width: 370px;
+  width: 300px;
   height: auto;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  /* @media screen and (min-width: 400px) and (max-width:100vw) {
+        width: 400px;
+        height: 100%;
+        border-radius: 20px;
+    } */
   .swipe {
     width: 100%;
   }
 `;
 
-const Dim = styled.div`
+const Bg = styled.div`
   ${flexRow}
   z-index: 99;
   box-sizing: border-box;
   position: fixed;
   top: 0;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   bottom: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  width: 425px;
+  background-color: rgba(0, 0, 0, 0.85);
   button {
     z-index: 100;
     display: flex;
     position: fixed;
-    right: 13.2%;
-    top: 3.6%;
-    width: 120px;
+    /* left: 50%;
+    transform: translateX(-50%); */
+    right: 10px;
+    top: 10px;
+    width: 30px;
     height: 30px;
+    line-height: 30px;
+    border-radius: 10px;
+    background-color: #ffffffeb;
     justify-content: center;
-    background-color: aliceblue;
-    border: 1px solid lightgray;
+    border: none;
+    /* border-radius: 10px; */
     :hover {
       cursor: pointer;
-      background-color: beige;
     }
-    /* @media screen and (max-width: 425px) {
-      width: 80px;
-      right: 11%;
-      top: 30%;
-    } */
   }
 `;
 
 export const ItemDetailImg = styled.img`
   width: 100%;
-  height: 90%;
+  height: 100%;
 `;
-

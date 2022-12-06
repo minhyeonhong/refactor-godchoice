@@ -88,7 +88,7 @@ const MyPageEdit = () => {
           <MyImgBox>
             <img src={fileUrls[0] || userInfo.userImg} alt="my profil photo" />
             <label htmlFor="img_UpFile">
-              <Camera />
+              <Camera style={{cursor:"pointer"}} />
             </label>
             <input
               ref={imgRef}

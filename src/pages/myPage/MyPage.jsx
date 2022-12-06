@@ -99,17 +99,17 @@ const MyPage = () => {
         {/* MyProfileWrap */}
 
         <MyCateWrap>
-          <CateBox onClick={() => navigate("/mypagepost")}>
+          <CateBox onClick={() => navigate("/mypagepost")} style={{cursor:"pointer"}}>
             <div className='title'>내가 쓴 글</div>
             <MyPost />
 
           </CateBox>
-          <CateBox onClick={() => navigate("/mypagecomment")}>
+          <CateBox onClick={() => navigate("/mypagecomment")} style={{cursor:"pointer"}}>
             <div className='title'>댓글 단 글</div>
             <Comment />
 
           </CateBox>
-          <CateBox onClick={() => navigate("/mypagescrap")}>
+          <CateBox onClick={() => navigate("/mypagescrap")} style={{cursor:"pointer"}}>
             <div className='title'>스크랩</div>
             <BookmarkFill />
 
