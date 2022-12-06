@@ -20,5 +20,8 @@ export const myPageApis = {
     getMyScrapAX: () => instance.get(`${process.env.REACT_APP_API_URL}/mypage/myscrap`),
 
     // 로그아웃
+    logoutAX: (domain) => instance.post(`${process.env.REACT_APP_API_URL}/member/signup/${domain}`),
+
+
     // 회원탈퇴
 }

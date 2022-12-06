@@ -48,6 +48,10 @@ const List = ({ searchState }) => {
         if (!result.isFetching) result.refetch(searchState, 0);
     }, [searchState])
 
+    useEffect(() => {
+        console.log("main result", result);
+    }, [result])
+
     return (
         <StCardWrap>
             <PageState display={result.data?.pages[0].postList.length === 0 ? 'flex' : 'none'} state='notFound' imgWidth='25%' height='60vh'
