@@ -11,6 +11,7 @@ import { BookmarkFill, Comment, MyPost } from '../../assets';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { myPageApis } from '../../api/api-functions/myPageApis';
 import { postApis } from '../../api/api-functions/postApis';
+import { useEffect } from 'react';
 
 const MyPage = () => {
   const navigate = useNavigate();
@@ -46,9 +47,30 @@ const MyPage = () => {
 
   // 로그아웃
   const handleLogout = () => {
-    localStorage.clear();
-    navigate("/")
+    if (window.confirm("로그아웃 하시겠습니까?")) {
+      if (myInfo.domain === 'kakako') {
+        logout.mutate(myInfo.domain);
+      } else {
+        //네이버 구글 똥같애
+        localStorage.clear();
+        navigate("/");
+      }
+    }
   }
+
+
+  //로그아웃
+  const logout = useMutation({
+    mutationFn: domain => {
+      return myPageApis.logoutAX(domain);
+    },
+    onSuccess: res => {
+      if (res.data.status === 200) {
+        localStorage.clear();
+        navigate("/");
+      }
+    },
+  })
 
   return (
     <Layout>
@@ -195,4 +217,5 @@ const CateBox = styled.div`
 
   
 `
+
 

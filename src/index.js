@@ -13,6 +13,11 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 
+
+// PWA 추가
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+serviceWorkerRegistration.register();
+
 const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

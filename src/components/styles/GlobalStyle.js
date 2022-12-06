@@ -23,10 +23,10 @@ body {
   box-sizing: border-box;
   margin: 0 auto;
  /* 모바일 크기 고정 */
- /* width: 100vw;
+ width: 100vw;
   height: 100vh;
   margin: auto;
-  background-color: #ccc;
+  background-color: #F4F5F7;
   word-break: break-all;
   @media all and (min-width: 360px) and (max-width: 100vw) {
   body {
@@ -35,18 +35,18 @@ body {
     background-position: center;
     background-repeat: no-repeat;
   }
-} */
-
+}
 }
 
-/* #root {
+#root {
   width: 100%;
-  max-width: 410px;
-  height: 100vh;
+  max-width: 425px;
+  /* height: 100vh; */
   margin: auto;
   position: relative;
   background-color: #F4F5F7;
-} */
+  box-shadow: 0px 0px 10px #ccc;
+}
 
 /* 여기까지 */
 

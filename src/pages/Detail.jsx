@@ -6,7 +6,10 @@ import Gather from '../components/detail/Gather';
 import Ask from '../components/detail/Ask';
 import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import { __getPost } from '../redux/modules/postSlice';
+
+import { postApis } from "../api/api-functions/postApis"
+import { useQuery } from "@tanstack/react-query";
+
 
 const Detail = () => {
     const { url, postId } = useParams();

@@ -19,10 +19,10 @@ function App() {
 
   return (
     <>
-      <Media>
+      {/* <Media> */}
       <GlobalStyle />
       <Router />
-      </Media>
+      {/* </Media> */}
     </>
   );
 }
@@ -30,12 +30,21 @@ function App() {
 export default App;
 
 
-const Media = styled.div`
-  @media screen and (max-width : 100vw) {
-    width: 425px;
-    height: 100%;
-    border-radius: 0;
-    box-shadow: 0px 0px 10px #ccc;
-    margin: 0 auto;
-  }
-`
+// const Media = styled.div`
+//   @media screen and (max-width : 100vw) {
+//     width: 425px;
+//     height: 100%;
+//     border-radius: 0;
+//     box-shadow: 0px 0px 10px #ccc;
+//     margin: 0 auto;
+//   }
+// `
+// const Media = styled.div`
+//   @media screen and (min-width : 479px) {
+//     width: 479px;
+//     height: 100%;
+//     border-radius: 0;
+//     box-shadow: 0px 0px 10px #ccc;
+//     margin: 0 auto;
+//   }
+// `

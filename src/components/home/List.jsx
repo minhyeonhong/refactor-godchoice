@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, Fragment } from 'react';
 
-import { useDispatch, useSelector } from "react-redux";
-import { __postList } from '../../redux/modules/postSlice'
 
 import { useInView } from "react-intersection-observer"
 import styled from 'styled-components';
@@ -11,51 +9,78 @@ import { useNavigate } from 'react-router-dom';
 
 import { BookmarkFill } from "../../assets/index";
 import PageState from '../common/PageState';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { postApis } from '../../api/api-functions/postApis';
 
-const List = ({ posts, main, isLoading, istLastPage, setPage }) => {
+const List = ({ searchState }) => {
 
     const navigate = useNavigate();
-
     const [ref, inView] = useInView();
 
-    //마지막 체크를 위해
-    const [listLength, setListLength] = useState(0);
+    //리스트 받아오기
+    const getSearchPosts = async (searchState, pageParam) => {
+        const res = await postApis.searchPostAX(searchState, pageParam);
+        const content = res.data.data.content;
+
+        return { postList: content, isLastPage: content.length !== 10, nextPage: pageParam + 1 };
+    }
+
+    //리스트 받아오기
+    const result = useInfiniteQuery({
+        queryKey: ['postList'],
+        queryFn: ({ pageParam = 0 }) => getSearchPosts(searchState, pageParam),
+        getNextPageParam: ({ isLastPage, nextPage }) => {
+            if (!isLastPage) return nextPage;
+        },
+        refetchOnWindowFocus: false,
+        retry: 0,
+    })
 
     useEffect(() => {
-        // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니고 마지막이 아니면 페이지+1
-        if (inView && !isLoading && !istLastPage) {
-            setPage(prevState => prevState + 1)
+        // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니고 다음페이지가 있다면
+        if (inView && !result.isFetching && result.hasNextPage) {
+            result.fetchNextPage();
         }
-    }, [inView, isLoading])
+    }, [inView, result.isFetching])
+
+    useEffect(() => {
+        //검색상태가 바뀌면 server state refetch
+        if (!result.isFetching) result.refetch(searchState, 0);
+    }, [searchState])
+
+    useEffect(() => {
+        console.log("main result", result);
+    }, [result])
 
     return (
         <StCardWrap>
-            {Object.keys(posts).length < 1 ?
-                <PageState display='flex' state='notFound' imgWidth='25%' height='60vh'
-                    text='리스트가 존재하지 않습니다.' />
-                :
-                posts.map((val, i) => {
-                    return (
-                        <StCardItem key={i} onClick={() => { navigate(`/${main}posts/${val.postId}`) }}>
-                            <StImgBox imgUrl={val.imgUrl} >
-                                {val.bookMarkStatus &&
+            <PageState display={result.data?.pages[0].postList.length === 0 ? 'flex' : 'none'} state='notFound' imgWidth='25%' height='60vh'
+                text='리스트가 존재하지 않습니다.' />
+
+            {result.data?.pages.map((page, i) => (
+                <Fragment key={i}>
+                    {page.postList.map((post) => (
+                        <StCardItem key={post.postId} onClick={() => { navigate(`/${searchState.main}posts/${post.postId}`) }}>
+                            <StImgBox imgUrl={post.imgUrl} >
+                                {post.bookMarkStatus &&
                                     <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
                                 }
                             </StImgBox>
                             <StContentBox>
-                                <div className='titleBox'>{val.title.length > 10 ? val.title.substring(0, 9) + '...' : val.title}</div>
-                                <div>{val.category}</div>
-                                <div className='contentBox'>{val.content}</div>
+                                <div className='titleBox'>{post.title.length > 10 ? post.title.substring(0, 9) + '...' : post.title}</div>
+                                <div>{post.category}</div>
+                                <div className='contentBox'>{post.content}</div>
                                 <div className='dtateBox'>
-                                    <div>{val.endPeriod}{val.date}</div>
-                                    <div className='lookBox'>{val.viewCount}&nbsp;<BsEye style={{ width: '16px', height: '16px' }} /></div>
+                                    <div>{post.endPeriod}{post.date}</div>
+                                    <div className='lookBox'>{post.viewCount}&nbsp;<BsEye style={{ width: '16px', height: '16px' }} /></div>
                                 </div>
                             </StContentBox>
                         </StCardItem>
-                    )
-                })}
+                    ))}
+                </Fragment>
+            ))}
             <PageState
-                display={posts.length > 0 && isLoading ? 'flex' : 'none'}
+                display={result.isFetching ? 'flex' : 'none'}
                 state='notFound'
                 imgWidth='25%'
                 height=''
@@ -63,7 +88,7 @@ const List = ({ posts, main, isLoading, istLastPage, setPage }) => {
                 text='검색중...' />
 
             {
-                posts.length > 0 && <div ref={ref} />
+                result.hasNextPage && <div ref={ref} />
             }
         </StCardWrap>
     );

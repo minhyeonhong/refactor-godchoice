@@ -2,8 +2,8 @@ import { instance } from "../instance";
 
 export const postApis = {
     /**전체글 검색 조회 */
-    searchPostAX: (searchInfo) => instance.get(
-        `${process.env.REACT_APP_API_URL}/allposts`, { params: { ...searchInfo, tag: searchInfo.tag.join() } }),
+    searchPostAX: (searchInfo, page = 0) => instance.get(
+        `${process.env.REACT_APP_API_URL}/allposts`, { params: { ...searchInfo, tag: searchInfo.tag.join(), page } }),
     /**상세글 조회 */
     getPostAX: (post) => instance.get(`${process.env.REACT_APP_API_URL}/${post.url}/${post.postId}`),
 

@@ -1,7 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import { commentApis } from "../../api/api-functions/commentApis"
-import axios from "axios";
-import { setCookie } from "../../cookie/cookie";
 
 
 /**댓글 등록 썬크 */
