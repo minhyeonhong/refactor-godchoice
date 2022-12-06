@@ -16,56 +16,57 @@ const Header = () => {
 
     const navigate = useNavigate();
 
-    const EventSource = NativeEventSource || EventSourcePolyfill;
-
+    //연결 여부
     const [listening, setListening] = useState(false);
-    const [data, setData] = useState([]);
-    const [value, setValue] = useState(null);
-    const [meventSource, msetEventSource] = useState(undefined);
+    //로그인 여부
+    const isLogin = localStorage.getItem('token') !== null;
 
     let eventSource = undefined;
-
     useEffect(() => {
         console.log("listening", listening);
 
-        if (!listening) {
-            eventSource = new EventSourcePolyfill("http://54.180.201.200/subscribe", {
+        if (!listening && isLogin) {
+            eventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}/subscribe`, {
                 headers: {
                     "Access_Token": localStorage.getItem("token"),
                     'Content-Type': 'text/event-stream',
                 }, heartbeatTimeout: 600000, withCredentials: true,
             });
 
-            msetEventSource(eventSource);
-
             console.log("eventSource", eventSource);
 
+            //sse 연결
             eventSource.onopen = (e) => {
-                console.log("connection opened");
-                console.log('e', e)
+                console.log('connection opened', e)
             };
 
+            //sse 받는 처리
             eventSource.onmessage = (event) => {
-                console.log("result", event);
-                console.log("result", JSON.parse(event.data));
-                setData(old => [...old, event.data]);
-                setValue(event.data);
+                console.log("result onmessage", event);
+                //console.log("result", JSON.parse(event.data));
             };
 
+            //sse 에러
             eventSource.onerror = event => {
                 console.log(event.target.readyState);
-                if (event.target.readyState === EventSource.CLOSED) {
-                    console.log("eventsource closed (" + event.target.readyState + ")");
+                if (eventSource !== undefined) {
+                    if (event.target.readyState === EventSourcePolyfill.CLOSED) {
+                        console.log("eventsource closed (" + event.target.readyState + ")");
+                    }
+                    eventSource.close();
+                    setListening(false);
                 }
-                eventSource.close();
             };
 
             setListening(true);
         }
 
         return () => {
-            eventSource.close();
-            console.log("eventsource closed");
+            if (!isLogin && eventSource !== undefined) {
+                eventSource.close();
+                setListening(false);
+                console.log("eventsource closed");
+            }
         };
     }, []);
 

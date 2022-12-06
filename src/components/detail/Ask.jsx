@@ -28,8 +28,15 @@ const Ask = ({ postId, url }) => {
             refetchOnWindowFocus: false, // react-query는 사용자가 사용하는 윈도우가 다른 곳을 갔다가 다시 화면으로 돌아오면 이 함수를 재실행합니다. 그 재실행 여부 옵션 입니다.
             retry: 0, // 실패시 재호출 몇번 할지
             onSuccess: res => { // 성공시 호출
-                setPost(res.data.data);
-                setmodPost(res.data.data);
+                if (res.data.status === 200) {
+                    setPost(res.data.data);
+                    setmodPost(res.data.data);
+                }
+            },
+            onError: res => {
+                console.log("error", res);
+                alert("잘못된 경로입니다.");
+                window.location.replace("/");
             }
         })
     //수정하기
@@ -269,75 +276,79 @@ const Ask = ({ postId, url }) => {
                             </div>
                         )
                         :
-                        post !== undefined &&
-                        (
-                            <>
-                                <STIng style={{ margin: "14px 0" }}>
-                                    <div>
-                                        <STImg2>
-                                            <div style={{ margin: "0 5px 0 18px", paddingTop: "10px" }}>
-                                                <img src={Views} style={{ width: "20px", height: "20px", flex: "2", marginRight: "4px" }} />
-                                            </div>
-                                            <div style={{ margin: "10px 20px 0 0 " }}> {post.viewCount}</div>
+                        post === undefined ?
+                            <PageState display='flex'
+                                flexDirection='column' state='notFound' imgWidth='25%' height='100vh'
+                                text='삭제된 게시글 입니다.' />
+                            :
+                            (
+                                <>
+                                    <STIng style={{ margin: "14px 0" }}>
+                                        <div>
+                                            <STImg2>
+                                                <div style={{ margin: "0 5px 0 18px", paddingTop: "10px" }}>
+                                                    <img src={Views} style={{ width: "20px", height: "20px", flex: "2", marginRight: "4px" }} />
+                                                </div>
+                                                <div style={{ margin: "10px 20px 0 0 " }}> {post.viewCount}</div>
 
-                                        </STImg2>
+                                            </STImg2>
+                                        </div>
+                                        <div>
+                                            <PostScrap style={{ position: "absolute", right: "10px" }} bookMarkStatus={post.bookMarkStatus} />
+                                        </div>
+
+                                    </STIng>
+                                    <div style={{ marginBottom: "14px" }}>
+                                        <img src={post.userImg} style={{ width: "36px", height: "36px", borderRadius: "30px" }} />
+                                        <STUsername>{post.userName}</STUsername>
                                     </div>
+
+                                    <STInput style={{ height: "48px", marginBottom: "8px" }}>{post.title}</STInput>
+
                                     <div>
-                                        <PostScrap style={{ position: "absolute", right: "10px" }} bookMarkStatus={post.bookMarkStatus} />
+                                        <Carousel >
+                                            {
+                                                post.askPostImgList
+                                                && post.askPostImgList.map((img, i) => {
+                                                    return (
+                                                        <Carousel.Item key={img.id + i}>
+                                                            <Img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
+                                                                src={img.postImgUrl} />
+                                                        </Carousel.Item>)
+                                                })
+                                            }
+                                        </Carousel>
                                     </div>
 
-                                </STIng>
-                                <div style={{ marginBottom: "14px" }}>
-                                    <img src={post.userImg} style={{ width: "36px", height: "36px", borderRadius: "30px" }} />
-                                    <STUsername>{post.userName}</STUsername>
-                                </div>
+                                    <StContent style={{ marginBottom: "14px", padding: "5px", borderRadius: "10px" }} value={post.content || ""} readOnly />
 
-                                <STInput style={{ height: "48px", marginBottom: "8px" }}>{post.title}</STInput>
+                                    <div>행사장 링크</div>
+                                    <STInput style={{ marginBottom: "14px", minHeight: "40px", padding: "5px" }}>
+                                        <a href={post.postLink} target="_blank">{post.postLink}</a>
+                                    </STInput>
 
-                                <div>
-                                    <Carousel >
-                                        {
-                                            post.askPostImgList
-                                            && post.askPostImgList.map((img, i) => {
-                                                return (
-                                                    <Carousel.Item key={img.id + i}>
-                                                        <Img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
-                                                            src={img.postImgUrl} />
-                                                    </Carousel.Item>)
-                                            })
-                                        }
-                                    </Carousel>
-                                </div>
-
-                                <StContent style={{ marginBottom: "14px", padding: "5px", borderRadius: "10px" }} value={post.content || ""} readOnly />
-
-                                <div>행사장 링크</div>
-                                <STInput style={{ marginBottom: "14px", minHeight: "40px", padding: "5px" }}>
-                                    <a href={post.postLink} target="_blank">{post.postLink}</a>
-                                </STInput>
-
-                                {
-                                    modPost.postAddress && (
-                                        <>
-                                            <div>행사장소</div>
-                                            <div style={{ display: "flex", marginBottom: "8px" }}>
-                                                <STAddressButton style={{ flex: "2" }}>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressButton>
-                                                <STInput style={{ flex: "8", marginLeft: "5px" }}>{post.postAddress}</STInput  >
-                                            </div>
-                                        </>
-                                    )
-                                }
+                                    {
+                                        modPost.postAddress && (
+                                            <>
+                                                <div>행사장소</div>
+                                                <div style={{ display: "flex", marginBottom: "8px" }}>
+                                                    <STAddressButton style={{ flex: "2" }}>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressButton>
+                                                    <STInput style={{ flex: "8", marginLeft: "5px" }}>{post.postAddress}</STInput  >
+                                                </div>
+                                            </>
+                                        )
+                                    }
 
 
-                                <KakaoMap address={post.postAddress} width='100%' height='144px' />
+                                    <KakaoMap address={post.postAddress} width='100%' height='144px' />
 
-                                {localStorage.getItem('userId') === post.userId.toString() &&
-                                    (<div>
-                                        <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={() => { onAskDelete(postId); }}>삭제</STEditButton>
-                                        <STEditButton onClick={toggleEdit}>수정</STEditButton>
-                                    </div>)}
-                            </>
-                        )}
+                                    {localStorage.getItem('userId') === post.userId.toString() &&
+                                        (<div>
+                                            <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={() => { onAskDelete(postId); }}>삭제</STEditButton>
+                                            <STEditButton onClick={toggleEdit}>수정</STEditButton>
+                                        </div>)}
+                                </>
+                            )}
                     <Comment postId={postId} kind='ask' />
 
                 </StWrap >

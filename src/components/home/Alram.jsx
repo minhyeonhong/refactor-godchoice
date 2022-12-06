@@ -1,70 +1,58 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components'
-import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { __deleteAlram, __putAlram } from '../../redux/modules/postSlice3';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { notificationApis } from '../../api/api-functions/notificationApis';
+import { useNavigate } from 'react-router-dom';
+
 function Alram({ popUpNotice }) {
 
+    const navigate = useNavigate();
+    //업데이트 인풋
     const [noticeList, setNoticeList] = useState([]);
-    const [isError, setError] = useState(false)
-    const [isLoading, setLoading] = useState(false)
-
-    // get 해오기
-    useEffect(() => {
-        const fetchData = async () => {
-            setError(false);
-            setLoading(true);
-
-            try {
-                const res = await axios('http://54.180.201.200/getnotice', {
-                    headers: {
-                        "Access_Token": localStorage.getItem("token"),
-                    }
-                })
-                console.log("alldata", res.data.data)
+    //디테일 페이지 server state
+    const { isSuccess, isLoading, refetch } = useQuery(['getNoticeList'], //key
+        () => notificationApis.getNotificationAX(),
+        {//options
+            refetchOnWindowFocus: false, // react-query는 사용자가 사용하는 윈도우가 다른 곳을 갔다가 다시 화면으로 돌아오면 이 함수를 재실행합니다. 그 재실행 여부 옵션 입니다.
+            retry: 0, // 실패시 재호출 몇번 할지
+            onSuccess: res => { // 성공시 호출
+                console.log("res.data", res.data);
                 setNoticeList(res.data.data);
-            } catch (error) {
-                setError(true);
-            } setLoading(false);
-        }
-        fetchData()
-    }, [])
-
-
-
-    const dispatch = useDispatch();
-
-    const onDeleteAlram = (id) => {
-        dispatch(__deleteAlram(id))
-    }
-
-    const [unread, setUnread] = useState();
-
-    // unreadnotice get 해오기
-    useEffect(() => {
-        const fetchData = async () => {
-            setError(false);
-            setLoading(true);
-
-            try {
-                const res = await axios('http://54.180.201.200/unreadnotice', {
-                    headers: {
-                        "Access_Token": localStorage.getItem("token"),
-                    }
-                })
-                console.log("allread", res.data)
-                setUnread(res.data);
-
-            } catch (error) {
-                setError(true);
-            } setLoading(false);
-        }
-        fetchData()
-    }, [])
-
+            }
+        })
+    //알림 읽고 해당 게시물로 이동
+    const putNotice = useMutation({
+        mutationFn: id => {
+            return notificationApis.putNotificationAX(id);
+        },
+        onSuccess: res => {
+            if (res.data.status === 200) {
+                navigate(res.data.msg);
+            }
+        },
+    })
     const onClickPut = (id) => {
-        dispatch(__putAlram(id))
+        putNotice.mutate(id);
     }
+
+    //알림 삭제
+    const deleteNotice = useMutation({
+        mutationFn: id => {
+            return notificationApis.deleteNotificationAX(id);
+        },
+        onSuccess: res => {
+            if (res.data.status === 200) {
+                refetch();
+            }
+        },
+    })
+    const onDeleteAlram = (id) => {
+        deleteNotice.mutate(id);
+    }
+
+    useEffect(() => {
+        console.log("noticeList", noticeList);
+    }, [noticeList])
 
     return (
         <ModalWrap onClick={popUpNotice}>
@@ -119,6 +107,7 @@ const STBox = styled.div`
 const STDelete = styled.div`
     float: right;
     padding-right: 10px;
+    cursor: pointer;
 `
 const STCreatAT = styled.div`
     color:gray;
