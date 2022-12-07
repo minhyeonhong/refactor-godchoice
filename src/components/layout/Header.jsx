@@ -32,7 +32,7 @@ const Header = () => {
 
     //알림 server state
     const resList = result.data?.data?.data
-    const unReadNum = resList.filter((notice) => { return !notice.readStatus }).length;
+    const unReadNum = resList?.filter((notice) => { return !notice.readStatus }).length;
     const [alramNum, setAlarmNum] = useState(0 || unReadNum);
 
     //sse handle
