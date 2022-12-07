@@ -295,7 +295,7 @@ const StCommentInputBox = styled.div`
     padding: 0px;
     gap: 8px;
     .inputBox{
-        width : 100%;
+        width : 90%;
         display: flex;
         flex-direction: row;
         align-items: center;

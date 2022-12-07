@@ -249,7 +249,7 @@ const GatherPost = () => {
                     </div>
 
                     <div style={{ marginBottom: "14px" }}>
-                        <label>행사장 링크</label><br />
+                        <label>관련 링크</label><br />
                         <STInput type="text" placeholder="링크" name="postLink" onChange={gatherPostsHandle} style={{ width: "100%" }} />
                     </div>
 
@@ -295,7 +295,6 @@ const STSelectButton2 = styled(ToggleButton)`
     border : transparent;
     height : 48px;
     color: black;
-    font-size: 14px;
     border-radius: 5px;
     padding-top: 13px;
 `

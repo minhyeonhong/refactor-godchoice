@@ -19,6 +19,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { postApis } from '../../api/api-functions/postApis';
 import useInput from '../../hooks/useInput';
 import PageState from '../common/PageState';
+import TextAreaAutoResize from "react-textarea-autosize";
 
 const Gather = ({ postId, url }) => {
 
@@ -266,8 +267,26 @@ const Gather = ({ postId, url }) => {
                                 }
 
                             </StCarouselWrap>
-                            <div>* '+'버튼 옆에 있는 사진을 클릭하면 삭제됩니다.</div>
-                            <AllTextarea style={{ width: "100%", height: "200px", marginTop: "14px", marginBottom: "14px" }} name="content" defaultValue={modPost.content || ""} onChange={modPostHandle} />
+                            <div>* '+'버튼 옆에 있는 사진을 클릭하면 사진 선택이 취소됩니다.</div>
+                            {/* <AllTextarea style={{ width: "100%", height: "200px", marginTop: "14px",
+                             marginBottom: "14px" }} name="content"
+                             defaultValue={modPost.content || ""} onChange={modPostHandle} /> */}
+
+                            <TextAreaAutoResize
+                                name='content' value={modPost.content || ""} onChange={modPostHandle}
+                                defaultValue={post.content}
+                                minRows={10}
+                                maxLength={2500}
+                                placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요"
+                                style={{
+                                    width: "100%",
+                                    resize: "none",
+                                    outline: "none",
+                                    overflow: "hidden",
+                                    border: "none",
+                                    borderRadius: "5px",
+                                }}
+                            />
 
                             <SelectWrap>
 
@@ -315,7 +334,7 @@ const Gather = ({ postId, url }) => {
                             </div>
 
                             <div style={{ marginBottom: "14px" }}>
-                                <label>행사장 링크</label><br />
+                                <label>관련 링크</label><br />
                                 <STLinkTextarea type="text" name="postLink" defaultValue={modPost.postLink} onChange={modPostHandle} />
                             </div>
 
@@ -362,8 +381,8 @@ const Gather = ({ postId, url }) => {
                                     />
                                 </StRadioBox>
                                 <div >
+                                    <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={toggleEdit}>취소</STEditButton>
                                     <STEditButton onClick={onSubmitGather}>수정완료</STEditButton>
-                                    <STEditButton style={{ background: "#515466", marginRight: "5px" }} onClick={toggleEdit}>취소</STEditButton>
                                 </div>
                             </div>
                         </div>
@@ -434,7 +453,19 @@ const Gather = ({ postId, url }) => {
                                         }
                                     </Carousel>
                                 </div>
-                                <StContent style={{ marginBottom: "14px", padding: "5px", borderRadius: "10px" }} value={post.content || ""} readOnly />
+                                {/* <StContent style={{ marginBottom: "14px", padding: "5px", borderRadius: "10px" }} value={post.content || ""} readOnly /> */}
+                                <TextAreaAutoResize
+                                    defaultValue={post.content}
+                                    minRows={10}
+                                    style={{
+                                        resize: "none",
+                                        outline: "none",
+                                        overflow: "hidden",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                    }}
+                                    readOnly
+                                />
 
                                 <div>카카오 링크</div>
                                 <STInput style={{ marginBottom: "14px" }}>
@@ -443,7 +474,7 @@ const Gather = ({ postId, url }) => {
 
                                 {
                                     post.postLink !== "" &&
-                                    <>  <div>행사장 링크</div>
+                                    <>  <div>관련 링크</div>
                                         <STInput style={{ marginBottom: "14px", minHeight: "40px" }}>
                                             <a href={post.postLink} target="_blank">{post.postLink}</a>
                                         </STInput>

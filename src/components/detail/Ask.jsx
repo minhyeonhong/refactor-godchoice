@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Comment from '../common/Comment';
 import KakaoMap from '../common/KakaoMap';
 import Carousel from 'react-bootstrap/Carousel';
-import { StContent, STUsername, StCarouselWrap, STUploadButton, STIng, STImg2, STAddressButton, STEditButton, StSearchBox, StWrap, STInput, STContentTextarea, STInput3, STAddressDiv, ModalWrap } from '../styles/DetailPost.styled.js'
+import { StContent, STLinkTextarea, STUsername, StCarouselWrap, STUploadButton, STIng, STImg2, STAddressButton, STEditButton, StSearchBox, StWrap, STInput, STContentTextarea, STInput3, STAddressDiv, ModalWrap } from '../styles/DetailPost.styled.js'
 
 import SearchAddress from '../post/SearchAddress';
 import useImgUpload from "../../hooks/useImgUpload";
@@ -16,6 +16,7 @@ import { postApis } from '../../api/api-functions/postApis';
 import useInput from '../../hooks/useInput';
 import PageState from '../common/PageState';
 import { useNavigate } from 'react-router-dom';
+import TextAreaAutoResize from "react-textarea-autosize";
 
 const Ask = ({ postId, url }) => {
     const navigate = useNavigate();
@@ -223,13 +224,28 @@ const Ask = ({ postId, url }) => {
                                 }
 
                             </StCarouselWrap>
-                            <div>* '+'버튼 옆에 있는 사진을 클릭하면 삭제됩니다.</div>
+                            <div>* '+'버튼 옆에 있는 사진을 클릭하면 사진 선택이 취소됩니다.</div>
                         </div>
 
-                        <STContentTextarea style={{ height: "200px", marginTop: "14px", marginBottom: "14px" }} type="text" name="content" defaultValue={modPost.content || ""} onChange={modPostHandle} />
+                        {/* <STContentTextarea style={{ height: "200px", marginTop: "14px", marginBottom: "14px" }} type="text" name="content" defaultValue={modPost.content || ""} onChange={modPostHandle} /> */}
+                        <TextAreaAutoResize
+                            name='content' value={modPost.content || ""} onChange={modPostHandle}
+                            defaultValue={post.content}
+                            minRows={10}
+                            maxLength={2500}
+                            placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요"
+                            style={{
+                                width: "100%",
+                                resize: "none",
+                                outline: "none",
+                                overflow: "hidden",
+                                border: "none",
+                                borderRadius: "5px",
+                            }}
+                        />
 
-                        <label>행사장 링크</label><br />
-                        <STInput3 type="text" name="postLink" defaultValue={modPost.postLink} onChange={modPostHandle} style={{ width: "100%", marginBottom: "14px", height: "100px" }} />
+                        <label>관련 링크</label><br />
+                        <STLinkTextarea type="text" name="postLink" defaultValue={modPost.postLink} onChange={modPostHandle} style={{ width: "100%", marginBottom: "14px" }} />
 
                         <div>
 
@@ -250,6 +266,7 @@ const Ask = ({ postId, url }) => {
                                             <STAddressDiv style={{ flex: "1" }}>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressDiv>
                                             <STInput style={{ flex: "4", marginLeft: "10px" }}>{modPost.postAddress}</STInput>
                                         </div>
+                                        <KakaoMap address={modPost.postAddress} width='100%' height='130px' />
                                     </>
                                 )
                             }
@@ -258,12 +275,10 @@ const Ask = ({ postId, url }) => {
                                 modPost.postAddress !== post.postAddress && <STInput3 style={{ float: "right", width: "79%", height: "40px", marginTop: "10px" }} type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle} />
                             }
 
-
-                            <KakaoMap address={modPost.postAddress} width='100%' height='130px' />
                         </div>
-                        <div>
-                            <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={onSubmitAsk}> 수정완료</STEditButton>
-                            <STEditButton onClick={toggleEdit}>취소</STEditButton>
+                        <div style={{ marginTop: "20px" }}>
+                            <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={toggleEdit}>취소</STEditButton>
+                            <STEditButton onClick={onSubmitAsk} >수정완료</STEditButton>
                         </div>
                     </div>
                 )
@@ -312,12 +327,24 @@ const Ask = ({ postId, url }) => {
                                 </Carousel>
                             </div>
 
-                            <StContent style={{ marginBottom: "14px", padding: "5px", borderRadius: "10px" }} value={post.content || ""} readOnly />
+                            {/* <StContent style={{ marginBottom: "14px", padding: "5px", borderRadius: "10px" }} value={post.content || ""} readOnly /> */}
+                            <TextAreaAutoResize
+                                defaultValue={post.content}
+                                minRows={10}
+                                style={{
+                                    resize: "none",
+                                    outline: "none",
+                                    overflow: "hidden",
+                                    border: "none",
+                                    borderRadius: "5px",
+                                }}
+                                readOnly
+                            />
 
 
                             {post.postLink !== "" &&
                                 <div>
-                                    <div>행사장 링크</div>
+                                    <div>관련 링크</div>
                                     <STInput style={{ marginBottom: "14px", minHeight: "40px", padding: "5px" }}>
                                         <a href={post.postLink} target="_blank">{post.postLink}</a>
                                     </STInput>

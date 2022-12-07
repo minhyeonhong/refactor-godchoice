@@ -86,7 +86,7 @@ const FestivalPost = () => {
             postLink: festival.postLink,
         }
 
-
+        console.log(obj)
         if (isAdmin) {
             if (originFiles.length > 0) {
                 originFiles.forEach((file) => {
@@ -105,7 +105,7 @@ const FestivalPost = () => {
             if (festival.endPeriod === "") { return alert('행사마감 일자를 입력하세요') }
             if (festival.title === "") { return alert('제목을 입력하세요') }
             if (festival.content === "") { return alert('내용을 입력하세요') }
-            if (festival.postLink === "") { return alert('행사장 링크를 입력하세요') }
+            // if (festival.postLink === "") { return alert('관련 링크를 입력하세요') }
             if (postAddress === "") { return alert('주소를 등록하세요') }
 
             //링크 검사
@@ -221,7 +221,7 @@ const FestivalPost = () => {
                     </SelBottom>
 
                     <Form.Group className="mb-3" controlId="formGridAddress1">
-                        <Form.Label>행사장 링크</Form.Label>
+                        <Form.Label>관련 링크</Form.Label>
                         <Form.Control type="text" placeholder="링크" name="postLink" onChange={festivalHandle} style={{ width: "100%", height: "45px", border: "none", margin: "0 0 10px 0" }} />
                     </Form.Group>
 

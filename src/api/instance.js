@@ -35,19 +35,19 @@ instance.interceptors.response.use(function (response) {
                 alert("로그인 시간이 만료되었습니다.\n다시 로그인 해주세요.");
                 localStorage.clear();
                 window.location.replace("/login");
-
-                // const res = await axios.get(`${process.env.REACT_APP_API_URL}/member/signup/issue/token`, {
-                //     headers: {
-                //         "Refresh_Token": refreshToken
-                //     }
-                // })
-
-                // console.log("인터셉터 res", res);
-                // if (res.data.status === 200) {
-                //     localStorage.setItem("token", res.headers.access_token);
-                //     localStorage.setItem("refreshToken", res.headers.refresh_token);
-                // }
             }
+            //     // const res = await axios.get(`${process.env.REACT_APP_API_URL}/member/signup/issue/token`, {
+            //     //     headers: {
+            //     //         "Refresh_Token": refreshToken
+            //     //     }
+            //     // })
+
+            //     // console.log("인터셉터 res", res);
+            //     // if (res.data.status === 200) {
+            //     //     localStorage.setItem("token", res.headers.access_token);
+            //     //     localStorage.setItem("refreshToken", res.headers.refresh_token);
+            //     // }
+            // }
 
             break;
         case 404:
