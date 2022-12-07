@@ -6,15 +6,8 @@ import notFoundImg from '../../assets/images/common/spiner_eyes.gif'
 import failRequestImg from '../../assets/images/common/404.png'
 
 import Button from '../elements/Button';
-import { useEffect } from 'react';
 
 const PageState = (props) => {
-
-    useEffect(() => {
-        if (props.state === 'failRequest') {
-            setTimeout(() => { window.location.reload() }, 2000);
-        }
-    }, [props])
 
     return (
         <StBackground
@@ -51,7 +44,6 @@ const PageState = (props) => {
 
             <StText>{props.text}</StText>
             {
-
                 props.state === 'failRequest' &&
                 <MyDoneBtnWrap>
                     <Button btnType="submit" onClick={() => window.location.reload()}>재시도</Button>
