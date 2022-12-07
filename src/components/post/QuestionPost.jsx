@@ -57,7 +57,7 @@ const QuestionPost = () => {
         if (question.title === "") { return alert('제목을 입력하세요') }
         if (question.content === "") { return alert('내용을 입력하세요') }
 
-        //행사장 링크(필수 아님)
+        //관련 링크(필수 아님)
         const link = /(http|https):\/\//.test(question.postLink)
         if (question.postLink !== "") {
             if (link === false) {
@@ -138,7 +138,7 @@ const QuestionPost = () => {
                     <AllTextarea type="text" placeholder="내용을 작성해주세요" name="content" onChange={questionHandle} style={{ width: "100%", height: "200px" }} />
 
                     <div style={{ marginBottom: "14px" }}>
-                        <label>행사장 링크</label>
+                        <label>관련 링크</label>
                         <STInput type="text" placeholder="링크" name="postLink" onChange={questionHandle} style={{ width: "100%" }} />
                     </div>
 

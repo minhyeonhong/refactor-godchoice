@@ -88,9 +88,8 @@ export const STBox2 = styled.div`
     font-size: 17px;
 `
 
-export const StContent = styled.textarea`
+export const StContent = styled.div`
     width: 100%;
-    height: 144px;
     border : transparent;
     background: #FFFFFF;
     padding : 6px 10px;

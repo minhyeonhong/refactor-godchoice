@@ -123,7 +123,6 @@ export const STDiv = styled.div`
 
 export const STInput2 = styled.input`
     height : 48px;
-    font-size: 14px;
     background-color: #FFF;
     border-radius: 5px;
     padding:12px 16px;
