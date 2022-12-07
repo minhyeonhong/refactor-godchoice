@@ -16,6 +16,7 @@ import { postApis } from '../../api/api-functions/postApis';
 import useInput from '../../hooks/useInput';
 import PageState from '../common/PageState';
 import { useNavigate } from 'react-router-dom';
+import TextAreaAutoResize from "react-textarea-autosize";
 
 const Ask = ({ postId, url }) => {
     const navigate = useNavigate();
@@ -226,7 +227,22 @@ const Ask = ({ postId, url }) => {
                             <div>* '+'버튼 옆에 있는 사진을 클릭하면 사진 선택이 취소됩니다.</div>
                         </div>
 
-                        <STContentTextarea style={{ height: "200px", marginTop: "14px", marginBottom: "14px" }} type="text" name="content" defaultValue={modPost.content || ""} onChange={modPostHandle} />
+                        {/* <STContentTextarea style={{ height: "200px", marginTop: "14px", marginBottom: "14px" }} type="text" name="content" defaultValue={modPost.content || ""} onChange={modPostHandle} /> */}
+                        <TextAreaAutoResize
+                            name='content' value={modPost.content || ""} onChange={modPostHandle}
+                            defaultValue={post.content}
+                            minRows={10}
+                            maxLength={2500}
+                            placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요"
+                            style={{
+                                width: "100%",
+                                resize: "none",
+                                outline: "none",
+                                overflow: "hidden",
+                                border: "none",
+                                borderRadius: "5px",
+                            }}
+                        />
 
                         <label>관련 링크</label><br />
                         <STLinkTextarea type="text" name="postLink" defaultValue={modPost.postLink} onChange={modPostHandle} style={{ width: "100%", marginBottom: "14px" }} />
@@ -311,7 +327,19 @@ const Ask = ({ postId, url }) => {
                                 </Carousel>
                             </div>
 
-                            <StContent style={{ marginBottom: "14px", padding: "5px", borderRadius: "10px" }} value={post.content || ""} readOnly />
+                            {/* <StContent style={{ marginBottom: "14px", padding: "5px", borderRadius: "10px" }} value={post.content || ""} readOnly /> */}
+                            <TextAreaAutoResize
+                                defaultValue={post.content}
+                                minRows={10}
+                                style={{
+                                    resize: "none",
+                                    outline: "none",
+                                    overflow: "hidden",
+                                    border: "none",
+                                    borderRadius: "5px",
+                                }}
+                                readOnly
+                            />
 
 
                             {post.postLink !== "" &&
