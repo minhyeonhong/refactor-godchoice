@@ -18,7 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import useInput from "../hooks/useInput";
 
 // 가이드 모달
-import { flexColumn, flexRow } from "../components/styles/Flex";
+import { flexRow } from "../components/styles/Flex";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Autoplay, Navigation, Pagination } from "swiper";
 import "swiper/swiper-bundle.min.css";
@@ -30,6 +30,7 @@ import guide01 from "../assets/images/banner/guide/guide_01.jpg";
 import guide02 from "../assets/images/banner/guide/guide_02.jpg";
 import guide03 from "../assets/images/banner/guide/guide_03.jpg";
 import guide04 from "../assets/images/banner/guide/guide_04.jpg";
+import { useEffect } from "react";
 
 SwiperCore.use([Pagination, Autoplay, Navigation]);
 // ------------- 여기까지 ---------------
@@ -37,7 +38,7 @@ SwiperCore.use([Pagination, Autoplay, Navigation]);
 const Home = () => {
 
   //배너 가져오기
-  const banner = useQuery(['banner'], () => postApis.getAdminPostAX(), { cacheTime: 3000, refetchOnWindowFocus: false, retry: 1 })
+  const banner = useQuery(['banner'], async () => await postApis.getAdminPostAX(), { cacheTime: 3000, refetchOnWindowFocus: false, retry: 1 })
 
   //유저 지역정보 가져오기
   const userAddressTag = localStorage.getItem('userAddressTag');
@@ -120,7 +121,8 @@ const Home = () => {
         {/* 슬라이드 */}
         <StCarouselWrap>
           <Carousel >
-            {banner?.data?.data?.data?.length === 0 ?
+            {!banner.isLoading &&
+              banner.data?.data.data.length === 0 ?
               <Carousel.Item>
                 <PageState
                   display='flex'
@@ -128,7 +130,7 @@ const Home = () => {
                   text='등록된 배너가 없습니다.' />
               </Carousel.Item>
               :
-              banner?.data?.data?.data?.map((post) => {
+              banner.data?.data.data.map((post) => {
                 return (
                   <Carousel.Item key={post.id} onClick={() => {
                     if (post.postLink === "https://이용방법") {

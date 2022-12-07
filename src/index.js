@@ -4,7 +4,6 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-import { CookiesProvider } from 'react-cookie';
 import 'bootstrap/dist/css/bootstrap.css';
 import {
   QueryClient,
@@ -16,15 +15,19 @@ import {
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 serviceWorkerRegistration.register();
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      suspense: true,
+    },
+  },
+});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <CookiesProvider>
-    <QueryClientProvider client={queryClient}>
-      <App />
-    </QueryClientProvider>
-  </CookiesProvider>
+  <QueryClientProvider client={queryClient}>
+    <App />
+  </QueryClientProvider>
 );
 
 reportWebVitals();
