@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Comment from '../common/Comment';
 import { FiSearch } from 'react-icons/fi';
 import {
-    STLinkTextarea, STInput3, ModalWrap, StWrap, StCarouselWrap, STUploadButton, StTypeBox, STIng, STIngDiv, STUsername, STInput, STButton, STBox2, StContent, STAddressButton, STEditButton, STImg, SelTop, SelBottom, STSelect, STDateInput, STTitleInput, STContentTextarea, StSearchBox, STAddressDiv
+    STLinkTextarea, STInput3, ModalWrap, StWrap, StCarouselWrap, STUploadButton, StTypeBox, STIng, STIngDiv, STUsername, STInput, STButton, STBox2, StContent, STAddressButton, STEditButton, STImg, SelTop, SelBottom, STSelect, STDateInput, STTitleInput, StSearchBox, STAddressDiv
 } from '../styles/DetailPost.styled.js'
 import useImgUpload from "../../hooks/useImgUpload";
 import Views from '../../assets/icon/Views.svg'
@@ -17,6 +17,9 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { postApis } from '../../api/api-functions/postApis';
 import useInput from '../../hooks/useInput';
 import PageState from '../common/PageState';
+import { useCallback } from 'react';
+import styled from 'styled-components';
+import { useMemo } from 'react';
 
 const Event = ({ postId, url }) => {
 
@@ -147,14 +150,28 @@ const Event = ({ postId, url }) => {
     const onEventDelete = (postId) => {
         deleteEventPost.mutate(postId);
     }
+
+    const handleResize = useCallback(() => {
+        console.log("동작하나")
+        textRef.current.style.height = textRef.current.scrollHeight + "px"
+    }, [])
+
+    useEffect(() => {
+
+    }, [])
+
+    const textRef = useRef();
+
     if (result.isLoading) {
         return < PageState
             display={'flex'}
             state='loading' imgWidth='25%' height='100vh'
             text='잠시만 기다려 주세요.' />;
     }
+
     return (
         <StWrap>
+
             {!mod ?
                 post === undefined ?
                     <PageState display='flex'
@@ -221,14 +238,18 @@ const Event = ({ postId, url }) => {
                                     })}
                             </Carousel>
                         </StCarouselWrap>
-                        <StContent type='text' style={{ marginBottom: "14px" }} value={post.content || ""} readOnly />
 
-
-                        <div>행사장 링크</div>
-                        <STInput style={{ marginBottom: "14px", minHeight: "40px" }}>
-                            <a href={post.postLink} target="_blank">{post.postLink}</a>
-                        </STInput>
-
+                        <StContent ref={textRef} onInput={handleResize} row={10}>{post.content}</StContent>
+                        {
+                            post.postLink !== "" && (
+                                <>
+                                    <div>관련 링크</div>
+                                    <STInput style={{ marginBottom: "14px", minHeight: "40px" }}>
+                                        <a href={post.postLink} target="_blank">{post.postLink}</a>
+                                    </STInput>
+                                </>
+                            )
+                        }
                         {
                             modPost.postAddress && (
                                 <>
@@ -240,9 +261,6 @@ const Event = ({ postId, url }) => {
                                 </>
                             )
                         }
-
-
-
                         <KakaoMap address={post.postAddress} width='100%' height='144px' />
 
                         {localStorage.getItem('userId') === post.userId.toString() &&
@@ -250,6 +268,8 @@ const Event = ({ postId, url }) => {
                                 <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={() => { onEventDelete(postId); }}>삭제</STEditButton>
                                 <STEditButton onClick={() => { setMod(true) }}>수정</STEditButton>
                             </div>)}
+
+                        {/* <textarea ref={textRef} onInput={handleResize} /> */}
                     </>
                 :
                 modPost !== undefined &&
@@ -324,9 +344,10 @@ const Event = ({ postId, url }) => {
                         }
 
                     </StCarouselWrap>
-                    <div>* '+'버튼 옆에 있는 사진을 클릭하면 삭제됩니다.</div>
-
-                    <STContentTextarea style={{ height: "200px" }} name='content' value={modPost.content || ""} onChange={modPostHandle} placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" maxLength={2500}></STContentTextarea>
+                    <div>* '+'버튼 옆에 있는 사진을 클릭하면 사진 선택이 취소됩니다.</div>
+                    <div style={{ display: "flex" }}>
+                        <STContentTextarea ref={textRef} onInput={handleResize} name='content' value={modPost.content || ""} onChange={modPostHandle} placeholder="행사글을 띄어쓰기 포함 2500자 이내로 입력해주세요" maxLength={2500}></STContentTextarea>
+                    </div>
 
                     <StTypeBox>
                         <label style={{ marginLeft: "10px", marginTop: "14px" }}>카테고리</label>
@@ -350,7 +371,7 @@ const Event = ({ postId, url }) => {
                         </SelBottom>
                     </StTypeBox>
 
-                    <label style={{ marginLeft: "5px" }}>행사장 링크</label>
+                    <label style={{ marginLeft: "5px" }}>관련 링크</label>
                     <STLinkTextarea type='text' name='postLink' value={modPost.postLink || ""} onChange={modPostHandle} />
 
                     <StSearchBox style={{ background: "#E1E3EC" }} onClick={popupPostCode}>
@@ -398,3 +419,12 @@ const Event = ({ postId, url }) => {
 export default Event;
 
 
+const STContentTextarea = styled.textarea`
+    border-radius: 5px;
+    border: transparent;
+    width :100%;
+    background-color: white;
+    padding: 6px 10px;
+    margin-top: 10px;
+    /* min-height: ${(props) => (props.minHeight)}px; */
+`

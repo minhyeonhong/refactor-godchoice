@@ -90,11 +90,12 @@ export const STBox2 = styled.div`
 
 export const StContent = styled.textarea`
     width: 100%;
-    height: 144px;
+    min-height : 144px;
     border : transparent;
     background: #FFFFFF;
     padding : 6px 10px;
     border-radius: 5px;
+    resize: none;
 `
 
 export const STAddressButton = styled.div`
