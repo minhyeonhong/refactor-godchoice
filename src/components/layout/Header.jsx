@@ -20,29 +20,25 @@ const Header = () => {
     //로그인 여부
     const isLogin = localStorage.getItem('token') !== null;
 
+
+    //알림 불러오기
+    const getNotice = async () => {
+        const res = await notificationApis.getNotificationAX();
+        return res;
+    }
+    const result = useQuery(['getNotice'], //key
+        getNotice,
+    )
+
     //알림 server state
-    const [noticeList, setNoticeList] = useState([]);
-    const [alramNum, setAlarmNum] = useState(0);
-    //알림 리스트
-    const { refetch } = useQuery(['getNoticeList'], //key
-        () => notificationApis.getNotificationAX(),
-        {//options
-            cacheTime: 3000,
-            refetchOnWindowFocus: false, // react-query는 사용자가 사용하는 윈도우가 다른 곳을 갔다가 다시 화면으로 돌아오면 이 함수를 재실행합니다. 그 재실행 여부 옵션 입니다.
-            retry: 1, // 실패시 재호출 몇번 할지
-            onSuccess: res => { // 성공시 호출  
-                if (res.data.status === 200 && res.data.data !== null) {
-                    const resList = res.data.data;
-                    setNoticeList(resList);
-                    const unReadNum = resList.filter((notice) => { return !notice.readStatus }).length;
-                    setAlarmNum(unReadNum);
-                }
-            }
-        })
+    const resList = result.data?.data?.data
+    const unReadNum = resList.filter((notice) => { return !notice.readStatus }).length;
+    const [alramNum, setAlarmNum] = useState(0 || unReadNum);
 
     //sse handle
     const [newNotice, setNewNotice] = useState({})
 
+    //SSE 
     let eventSource = undefined;
     useEffect(() => {
         if (!listening && isLogin) {
@@ -51,7 +47,7 @@ const Header = () => {
                     "Access_Token": localStorage.getItem("token"),
                     'Content-Type': 'text/event-stream',
                 },
-                heartbeatTimeout: 3600000,
+                heartbeatTimeout: 3600000, //sse 연결 시간 (토큰 유지1시간)
                 withCredentials: true,
             });
             //sse 연결
@@ -63,7 +59,7 @@ const Header = () => {
 
             //sse 받는 처리
             eventSource.onmessage = (event) => {
-
+                //받은 데이터 Json타입으로 형변환 가능여부fn
                 const isJson = (str) => {
                     try {
                         const json = JSON.parse(str);
@@ -74,7 +70,7 @@ const Header = () => {
                 };
                 if (isJson(event.data)) {
                     //알림 리스트 refetch
-                    refetch();
+                    result.refetch();
                     //실시간 알림 데이터
                     const obj = JSON.parse(event.data);
                     setNewNotice(obj);
@@ -104,7 +100,9 @@ const Header = () => {
     const popUpNotice = () => {
         setNotice(!notice)
     }
-
+    if (result.isLoading) {
+        return null;
+    }
     return (
         <>
 
