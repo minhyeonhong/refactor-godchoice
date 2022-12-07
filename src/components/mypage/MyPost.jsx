@@ -92,7 +92,7 @@ const MyPost = () => {
                   </ItemImg>
                   <ItemContainer>
                     <ItemTop>
-                      <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 15 ? v.title.substring(0, 14) + '...' : v.title}</p>
+                      <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 10 ? v.title.substring(0, 14) + '...' : v.title}</p>
                       <p>{v.category}</p>
                       <p>{v.content}</p>
                     </ItemTop>
@@ -120,7 +120,7 @@ const MyPost = () => {
                       </ItemImg>
                       <ItemContainer>
                         <ItemTop>
-                          <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 15 ? v.title.substring(0, 14) + '...' : v.title}</p>
+                          <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 10 ? v.title.substring(0, 14) + '...' : v.title}</p>
                           <p>{v.category}</p>
                           <p>{v.content}</p>
                         </ItemTop>
@@ -149,7 +149,7 @@ const MyPost = () => {
                     </ItemImg>
                     <ItemContainer>
                       <ItemTop style={{ marginBottom: "20px" }} >
-                        <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 15 ? v.title.substring(0, 14) + '...' : v.title}</p>
+                        <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 10 ? v.title.substring(0, 14) + '...' : v.title}</p>
                         <p>{v.category}</p>
                         <p>{v.content}</p>
                       </ItemTop>
@@ -186,7 +186,6 @@ const CategoryBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 10px;
 `;
 
 const CategoryInfoList = styled.div`
@@ -201,21 +200,21 @@ const ItemImg = styled.div`
   height: 130px;
   padding: 3px;
   border-radius : 20px;
-  @media (max-width: 375px) {
+  /* @media (max-width: 375px) {
     width: 125px;
     height: 150px;
   }
   @media (max-width: 299px) {
     width: 100px;
     height: 125px;
-  }
+  } */
 `;
 const ListBox = styled.div`
   height: 154px;
-  margin : 5px auto ;
+  margin-bottom : 5px;
   background-color : #fff;
   cursor: pointer;
-  padding: 23px 16px;
+  padding:  10px;
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
@@ -234,7 +233,7 @@ const ItemTop = styled.div`
   margin-bottom : 5px;
   p {
     font-size : 16px;
-    line-height: 1.5;
+    line-height: 1.4;
     font-weight: 400;
   }
 `
