@@ -29,10 +29,10 @@ const Header = () => {
         return { resList, unReadNum };
     }
     //알림 server state
-    const result = useQuery(
-        ['getNotice'],
-        getNotice,
-    )
+    // const result = useQuery(
+    //     ['getNotice'],
+    //     getNotice,
+    // )
 
     //sse handle
     const [newNotice, setNewNotice] = useState({})
@@ -41,60 +41,60 @@ const Header = () => {
     const isSSE = localStorage.getItem('sse') === "connect" ? true : false;
 
     //SSE 
-    useEffect(() => {
-        if (!isSSE && isLogin) {
-            const eventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}/subscribe`, {
-                headers: {
-                    "Access_Token": localStorage.getItem("token"),
-                    'Content-Type': 'text/event-stream',
-                },
-                heartbeatTimeout: 3600000, //sse 연결 시간 (토큰 유지1시간)
-                withCredentials: true,
-            });
-            //sse 연결
-            eventSource.onopen = (event) => {
-                if (event.status === 200) {
-                    localStorage.setItem('sse', "connect");
-                }
-            };
+    // useEffect(() => {
+    //     if (!isSSE && isLogin) {
+    //         const eventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}/subscribe`, {
+    //             headers: {
+    //                 "Access_Token": localStorage.getItem("token"),
+    //                 'Content-Type': 'text/event-stream',
+    //             },
+    //             heartbeatTimeout: 3600000, //sse 연결 시간 (토큰 유지1시간)
+    //             withCredentials: true,
+    //         });
+    //         //sse 연결
+    //         eventSource.onopen = (event) => {
+    //             if (event.status === 200) {
+    //                 localStorage.setItem('sse', "connect");
+    //             }
+    //         };
 
-            //sse 받는 처리
-            eventSource.onmessage = (event) => {
-                //받은 데이터 Json타입으로 형변환 가능여부fn
-                const isJson = (str) => {
-                    try {
-                        const json = JSON.parse(str);
-                        return json && typeof json === 'object';
-                    } catch (e) {
-                        return false;
-                    }
-                };
-                if (isJson(event.data)) {
-                    //알림 리스트 refetch
-                    result.refetch();
-                    //실시간 알림 데이터
-                    const obj = JSON.parse(event.data);
-                    //setNewNotice(obj);
-                    setAlram(obj);
-                }
-            };
+    //         //sse 받는 처리
+    //         eventSource.onmessage = (event) => {
+    //             //받은 데이터 Json타입으로 형변환 가능여부fn
+    //             const isJson = (str) => {
+    //                 try {
+    //                     const json = JSON.parse(str);
+    //                     return json && typeof json === 'object';
+    //                 } catch (e) {
+    //                     return false;
+    //                 }
+    //             };
+    //             if (isJson(event.data)) {
+    //                 //알림 리스트 refetch
+    //                 result.refetch();
+    //                 //실시간 알림 데이터
+    //                 const obj = JSON.parse(event.data);
+    //                 //setNewNotice(obj);
+    //                 setAlram(obj);
+    //             }
+    //         };
 
-            //sse 에러
-            eventSource.onerror = event => {
-                eventSource.close();
-                localStorage.setItem('sse', null);
-            };
-        }
+    //         //sse 에러
+    //         eventSource.onerror = event => {
+    //             eventSource.close();
+    //             localStorage.setItem('sse', null);
+    //         };
+    //     }
 
-    }, [isLogin]);
+    // }, [isLogin]);
 
     const [notice, setNotice] = useState(false);
     const popUpNotice = () => {
         setNotice(!notice)
     }
-    if (result.isLoading) {
-        return null;
-    }
+    // if (result.isLoading) {
+    //     return null;
+    // }
 
     return (
         <>
@@ -110,7 +110,7 @@ const Header = () => {
                         <>
                             <StBell>
                                 {/* {alramNum > 0 && <div className='bellNum'>{alramNum}</div>} */}
-                                {result.data.unReadNum > 0 && <div className='bellNum'>{result.data.unReadNum}</div>}
+                                {/* {result.data.unReadNum > 0 && <div className='bellNum'>{result.data.unReadNum}</div>} */}
                                 <Bell style={{ height: "48px", marginRight: "15px", padding: "2px", cursor: "pointer" }} onClick={popUpNotice} />
                             </StBell>
                             <MyPage style={{ height: "48px", marginRight: "5px", padding: "2px", cursor: "pointer" }}
