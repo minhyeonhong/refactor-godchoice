@@ -36,7 +36,7 @@ SwiperCore.use([Pagination, Autoplay, Navigation]);
 const Home = () => {
 
   //배너 가져오기
-  const banner = useQuery(['banner'], async () => await postApis.getAdminPostAX(), { cacheTime: 3000, refetchOnWindowFocus: false, retry: 1 })
+  //const banner = useQuery(['banner'], async () => await postApis.getAdminPostAX(), { cacheTime: 3000, refetchOnWindowFocus: false, retry: 1 })
 
   //유저 지역정보 가져오기
   const userAddressTag = localStorage.getItem('userAddressTag');
@@ -102,12 +102,6 @@ const Home = () => {
                   centeredSlides={true}
                   style={{ backgroundColor: "transparent" }}
                 >
-                  {/* {guides?.map((guide, i) => {
-                    return (
-                      <SwiperSlide key={i}>
-                        <ItemDetailImg src={guide} />
-                      </SwiperSlide> */}
-                  {/* return ( */}
                   <>
                     <SwiperSlide>
                       <div style={{ textAlign: "center" }}>
@@ -118,7 +112,6 @@ const Home = () => {
                           우선적으로 보여드립니다.
                           <br />
                           태그로도 지역 선택이 가능합니다!<br /><br />
-
                         </p>
                       </div>
                       <ItemDetailImg src={guide01} />
@@ -148,10 +141,7 @@ const Home = () => {
                       <ItemDetailImg src={guide03} />
                     </SwiperSlide>
                   </>
-                  {/* ); */}
-                  {/* })} */}
                 </StyledSwiper>
-                {/* StyledSwiper */}
               </StyleGuide>
             </Bg>
           )}
@@ -161,7 +151,7 @@ const Home = () => {
         {/* 슬라이드 */}
         <StCarouselWrap>
           <Carousel >
-            {!banner.isLoading &&
+            {/* {!banner.isLoading &&
               banner.data?.data.data.length === 0 ?
               <Carousel.Item>
                 <PageState
@@ -189,7 +179,7 @@ const Home = () => {
                     </Carousel.Caption>
                   </Carousel.Item>
                 )
-              })}
+              })} */}
           </Carousel>
         </StCarouselWrap>
 

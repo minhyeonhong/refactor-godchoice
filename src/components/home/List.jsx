@@ -26,33 +26,33 @@ const List = ({ searchState }) => {
     }
 
     //리스트 받아오기
-    const result = useInfiniteQuery({
-        queryKey: ['postList'],
-        queryFn: ({ pageParam = 0 }) => getSearchPosts(searchState, pageParam),
-        getNextPageParam: ({ isLastPage, nextPage }) => {
-            if (!isLastPage) return nextPage;
-        },
-        refetchOnWindowFocus: false,
-    })
+    // const result = useInfiniteQuery({
+    //     queryKey: ['postList'],
+    //     queryFn: ({ pageParam = 0 }) => getSearchPosts(searchState, pageParam),
+    //     getNextPageParam: ({ isLastPage, nextPage }) => {
+    //         if (!isLastPage) return nextPage;
+    //     },
+    //     refetchOnWindowFocus: false,
+    // })
 
-    useEffect(() => {
-        // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니고 다음페이지가 있다면
-        if (inView && !result.isFetching && result.hasNextPage) {
-            result.fetchNextPage();
-        }
-    }, [inView, result.isFetching])
+    // useEffect(() => {
+    //     // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니고 다음페이지가 있다면
+    //     if (inView && !result.isFetching && result.hasNextPage) {
+    //         result.fetchNextPage();
+    //     }
+    // }, [inView, result.isFetching])
 
-    useEffect(() => {
-        //검색상태가 바뀌면 server state refetch
-        if (!result.isFetching) result.refetch(searchState, 0);
-    }, [searchState])
+    // useEffect(() => {
+    //     //검색상태가 바뀌면 server state refetch
+    //     if (!result.isFetching) result.refetch(searchState, 0);
+    // }, [searchState])
 
-    if (result.isLoading) {
-        return null;
-    }
+    // if (result.isLoading) {
+    //     return null;
+    // }
     return (
         <StCardWrap>
-            <PageState display={result.data?.pages[0].postList.length === 0 ? 'flex' : 'none'} state='notFound' imgWidth='25%' height='60vh'
+            {/* <PageState display={result.data?.pages[0].postList.length === 0 ? 'flex' : 'none'} state='notFound' imgWidth='25%' height='60vh'
                 text='리스트가 존재하지 않습니다.' />
 
             {result.data?.pages.map((page, i) => (
@@ -87,7 +87,7 @@ const List = ({ searchState }) => {
 
             {
                 result.hasNextPage && <div ref={ref} />
-            }
+            } */}
         </StCardWrap>
     );
 };
