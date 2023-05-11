@@ -2,6 +2,9 @@ import React, { useEffect } from 'react';
 import PageState from '../common/PageState';
 import { useQuery } from '@tanstack/react-query';
 import { memberApis } from '../../api/api-functions/memberApis';
+import { async } from 'q';
+import axios from 'axios';
+import qs from 'qs'
 
 // 리다이렉트될 화면
 const Kakao = () => {
@@ -9,22 +12,59 @@ const Kakao = () => {
 	// 인가코드
 	let code = new URL(window.location.href).searchParams.get('code');
 
-	useEffect(() => {
-		fetch('https://kauth.kakao.com/oauth/token', {
-			method: 'POST',
-			headers: {
-				'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
-			},
-			body: `grant_type=authorization_code&client_id=${process.env.REACT_APP_KAKAO_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_REDIRECT_URI}&code=${code}`
-		}).then((res) => res.json())
-			.then(data => {
-				console.log(data)
-			})
-			.catch((err) => {
-				console.log("err", err);
+	const kakaoLogin = async () => {
 
-			})
+		const params = new URLSearchParams();
+
+		params.append("grant_type", "authorization_code");
+		params.append("client_id", process.env.REACT_APP_KAKAO_REST_API_KEY);
+		params.append("redirect_uri", process.env.REACT_APP_KAKAO_REDIRECT_URI);
+		params.append("code", code);
+
+		axios.post('https://kauth.kakao.com/oauth/token',
+			params
+			// qs.stringify({
+			// 	grant_type: 'authorization_code',
+			// 	client_id: process.env.REACT_APP_KAKAO_REST_API_KEY,
+			// 	redirect_uri: process.env.REACT_APP_KAKAO_REDIRECT_URI,
+			// 	code
+			// })
+		).then(res => {
+			console.log("Res", res);
+		}).catch(err => {
+			console.log("err", err);
+		})
+
+
+
+	}
+
+	useEffect(() => {
+		// const formData = new URLSearchParams();
+
+		// formData.append("grant_type", "authorization_code");
+		// formData.append("client_id", process.env.REACT_APP_KAKAO_REST_API_KEY);
+		// formData.append("redirect_uri", process.env.REACT_APP_KAKAO_REDIRECT_URI);
+		// formData.append("code", code);
+		// fetch('https://kauth.kakao.com/oauth/token', {
+		// 	method: 'POST',
+		// 	headers: {
+		// 		'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
+		// 	},
+		// 	body: formData//`grant_type=authorization_code&client_id=${process.env.REACT_APP_KAKAO_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_REDIRECT_URI}&code=${code}`
+		// }).then((res) => res.json())
+		// 	.then(data => {
+		// 		console.log(data)
+		// 	})
+		// 	.catch((err) => {
+		// 		console.log("err", err);
+
+		// 	})
+		kakaoLogin();
+
 	}, [])
+
+
 
 	// useQuery(
 	// 	['kakaoLogin', code],
