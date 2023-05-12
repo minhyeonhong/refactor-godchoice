@@ -13,29 +13,44 @@ import { myPageApis } from '../../api/api-functions/myPageApis';
 import { postApis } from '../../api/api-functions/postApis';
 import { useEffect } from 'react';
 import PageState from '../../components/common/PageState';
+import axios from 'axios';
 
 const MyPage = () => {
   const navigate = useNavigate();
 
+  const getKakaoProfil = async () => {
+    //return await axios.get(`kapi.kakao.com/v1/api/talk/profile`, {
+    const res = await axios.get(`https://kapi.kakao.com/v1/api/talk/profile`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+
+    console.log("res", res);
+  }
+
+  useEffect(() => {
+    getKakaoProfil()
+  }, [])
 
   //내정보 불러오기
   const getMyPage = async () => {
     const res = await myPageApis.getMyPageAX();
     return res;
   }
-  const result = useQuery(
-    ["getMyPage"],
-    getMyPage,
-    {
-      onSuccess: res => {
-        if (res.data.status === 200) {
-          localStorage.setItem('userAddressTag', res.data.data.addressTag);
-        }
-      }
-    }
-  );
+  // const result = useQuery(
+  //   ["getMyPage"],
+  //   getMyPage,
+  //   {
+  //     onSuccess: res => {
+  //       if (res.data.status === 200) {
+  //         localStorage.setItem('userAddressTag', res.data.data.addressTag);
+  //       }
+  //     }
+  //   }
+  // );
   // 내정보 server state
-  const myInfo = result.data?.data.data;
+  // const myInfo = result.data?.data.data;
 
 
   //관리자 배너 삭제
@@ -84,12 +99,12 @@ const MyPage = () => {
     },
   })
 
-  if (result.isLoading) {
-    return < PageState
-      display={'flex'}
-      state='loading' imgWidth='25%' height='100vh'
-      text='잠시만 기다려 주세요.' />;
-  }
+  // if (result.isLoading) {
+  //   return < PageState
+  //     display={'flex'}
+  //     state='loading' imgWidth='25%' height='100vh'
+  //     text='잠시만 기다려 주세요.' />;
+  // }
 
   return (
     <Layout>
@@ -97,7 +112,7 @@ const MyPage = () => {
         <MyProfileWrap>
           <MyImgContainer>
             <MyImgBox>
-              < img src={myInfo.userImg} alt={'ProfileImg'} />
+              {/* < img src={myInfo.userImg} alt={'ProfileImg'} /> */}
               {/* {userProfileImg()} */}
             </MyImgBox>
           </MyImgContainer>
@@ -106,7 +121,7 @@ const MyPage = () => {
           <NickBox>
 
             <div className="nickName">
-              {myInfo.nickName}
+              {/* {myInfo.nickName} */}
             </div>
             <Btns>
               <Button btnType="submit" onClick={() => { navigate("/mypageedit") }}>프로필 수정</Button>
@@ -138,7 +153,7 @@ const MyPage = () => {
 
         {/* admin일때 배너리스트 */}
         <div>
-          {myInfo?.adminPage?.map((post) => {
+          {/* {myInfo?.adminPage?.map((post) => {
             return (
               <div key={post.id}>
                 {post.title}
@@ -146,7 +161,7 @@ const MyPage = () => {
               </div>
             )
           })
-          }
+          } */}
         </div>
 
 

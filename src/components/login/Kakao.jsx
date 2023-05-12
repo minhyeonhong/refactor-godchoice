@@ -2,9 +2,7 @@ import React, { useEffect } from 'react';
 import PageState from '../common/PageState';
 import { useQuery } from '@tanstack/react-query';
 import { memberApis } from '../../api/api-functions/memberApis';
-import { async } from 'q';
 import axios from 'axios';
-import qs from 'qs'
 
 // 리다이렉트될 화면
 const Kakao = () => {
@@ -21,74 +19,32 @@ const Kakao = () => {
 		params.append("redirect_uri", process.env.REACT_APP_KAKAO_REDIRECT_URI);
 		params.append("code", code);
 
-		axios.post('https://kauth.kakao.com/oauth/token',
-			params
-			// qs.stringify({
-			// 	grant_type: 'authorization_code',
-			// 	client_id: process.env.REACT_APP_KAKAO_REST_API_KEY,
-			// 	redirect_uri: process.env.REACT_APP_KAKAO_REDIRECT_URI,
-			// 	code
-			// })
-		).then(res => {
-			console.log("Res", res);
-		}).catch(err => {
-			console.log("err", err);
-		})
-
-
-
+		return await axios.post('https://kauth.kakao.com/oauth/token', params)
 	}
 
-	useEffect(() => {
-		// const formData = new URLSearchParams();
+	useQuery(
+		['kakaoLogin', code],
+		() => kakaoLogin(),
+		{//options
+			refetchOnWindowFocus: false,
+			onSuccess: res => {
+				console.log(res)
+				if (res.status === 200) {
+					localStorage.setItem("token", res.data.access_token);
+					localStorage.setItem("expiresIn", res.data.expires_in);
+					localStorage.setItem("refreshToken", res.data.refresh_token);
+					localStorage.setItem("refreshTokenExpiresIn", res.data.refresh_token_expires_in);
+					localStorage.setItem("scope", res.data.scope);
+					localStorage.setItem("tokenType", res.data.token_type);
 
-		// formData.append("grant_type", "authorization_code");
-		// formData.append("client_id", process.env.REACT_APP_KAKAO_REST_API_KEY);
-		// formData.append("redirect_uri", process.env.REACT_APP_KAKAO_REDIRECT_URI);
-		// formData.append("code", code);
-		// fetch('https://kauth.kakao.com/oauth/token', {
-		// 	method: 'POST',
-		// 	headers: {
-		// 		'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
-		// 	},
-		// 	body: formData//`grant_type=authorization_code&client_id=${process.env.REACT_APP_KAKAO_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_REDIRECT_URI}&code=${code}`
-		// }).then((res) => res.json())
-		// 	.then(data => {
-		// 		console.log(data)
-		// 	})
-		// 	.catch((err) => {
-		// 		console.log("err", err);
-
-		// 	})
-		kakaoLogin();
-
-	}, [])
-
-
-
-	// useQuery(
-	// 	['kakaoLogin', code],
-	// 	() => memberApis.kakaoLoginAX(code),
-	// 	{//options
-	// 		refetchOnWindowFocus: false,
-	// 		onSuccess: res => {
-	// 			if (res.data.status === 200) {
-	// 				localStorage.setItem("token", res.headers.access_token);
-	// 				localStorage.setItem("refreshToken", res.headers.refresh_token);
-
-	// 				localStorage.setItem("role", res.data.data.role);
-	// 				localStorage.setItem("userAddressTag", res.data.data.userAddressTag);
-	// 				localStorage.setItem("userId", res.data.data.userId);
-	// 				localStorage.setItem("userImgUrl", res.data.data.userImgUrl);
-
-	// 				window.location.replace("/mypage");
-	// 			}
-	// 		},
-	// 		onError: res => {
-	// 			alert("로그인 실패");
-	// 			window.location.replace("/")
-	// 		}
-	// 	})
+					window.location.replace("/mypage");
+				}
+			},
+			onError: res => {
+				alert("로그인 실패");
+				window.location.replace("/")
+			}
+		})
 
 	return (
 		<PageState display='flex' state='loading' imgWidth='25%' height='100vh'
