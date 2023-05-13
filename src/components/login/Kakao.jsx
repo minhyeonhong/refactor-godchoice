@@ -3,6 +3,7 @@ import PageState from '../common/PageState';
 import { useQuery } from '@tanstack/react-query';
 import { memberApis } from '../../api/api-functions/memberApis';
 import axios from 'axios';
+import { kakaoInstance } from '../../api/kakaoInstance';
 
 // 리다이렉트될 화면
 const Kakao = () => {
@@ -19,7 +20,7 @@ const Kakao = () => {
 		params.append("redirect_uri", process.env.REACT_APP_KAKAO_REDIRECT_URI);
 		params.append("code", code);
 
-		return await axios.post('https://kauth.kakao.com/oauth/token', params)
+		return await kakaoInstance.post('https://kauth.kakao.com/oauth/token', params)
 	}
 
 	useQuery(
@@ -28,7 +29,6 @@ const Kakao = () => {
 		{//options
 			refetchOnWindowFocus: false,
 			onSuccess: res => {
-				console.log(res)
 				if (res.status === 200) {
 					localStorage.setItem("token", res.data.access_token);
 					localStorage.setItem("expiresIn", res.data.expires_in);
@@ -40,7 +40,7 @@ const Kakao = () => {
 					window.location.replace("/mypage");
 				}
 			},
-			onError: res => {
+			onError: error => {
 				alert("로그인 실패");
 				window.location.replace("/")
 			}
