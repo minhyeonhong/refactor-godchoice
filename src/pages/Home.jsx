@@ -31,7 +31,6 @@ import guide02 from "../assets/images/banner/guide/guide_02.png";
 import guide03 from "../assets/images/banner/guide/guide_03.png";
 
 SwiperCore.use([Pagination, Autoplay, Navigation]);
-// ------------- 여기까지 ---------------
 
 const Home = () => {
 

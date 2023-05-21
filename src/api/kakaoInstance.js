@@ -21,7 +21,7 @@ kakaoInstance.interceptors.response.use(
     function (error) {
         switch (error.response.status) {
             case 401: {
-                alert("로그인 토큰이 만료되어 로그아웃 합니다.");
+                alert("로그인 정보가 만료되어 로그아웃 합니다.");
                 localStorage.clear();
                 window.location.replace("/");
                 break;

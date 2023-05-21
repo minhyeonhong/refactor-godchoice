@@ -1,18 +1,14 @@
 import React, { useEffect } from 'react';
 import PageState from '../common/PageState';
 import { useQuery } from '@tanstack/react-query';
-import { memberApis } from '../../api/api-functions/memberApis';
-import axios from 'axios';
 import { kakaoInstance } from '../../api/kakaoInstance';
-import { collection, getDocs, addDoc, doc, setDoc, db } from "../../firebase";
+import { doc, setDoc, db } from "../../firebase";
 
 // 리다이렉트될 화면
 const Kakao = () => {
 
 	// 인가코드
 	let code = new URL(window.location.href).searchParams.get('code');
-	const usersCollectionRef = collection(db, "users");
-	const usersDoc = doc(usersCollectionRef);
 
 	const kakaoLogin = async () => {
 
@@ -37,58 +33,38 @@ const Kakao = () => {
 		token_type
 	} = kakaoLoginResponse.data.data
 
-	console.log(kakaoLoginResponse);
-
-	const getKakaoProfil = async () => {
-		return await kakaoInstance.get(`https://kapi.kakao.com/v1/api/talk/profile`, {
-			headers: {
-				Authorization: `Bearer ${access_token}`
-			}
-		})
+	const getKakaoUserInfo = async () => {
+		return await kakaoInstance.get(`https://kapi.kakao.com/v2/user/me`,
+			{
+				headers: {
+					Authorization: `Bearer ${access_token}`
+				}
+			})
 	}
-	useQuery(["getKakaoProfil"], getKakaoProfil,
+
+	useQuery(["getKakaoUserInfo"], getKakaoUserInfo,
 		{
 			refetchOnWindowFocus: false,
-			onSuccess: async (res) => {
-				const { nickName, profileImageURL, thumbnailURL } = res.data;
+			onSuccess: res => {
+				const { id, kakao_account } = res.data;
+				const { email, gender, profile } = kakao_account;
+				const { nickname, profile_image_url } = profile;
 
-				await setDoc(doc(db, "users", `ID${expires_in}`), {
-					expires_in,
-					nickName,
-					profileImageURL,
-					refresh_token_expires_in,
-					thumbnailURL
-				});
-
+				setDoc(doc(db, "users", `UID_${id}`), {
+					email,
+					gender,
+					nickname,
+					profile_image_url
+				})
+				localStorage.setItem("uid", `UID_${id}`);
+				window.location.replace("/mypage")
 			},
 			onError: error => {
-				console.log(error);
+				alert("로그인 실패 메인화면으로 돌아갑니다.");
 				window.location.replace("/")
 			}
 		});
 
-	// useQuery(
-	// 	['kakaoLogin', code],
-	// 	() => kakaoLogin(),
-	// 	{//options
-	// 		refetchOnWindowFocus: false,
-	// 		onSuccess: res => {
-	// 			if (res.status === 200) {
-	// 				localStorage.setItem("token", res.data.access_token);
-	// 				localStorage.setItem("expiresIn", res.data.expires_in);
-	// 				localStorage.setItem("refreshToken", res.data.refresh_token);
-	// 				localStorage.setItem("refreshTokenExpiresIn", res.data.refresh_token_expires_in);
-	// 				localStorage.setItem("scope", res.data.scope);
-	// 				localStorage.setItem("tokenType", res.data.token_type);
-
-	// 				window.location.replace("/mypage");
-	// 			}
-	// 		},
-	// 		onError: error => {
-	// 			alert("로그인 실패");
-	// 			window.location.replace("/")
-	// 		}
-	// 	})
 
 	return (
 		<PageState display='flex' state='loading' imgWidth='25%' height='100vh'
