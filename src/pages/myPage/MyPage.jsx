@@ -15,6 +15,7 @@ import { useEffect } from 'react';
 import PageState from '../../components/common/PageState';
 import axios from 'axios';
 import { kakaoInstance } from '../../api/kakaoInstance';
+import { doc, setDoc, collection, db, getDoc, query, namedQuery } from "../../firebase";
 
 const MyPage = () => {
   const navigate = useNavigate();
@@ -27,11 +28,17 @@ const MyPage = () => {
     })
   }
 
-  const getMyPage = useQuery(["getMyPage"], getKakaoProfil);
+  const getUserInfoFB = async () => {
+    const response = await getDoc(doc(db, "users", localStorage.getItem("uid")));
+    return response._document.data.value.mapValue.fields;
+  }
 
-  console.log(getMyPage);
+  const getMyPageInfo = useQuery(["getUserInfoFB"], getUserInfoFB);
+
+  const { email, gender, nickname, profile_image_url } = getMyPageInfo.data;
+
   //내정보 server state
-  const myInfo = getMyPage.data?.data;
+  // const myInfo = getMyPage.data?.data;
 
 
   //관리자 배너 삭제
@@ -80,7 +87,7 @@ const MyPage = () => {
     },
   })
 
-  if (getMyPage.isLoading) {
+  if (getMyPageInfo.isLoading) {
     return < PageState
       display={'flex'}
       state='loading' imgWidth='25%' height='100vh'
@@ -93,10 +100,10 @@ const MyPage = () => {
         <MyProfileWrap>
           <MyImgContainer>
             <MyImgBox>
-              {myInfo.profileImageURL === "" ?
+              {profile_image_url.stringValue === "" ?
                 < img src={`${process.env.PUBLIC_URL}/kakao_base_profil.jpg`} alt={'ProfileImg'} />
                 :
-                < img src={myInfo.profileImageURL} alt={'ProfileImg'} />
+                < img src={profile_image_url.stringValue} alt={'ProfileImg'} />
               }
             </MyImgBox>
           </MyImgContainer>
@@ -105,7 +112,7 @@ const MyPage = () => {
           <NickBox>
 
             <div className="nickName">
-              {myInfo.nickName}
+              {nickname.stringValue}
             </div>
             <Btns>
               <Button btnType="submit" onClick={() => { navigate("/mypageedit") }}>프로필 수정</Button>
