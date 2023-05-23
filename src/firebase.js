@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, addDoc, doc, setDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, addDoc, doc, setDoc, getDoc, query, namedQuery } from 'firebase/firestore';
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FB_API_KEY,
@@ -15,4 +15,17 @@ const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
-export { collection, getDocs, addDoc, doc, db, setDoc };
+
+// let admin = require("firebase-admin");
+
+// let serviceAccount = require("path/to/serviceAccountKey.json");
+
+// admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccount)
+// });
+
+// exports.auth = functions
+//     .runWith({ secrets: ["GODCHOICE_SECRET_KEY"] })
+//     .https.onRequest(app);
+
+export { collection, getDocs, addDoc, doc, setDoc, getDoc, db, query, namedQuery };

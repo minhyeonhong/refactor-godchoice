@@ -11,35 +11,13 @@ import { BookmarkFill, Comment, MyPost } from '../../assets';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { myPageApis } from '../../api/api-functions/myPageApis';
 import { postApis } from '../../api/api-functions/postApis';
-import { useEffect } from 'react';
 import PageState from '../../components/common/PageState';
-import axios from 'axios';
-import { kakaoInstance } from '../../api/kakaoInstance';
-import { doc, setDoc, collection, db, getDoc, query, namedQuery } from "../../firebase";
+import useGetMyInfo from '../../hooks/useGetMyInfo';
 
 const MyPage = () => {
   const navigate = useNavigate();
 
-  const getKakaoProfil = async () => {
-    return await kakaoInstance.get(`https://kapi.kakao.com/v1/api/talk/profile`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      }
-    })
-  }
-
-  const getUserInfoFB = async () => {
-    const response = await getDoc(doc(db, "users", localStorage.getItem("uid")));
-    return response._document.data.value.mapValue.fields;
-  }
-
-  const getMyPageInfo = useQuery(["getUserInfoFB"], getUserInfoFB);
-
-  const { email, gender, nickname, profile_image_url } = getMyPageInfo.data;
-
-  //내정보 server state
-  // const myInfo = getMyPage.data?.data;
-
+  const { userInfo, isLoading } = useGetMyInfo("users", localStorage.getItem("uid"));
 
   //관리자 배너 삭제
   const deleteBanner = useMutation({
@@ -87,7 +65,7 @@ const MyPage = () => {
     },
   })
 
-  if (getMyPageInfo.isLoading) {
+  if (isLoading) {
     return < PageState
       display={'flex'}
       state='loading' imgWidth='25%' height='100vh'
@@ -100,10 +78,10 @@ const MyPage = () => {
         <MyProfileWrap>
           <MyImgContainer>
             <MyImgBox>
-              {profile_image_url.stringValue === "" ?
+              {userInfo.profile_image_url === "" ?
                 < img src={`${process.env.PUBLIC_URL}/kakao_base_profil.jpg`} alt={'ProfileImg'} />
                 :
-                < img src={profile_image_url.stringValue} alt={'ProfileImg'} />
+                < img src={userInfo.profile_image_url} alt={'ProfileImg'} />
               }
             </MyImgBox>
           </MyImgContainer>
@@ -112,7 +90,7 @@ const MyPage = () => {
           <NickBox>
 
             <div className="nickName">
-              {nickname.stringValue}
+              {userInfo.nickname}
             </div>
             <Btns>
               <Button btnType="submit" onClick={() => { navigate("/mypageedit") }}>프로필 수정</Button>
