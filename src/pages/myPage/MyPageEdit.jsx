@@ -8,86 +8,45 @@ import kakao from "../../assets/logo_kakao.png";
 import naver from "../../assets/logo_naver.png";
 import google from "../../assets/logo_google.png";
 
-import useInput from "../../hooks/useInput";
 import useImgUpload from "../../hooks/useImgUpload";
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { myPageApis } from '../../api/api-functions/myPageApis';
 import PageState from "../../components/common/PageState";
+import useGetMyInfo from "../../hooks/useGetMyInfo";
+import { fsUploadImage, updateDoc, doc, db } from "../../firebase";
 
 const MyPageEdit = () => {
   const navigate = useNavigate();
-  const selectList = ["서울", "인천", "세종", "대구", "부산", "울산", "광주", "대전", "제주도", "경기도", "강원도", "충청도", "경상도", "전라도"];
 
   //이미지 업로드 훅
   const [files, fileUrls, uploadHandle] = useImgUpload(1, true, 0.5, 1000);
 
   //이미지 업로드 인풋돔 선택 훅
   const imgRef = useRef();
-  //수정 인풋state
-  const [modMyInfo, setModMyInfo, modMyInfoHandle] = useInput({
-    userName: "",
-    userAddress: ""
-  });
 
-  //내정보 불러오기
-  const getMyPage = async () => {
-    const res = await myPageApis.getMyPageAX();
-    return res;
-  }
-  const result = useQuery(
-    ["getMyPage"],
-    getMyPage,
-    {
-      onSuccess: res => {
-        if (res.data.status === 200) {
-          localStorage.setItem("userImgUrl", res.data.data.userImg);
-          localStorage.setItem('userAddressTag', res.data.data.addressTag);
-        }
-      }
-    }
-  );
-  // 내정보 server state
-  const userInfo = result.data?.data.data;
+  const { userInfo, isLoading } = useGetMyInfo("users", localStorage.getItem("uid"));
 
+  const onSubmit = async (event) => {
+    event.preventDefault();
 
-  //내정보 수정
-  const putMyInfo = useMutation({
-    mutationFn: (obj) => {
-      return myPageApis.putMyPageAX(obj);
-    },
-    onSuccess: res => {
-      if (res.data.status === 200) {
-        localStorage.setItem("userImgUrl", res.data.data.userImg);
-        localStorage.setItem('userAddressTag', res.data.data.addressTag);
-        navigate("/mypage");
-      }
-    },
-  })
+    const profile_image_url = files.length !== 0 ? await fsUploadImage(files[0]) : "";
+    const nickname = event.target[1].value === "" ? userInfo.nickname : event.target[1].value;
 
-  //서브밋
-  const onSubmitHandler = async () => {
-    let formData = new FormData();
-
-    let obj = {
-      userName: modMyInfo.userName === '' ? userInfo.nickName : modMyInfo.userName,
-      userAddress: modMyInfo.userAddress === '' ? (userInfo.addressTag === null ? "서울" : userInfo.addressTag) : modMyInfo.userAddress
+    const modUserInfo = {
+      nickname,
+      profile_image_url
     }
 
-    formData.append(
-      "user",
-      new Blob([JSON.stringify(obj)], { type: "application/json" })
-    );
+    const res = await updateDoc(doc(db, "users", localStorage.getItem("uid")), modUserInfo);
 
-    if (files.length === 0) {
-      formData.append("multipartFile", null);
+    if (res === undefined) {
+      navigate("/mypage");
     } else {
-      formData.append("multipartFile", files[0]);
+      alert("수정 실패");
     }
+  }
 
-    putMyInfo.mutate(formData);
-  };
-
-  if (result.isLoading) {
+  if (isLoading) {
     return < PageState
       display={'flex'}
       state='loading' imgWidth='25%' height='100vh'
@@ -96,10 +55,15 @@ const MyPageEdit = () => {
 
   return (
     <Layout>
-      <MyProfile>
+      <MyProfile onSubmit={onSubmit}>
         <MyImgWrap>
           <MyImgBox>
-            <img src={fileUrls[0] || userInfo.userImg} alt="my profil photo" />
+            {userInfo.profile_image_url === "" ?
+              < img src={fileUrls[0] || `${process.env.PUBLIC_URL}/kakao_base_profil.jpg`} alt={'ProfileImg'} />
+              :
+              <img src={fileUrls[0] || userInfo.profile_image_url} alt="my profil photo" />
+            }
+
             <label htmlFor="img_UpFile">
               <Camera style={{ cursor: "pointer" }} />
             </label>
@@ -118,9 +82,10 @@ const MyPageEdit = () => {
         <LoginInfo>
           <LoginInfoTitle>로그인 정보</LoginInfoTitle>
           <LoginInfoContent>
-            {userInfo.domain === 'google' && <img src={google} alt="logoImg" />}
+            {/* {userInfo.domain === 'google' && <img src={google} alt="logoImg" />}
             {userInfo.domain === 'kakao' && <img src={kakao} alt="logoImg" />}
-            {userInfo.domain === 'naver' && <img src={naver} alt="logoImg" />}
+            {userInfo.domain === 'naver' && <img src={naver} alt="logoImg" />} */}
+            <img src={kakao} alt="logoImg" />
             {userInfo.email}
           </LoginInfoContent>
         </LoginInfo>
@@ -130,10 +95,7 @@ const MyPageEdit = () => {
           <div className="MyTextInputWrap">
             <input
               type="text"
-              value={modMyInfo.userName || ""}
-              name="userName"
-              onChange={modMyInfoHandle}
-              placeholder={userInfo.nickName}
+              placeholder={userInfo.nickname}
               minLength="1"
               maxLength="6"
             />
@@ -141,30 +103,16 @@ const MyPageEdit = () => {
           </div>
           {/* <span className="MyTextCheck"></span> */}
         </MyTextWrap>
-        <MyTextWrap>
-          <div className="MyTextNick">관심 지역</div>
-          <div className="MyTextInputWrap">
-            <select onChange={modMyInfoHandle} name='userAddress' defaultValue={userInfo.addressTag} style={{ width: "100%", height: "56px", border: "1px solid #808080", borderRadius: "10px" }} >
-              {
-                selectList.map((select) => (
-                  <option value={select} key={select} >{select}</option>
-                ))
-              }
-            </select>
-            {/* <p>Selected : <b>{Selected}</b> </p> */}
-            {/* <Delete /> */}
-          </div>
-          {/* <span className="MyTextCheck"></span> */}
-        </MyTextWrap>
+        <MyDoneBtnWrap>
+          <MyDoneBtn type="button" onClick={() => window.history.back()}>
+            취소
+          </MyDoneBtn>
+          <MyDoneBtn type="submit">
+            완료
+          </MyDoneBtn>
+        </MyDoneBtnWrap>
       </MyProfile>
-      <MyDoneBtnWrap>
-        <MyDoneBtn onClick={() => window.history.back()}>
-          취소
-        </MyDoneBtn>
-        <MyDoneBtn onClick={onSubmitHandler}>
-          완료
-        </MyDoneBtn>
-      </MyDoneBtnWrap>
+
     </Layout>
   );
 };
@@ -172,7 +120,7 @@ const MyPageEdit = () => {
 export default MyPageEdit;
 
 
-const MyProfile = styled.div`
+const MyProfile = styled.form`
   display: flex;
   flex-direction: column;
   /* margin: 0px 10px 10px 10px; */
