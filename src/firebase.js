@@ -1,5 +1,17 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, addDoc, doc, setDoc, getDoc, query, namedQuery } from 'firebase/firestore';
+import {
+    getFirestore,
+    collection,
+    getDocs,
+    addDoc,
+    doc,
+    setDoc,
+    getDoc,
+    updateDoc,
+    query,
+    namedQuery
+} from 'firebase/firestore';
+import { ref, getDownloadURL, uploadBytes, getStorage } from "firebase/storage"
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FB_API_KEY,
@@ -15,6 +27,16 @@ const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
+const storage = getStorage(app);
+
+export const fsUploadImage = async (imgFile) => {
+    const storageRef = ref(storage, `images/${localStorage.getItem("uid")}_${imgFile.name}`);
+    const uploadTask = await uploadBytes(storageRef, imgFile);
+    const getImageURL = await getDownloadURL(uploadTask.ref);
+
+    return getImageURL;
+}
+
 
 // let admin = require("firebase-admin");
 
@@ -28,4 +50,15 @@ const db = getFirestore(app);
 //     .runWith({ secrets: ["GODCHOICE_SECRET_KEY"] })
 //     .https.onRequest(app);
 
-export { collection, getDocs, addDoc, doc, setDoc, getDoc, db, query, namedQuery };
+export {
+    collection,
+    getDocs,
+    addDoc,
+    doc,
+    setDoc,
+    getDoc,
+    updateDoc,
+    db,
+    query,
+    namedQuery,
+};
