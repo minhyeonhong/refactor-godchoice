@@ -13,7 +13,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { myPageApis } from '../../api/api-functions/myPageApis';
 import PageState from "../../components/common/PageState";
 import useGetMyInfo from "../../hooks/useGetMyInfo";
-import { fsUploadImage, updateDoc, doc, db } from "../../firebase";
+import { fsUploadImage, fsDeleteImage, updateDoc, doc, db } from "../../firebase";
 
 const MyPageEdit = () => {
   const navigate = useNavigate();
@@ -26,10 +26,23 @@ const MyPageEdit = () => {
 
   const { userInfo, isLoading } = useGetMyInfo("users", localStorage.getItem("uid"));
 
+
   const onSubmit = async (event) => {
     event.preventDefault();
 
-    const profile_image_url = files.length !== 0 ? await fsUploadImage(files[0]) : "";
+    const prevProfileName = (() => {
+      if (userInfo.profile_image_url !== undefined || userInfo.profile_image_url !== "") {
+        const firstIdx = userInfo.profile_image_url.indexOf(localStorage.getItem("uid"));
+        const lastIdx = userInfo.profile_image_url.indexOf("?", firstIdx);
+        return decodeURI(userInfo.profile_image_url.substring(firstIdx, lastIdx));
+      } else {
+        return "";
+      }
+    })();
+
+    if (files.length !== 0 && prevProfileName !== "") await fsDeleteImage("images/profile", prevProfileName);
+
+    const profile_image_url = files.length !== 0 ? await fsUploadImage("images/profile", files[0]) : "";
     const nickname = event.target[1].value === "" ? userInfo.nickname : event.target[1].value;
 
     const modUserInfo = {
@@ -37,13 +50,13 @@ const MyPageEdit = () => {
       profile_image_url
     }
 
-    const res = await updateDoc(doc(db, "users", localStorage.getItem("uid")), modUserInfo);
-
-    if (res === undefined) {
-      navigate("/mypage");
-    } else {
-      alert("수정 실패");
-    }
+    updateDoc(doc(db, "users", localStorage.getItem("uid")), modUserInfo)
+      .then(() => {
+        navigate("/mypage");
+      })
+      .catch(error => {
+        console.log(`upload error : ${error}`);
+      })
   }
 
   if (isLoading) {
