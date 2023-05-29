@@ -8,10 +8,10 @@ const WritingToggle = ({ modalOn, setModalOn }) => {
     const navigate = useNavigate();
 
     const writePost = (url) => {
-        if (localStorage.getItem('token') === null || localStorage.getItem('token') === 'null' ||
-            localStorage.getItem('token') === undefined || localStorage.getItem('token') === '') {
+        if (localStorage.getItem('uid') === undefined || localStorage.getItem('uid') === '') {
             alert('로그인 해주세요.');
-            window.location.replace('/login');
+            //window.location.replace('/login');
+            navigate("/login", { replace: true });
         } else {
             navigate(url)
         }
