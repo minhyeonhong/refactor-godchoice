@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
 import PageState from '../common/PageState';
 import { useQuery } from '@tanstack/react-query';
 import { kakaoInstance } from '../../api/kakaoInstance';
-import { doc, setDoc, db } from "../../firebase";
+import { doc, setDoc, getDoc, db } from "../../firebase";
 
 // 리다이렉트될 화면
 const Kakao = () => {
@@ -45,23 +44,28 @@ const Kakao = () => {
 	useQuery(["getKakaoUserInfo"], getKakaoUserInfo,
 		{
 			refetchOnWindowFocus: false,
-			onSuccess: res => {
+			onSuccess: async (res) => {
 				const { id, kakao_account } = res.data;
 				const { email, gender, profile } = kakao_account;
 				const { nickname, profile_image_url } = profile;
 
-				setDoc(doc(db, "users", `UID_${id}`), {
-					email,
-					gender,
-					nickname,
-					profile_image_url
-				})
+				const haveUserInfo = (await getDoc(doc(db, "users", `UID_${id}`)))._document !== null;
+
+				if (!haveUserInfo) {
+					await setDoc(doc(db, "users", `UID_${id}`), {
+						email,
+						gender,
+						nickname,
+						profile_image_url
+					})
+				}
+
 				localStorage.setItem("uid", `UID_${id}`);
-				window.location.replace("/mypage")
+				window.location.replace("/mypage");
 			},
 			onError: error => {
 				alert("로그인 실패 메인화면으로 돌아갑니다.");
-				window.location.replace("/")
+				window.location.replace("/");
 			}
 		});
 
