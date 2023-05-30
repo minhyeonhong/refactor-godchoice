@@ -11,7 +11,7 @@ import {
     query,
     namedQuery
 } from 'firebase/firestore';
-import { ref, getDownloadURL, uploadBytes, deleteObject, getMetadata, getStorage } from "firebase/storage"
+import { ref, getDownloadURL, uploadBytes, deleteObject, getStorage } from "firebase/storage"
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FB_API_KEY,
@@ -29,8 +29,8 @@ const db = getFirestore(app);
 
 const storage = getStorage(app);
 
-export const fsUploadImage = async (imgURL, imgFile) => {
-    const storageRef = ref(storage, `${imgURL}/${localStorage.getItem("uid")}_${imgFile.name}`);
+export const fsUploadImage = async (imgURL, imgFile, imgFileName) => {
+    const storageRef = ref(storage, `${imgURL}/${imgFileName}`);
     const uploadTask = await uploadBytes(storageRef, imgFile);
     const getImageURL = await getDownloadURL(uploadTask.ref);
 
@@ -48,6 +48,16 @@ export const fsDeleteImage = async (imgURL, imgName) => {
         });
 }
 
+export const insertPost = async (post) => {
+    console.log(post);
+    addDoc(collection(db, "post"), post)
+        .then(res => {
+            console.log(res);
+        })
+        .catch(error => {
+            console.log("insertError", error);
+        })
+}
 
 // let admin = require("firebase-admin");
 
