@@ -8,7 +8,6 @@ const Google = lazy(() => import("../components/login/Google"))
 const Github = lazy(() => import("../components/login/Github"))
 const Home = lazy(() => import("../pages/Home"))
 const LoginPage = lazy(() => import("../pages/LoginPage"))
-const Post = lazy(() => import("../pages/Post"))
 const Detail = lazy(() => import("../pages/Detail"))
 
 const MyPage = lazy(() => import("../pages/myPage/MyPage"))
@@ -30,8 +29,6 @@ const Router = () => {
                 <Routes>
                     {/* 홈 페이지 */}
                     <Route path="/" element={<Home />} />
-                    {/* 포스트 페이지 */}
-                    <Route path="/post" element={<Post />} />
 
                     {/* 로그인 페이지 */}
                     <Route path="/login" element={<LoginPage />} />
