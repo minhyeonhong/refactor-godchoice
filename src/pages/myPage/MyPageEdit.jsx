@@ -42,7 +42,7 @@ const MyPageEdit = () => {
 
     if (files.length !== 0 && prevProfileName !== "") await fsDeleteImage("images/profile", prevProfileName);
 
-    const profile_image_url = files.length !== 0 ? await fsUploadImage("images/profile", files[0]) : "";
+    const profile_image_url = files.length !== 0 ? await fsUploadImage("images/profile", files[0], `${localStorage.getItem("uid")}_${files[0].name}`) : "";
     const nickname = event.target[1].value === "" ? userInfo.nickname : event.target[1].value;
 
     const modUserInfo = {
