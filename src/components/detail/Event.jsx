@@ -21,150 +21,156 @@ import { useCallback } from 'react';
 import styled from 'styled-components';
 import { useMemo } from 'react';
 import TextAreaAutoResize from "react-textarea-autosize";
+import { getPost } from '../../firebase';
 
 const Event = ({ postId, url }) => {
 
+
+
     //디테일 페이지 불러오기
     const getEventPost = async () => {
-        const res = await postApis.getPostAX({ url, postId });
-        return res;
+        const response = await getPost(postId);
+        return response.data();
     }
     const result = useQuery(
-        ["getEventPost", url, postId],
+        ["getEventPost"],
         getEventPost,
     );
+
+    console.log(result);
+
     //디테일 페이지 server state
-    const post = result.data?.data.data;
+    // const post = result.data?.data.data;
     //업데이트 인풋
-    const [modPost, setmodPost, modPostHandle] = useInput(result.data?.data.data);
+    // const [modPost, setmodPost, modPostHandle] = useInput(result.data?.data.data);
 
-    //상세글 수정하기 상태
-    const [mod, setMod] = useState(false);
+    // //상세글 수정하기 상태
+    // const [mod, setMod] = useState(false);
 
-    // 주소 API 팝업창 상태 관리
-    const [isAddressModal, setIsAddressModal] = useState(false);
-    //주소 API useState
-    const [postAddress, setPostAddress] = useState("");
+    // // 주소 API 팝업창 상태 관리
+    // const [isAddressModal, setIsAddressModal] = useState(false);
+    // //주소 API useState
+    // const [postAddress, setPostAddress] = useState("");
 
-    const popupPostCode = () => {
-        setIsAddressModal(!isAddressModal)
-    }
+    // const popupPostCode = () => {
+    //     setIsAddressModal(!isAddressModal)
+    // }
 
-    useEffect(() => {
-        if (postAddress !== "") {
-            setmodPost({ ...modPost, postAddress })
-        }
-    }, [postAddress])
+    // useEffect(() => {
+    //     if (postAddress !== "") {
+    //         setmodPost({ ...modPost, postAddress })
+    //     }
+    // }, [postAddress])
 
-    //이미지 업로드 훅
-    const [files, fileUrls, uploadHandle, setImgFiles, setImgUrls] = useImgUpload(5, true, 0.5, 1000);
-    const imgRef = useRef();
+    // //이미지 업로드 훅
+    // const [files, fileUrls, uploadHandle, setImgFiles, setImgUrls] = useImgUpload(5, true, 0.5, 1000);
+    // const imgRef = useRef();
 
-    //기존 프리뷰 지울 state
-    const [delImg, setDelImg] = useState([]);
+    // //기존 프리뷰 지울 state
+    // const [delImg, setDelImg] = useState([]);
 
 
-    //게시글 수정
-    const putEventPost = useMutation({
-        mutationFn: (obj) => {
-            return postApis.putEventPostAx(obj);
-        },
-        onSuccess: res => {
-            if (res.data.status === 200) {
-                window.location.reload();
-            }
-        },
-    })
+    // //게시글 수정
+    // const putEventPost = useMutation({
+    //     mutationFn: (obj) => {
+    //         return postApis.putEventPostAx(obj);
+    //     },
+    //     onSuccess: res => {
+    //         if (res.data.status === 200) {
+    //             window.location.reload();
+    //         }
+    //     },
+    // })
 
-    //submit
-    const putPostSubmit = () => {
+    // //submit
+    // const putPostSubmit = () => {
 
-        const formData = new FormData();
+    //     const formData = new FormData();
 
-        if (files.length > 0) {
-            files.forEach((file) => {
-                formData.append("multipartFile", file);
-            })
-        } else {
-            formData.append("multipartFile", null);
-        }
+    //     if (files.length > 0) {
+    //         files.forEach((file) => {
+    //             formData.append("multipartFile", file);
+    //         })
+    //     } else {
+    //         formData.append("multipartFile", null);
+    //     }
 
-        //링크 검사(행사장링크 필수 아님)
-        const link = /(http|https):\/\//.test(modPost.postLink)
-        if (modPost.postLink !== "") {
-            if (link === false) {
-                return alert("'http://' 또는 'https://'가 포함된 링크를 입력해주세요.")
-            }
-        }
+    //     //링크 검사(행사장링크 필수 아님)
+    //     const link = /(http|https):\/\//.test(modPost.postLink)
+    //     if (modPost.postLink !== "") {
+    //         if (link === false) {
+    //             return alert("'http://' 또는 'https://'가 포함된 링크를 입력해주세요.")
+    //         }
+    //     }
 
-        const detail = modPost.detailAddress === undefined ? "" : modPost.detailAddress
+    //     const detail = modPost.detailAddress === undefined ? "" : modPost.detailAddress
 
-        const obj = {
-            imgId: delImg.join(),
-            category: modPost.category,
-            startPeriod: modPost.startPeriod,
-            endPeriod: modPost.endPeriod,
-            title: modPost.title,
-            content: modPost.content,
-            postLink: modPost.postLink,
-            postAddress: modPost.postAddress + detail
-        }
+    //     const obj = {
+    //         imgId: delImg.join(),
+    //         category: modPost.category,
+    //         startPeriod: modPost.startPeriod,
+    //         endPeriod: modPost.endPeriod,
+    //         title: modPost.title,
+    //         content: modPost.content,
+    //         postLink: modPost.postLink,
+    //         postAddress: modPost.postAddress + detail
+    //     }
 
-        //폼 데이터에 글작성 데이터 넣기
-        formData.append("eventPostPutReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
+    //     //폼 데이터에 글작성 데이터 넣기
+    //     formData.append("eventPostPutReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
 
-        //Api 날리기
-        putEventPost.mutate({ postId, content: formData });
-    }
+    //     //Api 날리기
+    //     putEventPost.mutate({ postId, content: formData });
+    // }
 
-    const categoryOption = ['마라톤', '페스티벌', '전시회', '공연', '기타'];
-    //날짜 제한
-    const today = new Date();
-    const today2 = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    // const categoryOption = ['마라톤', '페스티벌', '전시회', '공연', '기타'];
+    // //날짜 제한
+    // const today = new Date();
+    // const today2 = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
 
-    //기존글의 삭제할 이미지
-    const delImgHandle = (postImgId) => {
-        setDelImg((e) => [...e, postImgId]);
-    }
+    // //기존글의 삭제할 이미지
+    // const delImgHandle = (postImgId) => {
+    //     setDelImg((e) => [...e, postImgId]);
+    // }
 
-    //새로추가한 글 삭제할 이미지
-    function deleteNewFile(e) {
-        const imgurls = fileUrls.filter((imgUrl, index) => index !== e);
-        setImgUrls(imgurls);
+    // //새로추가한 글 삭제할 이미지
+    // function deleteNewFile(e) {
+    //     const imgurls = fileUrls.filter((imgUrl, index) => index !== e);
+    //     setImgUrls(imgurls);
 
-        const imgdelete = files.filter((file, index) => index !== e);
-        setImgFiles(imgdelete);
-    }
+    //     const imgdelete = files.filter((file, index) => index !== e);
+    //     setImgFiles(imgdelete);
+    // }
 
-    //게시글 삭제
-    const deleteEventPost = useMutation({
-        mutationFn: (obj) => {
-            return postApis.deleteEventPostAx(obj);
-        },
-        onSuccess: res => {
-            if (res.data.status === 200) {
-                window.location.replace('/');
-            }
-        },
-    })
-    //게시글 삭제
-    const onEventDelete = (postId) => {
-        if (window.confirm("게시글을 삭제 하시겠습니까?")) {
-            deleteEventPost.mutate(postId);
-        }
-    }
+    // //게시글 삭제
+    // const deleteEventPost = useMutation({
+    //     mutationFn: (obj) => {
+    //         return postApis.deleteEventPostAx(obj);
+    //     },
+    //     onSuccess: res => {
+    //         if (res.data.status === 200) {
+    //             window.location.replace('/');
+    //         }
+    //     },
+    // })
+    // //게시글 삭제
+    // const onEventDelete = (postId) => {
+    //     if (window.confirm("게시글을 삭제 하시겠습니까?")) {
+    //         deleteEventPost.mutate(postId);
+    //     }
+    // }
 
-    if (result.isLoading) {
-        return < PageState
-            display={'flex'}
-            state='loading' imgWidth='25%' height='100vh'
-            text='잠시만 기다려 주세요.' />;
-    }
+    // if (result.isLoading) {
+    //     return < PageState
+    //         display={'flex'}
+    //         state='loading' imgWidth='25%' height='100vh'
+    //         text='잠시만 기다려 주세요.' />;
+    // }
 
     return (
         <StWrap>
 
-            {!mod ?
+            {/* {!mod ?
                 post === undefined ?
                     <PageState display='flex'
                         flexDirection='column' state='notFound' imgWidth='25%' height='100vh'
@@ -427,7 +433,7 @@ const Event = ({ postId, url }) => {
 
                 </>
             }
-            <Comment postId={postId} kind='event' style={{ marginTop: "20px" }} />
+            <Comment postId={postId} kind='event' style={{ marginTop: "20px" }} /> */}
         </StWrap >
     );
 };

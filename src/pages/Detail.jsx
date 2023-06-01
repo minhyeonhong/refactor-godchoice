@@ -11,8 +11,7 @@ const Detail = () => {
     const { url, postId } = useParams();
 
     useEffect(() => {
-        if (localStorage.getItem('token') === null || localStorage.getItem('token').trim() === 'null' ||
-            localStorage.getItem('token') === undefined || localStorage.getItem('token').trim() === '') {
+        if (localStorage.getItem("uid") === null || localStorage.getItem('uid').trim() === '') {
             alert('로그인 해주세요.');
             window.location.replace('/login');
         }
@@ -20,9 +19,9 @@ const Detail = () => {
 
     return (
         <Layout>
-            {url === 'eventposts' && <Event postId={postId} url={url} />}
-            {url === 'gatherposts' && <Gather postId={postId} url={url} />}
-            {url === 'askposts' && <Ask postId={postId} url={url} />}
+            {url === 'event' && <Event postId={postId} url={url} />}
+            {url === 'gather' && <Gather postId={postId} url={url} />}
+            {url === 'ask' && <Ask postId={postId} url={url} />}
         </Layout>
     );
 };
