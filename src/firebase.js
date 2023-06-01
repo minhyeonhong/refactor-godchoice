@@ -49,14 +49,11 @@ export const fsDeleteImage = async (imgURL, imgName) => {
 }
 
 export const insertPost = async (post) => {
-    console.log(post);
-    addDoc(collection(db, "post"), post)
-        .then(res => {
-            console.log(res);
-        })
-        .catch(error => {
-            console.log("insertError", error);
-        })
+    return await addDoc(collection(db, "post"), post);
+}
+
+export const getPost = async (postID) => {
+    return await getDoc(doc(db, "post", postID));
 }
 
 // let admin = require("firebase-admin");
