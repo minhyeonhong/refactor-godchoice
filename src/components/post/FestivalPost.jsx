@@ -16,11 +16,11 @@ import noImg from '../../assets/images/common/noImg.png'
 
 import useImgUpload from '../../hooks/useImgUpload';
 import useInput from '../../hooks/useInput';
-import { useMutation } from '@tanstack/react-query';
-import { postApis } from '../../api/api-functions/postApis';
+import { fsUploadImage, insertPost } from '../../firebase';
+import { useNavigate } from 'react-router-dom';
 
 const FestivalPost = () => {
-
+    const navigate = useNavigate();
     //주소 API useState
     const [postAddress, setPostAddress] = useState("")
 
@@ -41,93 +41,6 @@ const FestivalPost = () => {
         detailAddress: "" //상세 주소를 보내주기 위함
     })
 
-    //게시글 작성
-    const insertEventPost = useMutation({
-        mutationFn: (obj) => {
-            return postApis.addEventPostAx(obj);
-        },
-        onSuccess: res => {
-            if (res.data.status === 200) {
-                window.location.replace(`/eventposts/${res.data.data.postId}`);
-            }
-        },
-    })
-
-    //관리자글 작성
-    const insertAdminPost = useMutation({
-        mutationFn: (obj) => {
-            return postApis.addAdminPostAX(obj);
-        },
-        onSuccess: res => {
-            if (res.data.status === 200) {
-                window.location.replace('/mypage');
-            }
-        },
-    })
-
-    const onSubmit = () => {
-        const formData = new FormData();
-
-
-
-        const obj = {
-            category: festival.category,
-            startPeriod: festival.startPeriod,
-            endPeriod: festival.endPeriod,
-            title: festival.title,
-            content: festival.content,
-            postAddress: postAddress + festival.detailAddress, //상세 주소 내용 추가
-            postLink: festival.postLink,
-        }
-
-
-        const adminObj = {
-            title: festival.title,
-            postLink: festival.postLink,
-        }
-
-        if (isAdmin) {
-            if (originFiles.length > 0) {
-                originFiles.forEach((file) => {
-                    formData.append("multipartFile", file);
-                })
-            } else {
-                formData.append("multipartFile", null);
-            }
-
-            formData.append("adminPostReqDto", new Blob([JSON.stringify(adminObj)], { type: "application/json" }));
-            insertAdminPost.mutate(formData);
-        } else {
-            //카테고리, 행사시작, 행사마감, 글작성, content 검사
-            if (festival.category === "") { return alert('카테고리를 입력하세요') }
-            if (festival.startPeriod === "") { return alert('행사시작 일자를 입력하세요') }
-            if (festival.endPeriod === "") { return alert('행사마감 일자를 입력하세요') }
-            if (festival.title === "") { return alert('제목을 입력하세요') }
-            if (festival.content === "") { return alert('내용을 입력하세요') }
-            // if (festival.postLink === "") { return alert('관련 링크를 입력하세요') }
-            if (postAddress === "") { return alert('주소를 등록하세요') }
-
-            //링크 검사
-            const link = /(http|https):\/\//.test(festival.postLink)
-            if (festival.postLink !== "") {
-                if (link === false) {
-                    return alert("'http://' 또는 'https://'가 포함된 링크를 입력해주세요.")
-                }
-            }
-
-            if (files.length > 0) {
-                files.forEach((file) => {
-                    formData.append("multipartFile", file);
-                })
-            } else {
-                formData.append("multipartFile", null);
-            }
-
-            formData.append("eventPostReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
-            insertEventPost.mutate(formData);
-        }
-    }
-
     // 주소 API 팝업창 상태 관리
     const [isPopupOpen, setIsPopupOpen] = useState(false)
 
@@ -136,13 +49,8 @@ const FestivalPost = () => {
     }
 
     //날짜 제한
-    const today = new Date();
-    const day = today.getDate();
-    const month = today.getMonth() + 1;
-    const year = today.getFullYear()
-
-    const today2 = year + '-' + month + '-' + day;
-    const today3 = festival.startPeriod
+    const getDate = new Date();
+    const today = `${getDate.getFullYear()}-${(getDate.getMonth() + 1)}-${getDate.getDate()}`;
 
     //주소 앞에 두글자 따기
     const region = postAddress.split("")[0] + postAddress.split("")[1]
@@ -154,6 +62,56 @@ const FestivalPost = () => {
         } else {
             setIsAdmin(false);
         }
+    }
+
+    const onSubmit = async () => {
+
+        //카테고리, 행사시작, 행사마감, 글작성, content 검사
+        if (festival.title === "") { return alert('제목을 입력하세요') }
+        if (festival.content === "") { return alert('내용을 입력하세요') }
+        if (festival.category === "") { return alert('카테고리를 입력하세요') }
+        if (festival.startPeriod === "") { return alert('행사시작 일자를 입력하세요') }
+        if (festival.endPeriod === "") { return alert('행사마감 일자를 입력하세요') }
+        if (postAddress === "") { return alert('주소를 등록하세요') }
+        //         //링크 검사
+        const link = /(http|https):\/\//.test(festival.postLink)
+        if (festival.postLink !== "") {
+            if (link === false) {
+                return alert("'http://' 또는 'https://'가 포함된 링크를 입력해주세요.")
+            }
+        }
+
+        const writeTime = `${today} ${getDate.getHours()}:${getDate.getMinutes()}:${getDate.getSeconds()}:${getDate.getMilliseconds()}`;
+
+        const obj = {
+            category: festival.category,
+            startPeriod: festival.startPeriod,
+            endPeriod: festival.endPeriod,
+            title: festival.title,
+            content: festival.content,
+            contentType: "event",
+            postAddress: postAddress + festival.detailAddress,
+            postLink: festival.postLink,
+            writer: localStorage.getItem('uid'),
+            writeTime: writeTime,
+            photoURIs: [],
+        }
+
+        if (files.length > 0) {
+            files.forEach(async (file) => {
+                const getImageURI = await fsUploadImage("images/post", file, `${localStorage.getItem('uid')}_${file.name}_${writeTime}`)
+                obj.photoURIs.push(getImageURI)
+            })
+        }
+
+        insertPost(obj)
+            .then(response => {
+                const postID = response._key.path.segments[1];
+                navigate(`/event/${postID}`, { replace: true });
+            })
+            .catch(error => {
+                console.log("fireStore insert error", error);
+            })
     }
 
     return (
@@ -209,12 +167,12 @@ const FestivalPost = () => {
                         <Row className="mb-3">
                             <Form.Group as={Col} controlId="formGridCity">
                                 <Form.Label>행사시작</Form.Label>
-                                <Form.Control type="date" name="startPeriod" onChange={festivalHandle} min={today2} className="dateform"
+                                <Form.Control type="date" name="startPeriod" onChange={festivalHandle} min={today} className="dateform"
                                 />
                             </Form.Group>
                             <Form.Group as={Col} controlId="formGridCity">
                                 <Form.Label>행사마감</Form.Label>
-                                <Form.Control type="date" name="endPeriod" onChange={festivalHandle} min={today3} className="dateform" />
+                                <Form.Control type="date" name="endPeriod" onChange={festivalHandle} min={festival.startPeriod} className="dateform" />
                             </Form.Group>
                         </Row>
                     </SelBottom>
