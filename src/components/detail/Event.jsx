@@ -22,10 +22,9 @@ import styled from 'styled-components';
 import { useMemo } from 'react';
 import TextAreaAutoResize from "react-textarea-autosize";
 import { getPost } from '../../firebase';
+import { today } from '../common/Date';
 
 const Event = ({ postId, url }) => {
-
-
 
     //디테일 페이지 불러오기
     const getEventPost = async () => {
@@ -37,140 +36,138 @@ const Event = ({ postId, url }) => {
         getEventPost,
     );
 
-    console.log(result);
+    const post = result.data;
 
-    //디테일 페이지 server state
-    // const post = result.data?.data.data;
+    console.log(post);
+
+
     //업데이트 인풋
-    // const [modPost, setmodPost, modPostHandle] = useInput(result.data?.data.data);
+    const [modPost, setmodPost, modPostHandle] = useInput(result.data);
 
-    // //상세글 수정하기 상태
-    // const [mod, setMod] = useState(false);
+    //상세글 수정하기 상태
+    const [mod, setMod] = useState(false);
 
-    // // 주소 API 팝업창 상태 관리
-    // const [isAddressModal, setIsAddressModal] = useState(false);
+    // 주소 API 팝업창 상태 관리
+    const [isAddressModal, setIsAddressModal] = useState(false);
     // //주소 API useState
-    // const [postAddress, setPostAddress] = useState("");
+    const [postAddress, setPostAddress] = useState("");
 
-    // const popupPostCode = () => {
-    //     setIsAddressModal(!isAddressModal)
-    // }
+    const popupPostCode = () => {
+        setIsAddressModal(!isAddressModal)
+    }
 
-    // useEffect(() => {
-    //     if (postAddress !== "") {
-    //         setmodPost({ ...modPost, postAddress })
-    //     }
-    // }, [postAddress])
+    useEffect(() => {
+        if (postAddress !== "") {
+            setmodPost({ ...modPost, postAddress })
+        }
+    }, [postAddress])
 
     // //이미지 업로드 훅
-    // const [files, fileUrls, uploadHandle, setImgFiles, setImgUrls] = useImgUpload(5, true, 0.5, 1000);
-    // const imgRef = useRef();
+    const [files, fileUrls, uploadHandle, setImgFiles, setImgUrls] = useImgUpload(5, true, 0.5, 1000);
+    const imgRef = useRef();
 
     // //기존 프리뷰 지울 state
-    // const [delImg, setDelImg] = useState([]);
+    const [delImg, setDelImg] = useState([]);
 
 
     // //게시글 수정
-    // const putEventPost = useMutation({
-    //     mutationFn: (obj) => {
-    //         return postApis.putEventPostAx(obj);
-    //     },
-    //     onSuccess: res => {
-    //         if (res.data.status === 200) {
-    //             window.location.reload();
-    //         }
-    //     },
-    // })
+    const putEventPost = useMutation({
+        mutationFn: (obj) => {
+            return postApis.putEventPostAx(obj);
+        },
+        onSuccess: res => {
+            if (res.data.status === 200) {
+                window.location.reload();
+            }
+        },
+    })
 
-    // //submit
-    // const putPostSubmit = () => {
+    //submit
+    const putPostSubmit = () => {
 
-    //     const formData = new FormData();
+        const formData = new FormData();
 
-    //     if (files.length > 0) {
-    //         files.forEach((file) => {
-    //             formData.append("multipartFile", file);
-    //         })
-    //     } else {
-    //         formData.append("multipartFile", null);
-    //     }
+        if (files.length > 0) {
+            files.forEach((file) => {
+                formData.append("multipartFile", file);
+            })
+        } else {
+            formData.append("multipartFile", null);
+        }
 
-    //     //링크 검사(행사장링크 필수 아님)
-    //     const link = /(http|https):\/\//.test(modPost.postLink)
-    //     if (modPost.postLink !== "") {
-    //         if (link === false) {
-    //             return alert("'http://' 또는 'https://'가 포함된 링크를 입력해주세요.")
-    //         }
-    //     }
+        //링크 검사(행사장링크 필수 아님)
+        const link = /(http|https):\/\//.test(modPost.postLink)
+        if (modPost.postLink !== "") {
+            if (link === false) {
+                return alert("'http://' 또는 'https://'가 포함된 링크를 입력해주세요.")
+            }
+        }
 
-    //     const detail = modPost.detailAddress === undefined ? "" : modPost.detailAddress
+        const detail = modPost.detailAddress === undefined ? "" : modPost.detailAddress
 
-    //     const obj = {
-    //         imgId: delImg.join(),
-    //         category: modPost.category,
-    //         startPeriod: modPost.startPeriod,
-    //         endPeriod: modPost.endPeriod,
-    //         title: modPost.title,
-    //         content: modPost.content,
-    //         postLink: modPost.postLink,
-    //         postAddress: modPost.postAddress + detail
-    //     }
+        const obj = {
+            imgId: delImg.join(),
+            category: modPost.category,
+            startPeriod: modPost.startPeriod,
+            endPeriod: modPost.endPeriod,
+            title: modPost.title,
+            content: modPost.content,
+            postLink: modPost.postLink,
+            postAddress: modPost.postAddress + detail
+        }
 
-    //     //폼 데이터에 글작성 데이터 넣기
-    //     formData.append("eventPostPutReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
+        //폼 데이터에 글작성 데이터 넣기
+        formData.append("eventPostPutReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
 
-    //     //Api 날리기
-    //     putEventPost.mutate({ postId, content: formData });
-    // }
+        //Api 날리기
+        putEventPost.mutate({ postId, content: formData });
+    }
 
-    // const categoryOption = ['마라톤', '페스티벌', '전시회', '공연', '기타'];
-    // //날짜 제한
-    // const today = new Date();
-    // const today2 = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    const categoryOption = ['마라톤', '페스티벌', '전시회', '공연', '기타'];
 
     // //기존글의 삭제할 이미지
-    // const delImgHandle = (postImgId) => {
-    //     setDelImg((e) => [...e, postImgId]);
-    // }
+    const delImgHandle = (postImgId) => {
+        setDelImg((e) => [...e, postImgId]);
+    }
 
     // //새로추가한 글 삭제할 이미지
-    // function deleteNewFile(e) {
-    //     const imgurls = fileUrls.filter((imgUrl, index) => index !== e);
-    //     setImgUrls(imgurls);
+    function deleteNewFile(e) {
+        const imgurls = fileUrls.filter((imgUrl, index) => index !== e);
+        setImgUrls(imgurls);
 
-    //     const imgdelete = files.filter((file, index) => index !== e);
-    //     setImgFiles(imgdelete);
-    // }
+        const imgdelete = files.filter((file, index) => index !== e);
+        setImgFiles(imgdelete);
+    }
 
     // //게시글 삭제
-    // const deleteEventPost = useMutation({
-    //     mutationFn: (obj) => {
-    //         return postApis.deleteEventPostAx(obj);
-    //     },
-    //     onSuccess: res => {
-    //         if (res.data.status === 200) {
-    //             window.location.replace('/');
-    //         }
-    //     },
-    // })
+    const deleteEventPost = useMutation({
+        mutationFn: (obj) => {
+            return postApis.deleteEventPostAx(obj);
+        },
+        onSuccess: res => {
+            if (res.data.status === 200) {
+                window.location.replace('/');
+            }
+        },
+    })
     // //게시글 삭제
-    // const onEventDelete = (postId) => {
-    //     if (window.confirm("게시글을 삭제 하시겠습니까?")) {
-    //         deleteEventPost.mutate(postId);
-    //     }
-    // }
+    const onEventDelete = (postId) => {
+        if (window.confirm("게시글을 삭제 하시겠습니까?")) {
+            deleteEventPost.mutate(postId);
+        }
+    }
 
-    // if (result.isLoading) {
-    //     return < PageState
-    //         display={'flex'}
-    //         state='loading' imgWidth='25%' height='100vh'
-    //         text='잠시만 기다려 주세요.' />;
-    // }
+    if (result.isLoading) {
+        return < PageState
+            display={'flex'}
+            state='loading' imgWidth='25%' height='100vh'
+            text='잠시만 기다려 주세요.' />;
+    }
 
     return (
         <StWrap>
 
-            {/* {!mod ?
+            {!mod ?
                 post === undefined ?
                     <PageState display='flex'
                         flexDirection='column' state='notFound' imgWidth='25%' height='100vh'
@@ -180,10 +177,10 @@ const Event = ({ postId, url }) => {
                         <STIng style={{ margin: "14px 0" }}>
                             <div style={{ display: "flex" }}>
                                 <div>
-                                    {post.postState === "진행중" ?
-                                        (<STIngDiv><div>{post.postState}</div></STIngDiv>)
+                                    {post.endPeriod >= today ?
+                                        (<STIngDiv><div>진행중</div></STIngDiv>)
                                         :
-                                        (<STIngDiv style={{ background: "#727785" }}>{post.postState}</STIngDiv>)
+                                        (<STIngDiv style={{ background: "#727785" }}>종료</STIngDiv>)
                                     }
                                 </div>
                                 <div>
@@ -191,7 +188,8 @@ const Event = ({ postId, url }) => {
                                         <div style={{ background: "white", width: "70px", height: "45px" }}>
                                             <div style={{ margin: "0 5px 0 18px", paddingTop: "10px" }}>
                                                 <img src={Views} style={{ width: "20px", height: "20px", flex: "2", marginRight: "4px" }} alt="views icon" />
-                                                {post.viewCount}
+                                                {/* {post.viewCount} */}
+                                                1
                                             </div>
                                         </div>
                                     </STImg>
@@ -199,7 +197,8 @@ const Event = ({ postId, url }) => {
 
                             </div>
                             <div>
-                                <PostScrap style={{ right: "0px" }} bookMarkStatus={post.bookMarkStatus} />
+                                {/* <PostScrap style={{ right: "0px" }} bookMarkStatus={post.bookMarkStatus} /> */}
+                                북마크
                             </div>
 
                         </STIng>
@@ -213,8 +212,12 @@ const Event = ({ postId, url }) => {
                         </STBox2>
 
                         <div style={{ margin: "10px 0" }}>
-                            <img src={post.userImg} style={{ width: "36px", height: "36px", borderRadius: "30px" }} alt="user iamage" />
-                            <STUsername>{post.username}</STUsername>
+                            {post.writerProfileImg === "" ?
+                                < img src={`${process.env.PUBLIC_URL}/kakao_base_profil.jpg`} style={{ width: "36px", height: "36px", borderRadius: "30px" }} alt="user iamage" />
+                                :
+                                <img src={post.writerProfileImg} style={{ width: "36px", height: "36px", borderRadius: "30px" }} alt="user iamage" />
+                            }
+                            <STUsername>{post.writerNickName}</STUsername>
                         </div>
 
                         <STInput style={{ height: "48px" }}><p>{post.title}</p></STInput>
@@ -222,13 +225,13 @@ const Event = ({ postId, url }) => {
                         <StCarouselWrap>
                             <Carousel>
                                 {
-                                    post.postImgInfo !== undefined &&
-                                    post.postImgInfo.map((imgInfo, i) => {
+                                    post.photoURIs !== undefined &&
+                                    post.photoURIs.map((img, i) => {
                                         return (
                                             <Carousel.Item key={i}>
                                                 <img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
                                                     className="d-block w-100"
-                                                    src={imgInfo.postImgUrl}
+                                                    src={img}
                                                     alt={`slide${i + 1}`}
                                                 />
                                             </Carousel.Item>
@@ -272,7 +275,7 @@ const Event = ({ postId, url }) => {
                         }
                         <KakaoMap address={post.postAddress} width='100%' height='144px' />
 
-                        {localStorage.getItem('userId') === post.userId.toString() &&
+                        {localStorage.getItem('uid') === post.writer &&
                             (<div>
                                 <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={() => { onEventDelete(postId); }}>삭제</STEditButton>
                                 <STEditButton onClick={() => { setMod(true) }}>수정</STEditButton>
@@ -288,16 +291,16 @@ const Event = ({ postId, url }) => {
                     <StCarouselWrap>
 
                         <Carousel>
-                            {delImg === "" || modPost.postImgInfo.length - delImg.length > 0 && modPost.postImgInfo[0].postImgId !== null &&
-                                modPost.postImgInfo
-                                    .filter((item, i) => delImg.indexOf(item.postImgId) === -1)
-                                    .map((imgInfo, i) => {
+                            {delImg === "" || modPost.photoURIs.length - delImg.length > 0 && modPost.photoURIs[0] !== null &&
+                                modPost.photoURIs
+                                    .filter((item, i) => delImg.indexOf(item) === -1)
+                                    .map((img, i) => {
                                         return (
 
-                                            <Carousel.Item key={imgInfo.id}>
+                                            <Carousel.Item key={i}>
                                                 <img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
                                                     className="d-block w-100"
-                                                    src={imgInfo.postImgUrl}
+                                                    src={img}
                                                     alt={`slide${i + 1}`}
                                                 />
                                             </Carousel.Item>
@@ -317,12 +320,12 @@ const Event = ({ postId, url }) => {
                             })}
                         </Carousel>
 
-                        {modPost.postImgInfo.map((imgInfo, i) => {
+                        {modPost.photoURIs.map((img, i) => {
                             return (
-                                imgInfo.postImgId &&
-                                <button style={{ display: delImg.indexOf(imgInfo.postImgId) > -1 ? "none" : "inline-block" }}
-                                    onClick={() => delImgHandle(imgInfo.postImgId)} key={i}>
-                                    <img style={{ width: '60px', height: '60px' }} src={imgInfo.postImgUrl} alt={"post image" + i} />
+                                img &&
+                                <button style={{ display: delImg.indexOf(img) > -1 ? "none" : "inline-block" }}
+                                    onClick={() => delImgHandle(img)} key={i}>
+                                    <img style={{ width: '60px', height: '60px' }} src={img} alt={"post image" + i} />
                                 </button>
                             )
                         })}
@@ -388,8 +391,8 @@ const Event = ({ postId, url }) => {
                         </div>
 
                         <SelBottom style={{ marginBottom: "10px" }}>
-                            <STDateInput type="date" name="startPeriod" value={modPost.startPeriod || ""} onChange={modPostHandle} min={today2} />
-                            <STDateInput type="date" name="endPeriod" value={modPost.endPeriod || ""} onChange={modPostHandle} min={today2} />
+                            <STDateInput type="date" name="startPeriod" value={modPost.startPeriod || ""} onChange={modPostHandle} min={today} />
+                            <STDateInput type="date" name="endPeriod" value={modPost.endPeriod || ""} onChange={modPostHandle} min={today} />
                         </SelBottom>
                     </StTypeBox>
 
@@ -433,7 +436,7 @@ const Event = ({ postId, url }) => {
 
                 </>
             }
-            <Comment postId={postId} kind='event' style={{ marginTop: "20px" }} /> */}
+            {/* <Comment postId={postId} kind='event' style={{ marginTop: "20px" }} /> */}
         </StWrap >
     );
 };

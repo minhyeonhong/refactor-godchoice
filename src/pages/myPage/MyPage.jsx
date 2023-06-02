@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,6 +19,11 @@ const MyPage = () => {
 
   const { userInfo, isLoading } = useGetMyInfo("users", localStorage.getItem("uid"));
 
+  useEffect(() => {
+    localStorage.setItem("nickname", userInfo.nickname);
+    localStorage.setItem("profile_image_url", userInfo.profile_image_url);
+  }, [userInfo])
+
   //관리자 배너 삭제
   const deleteBanner = useMutation({
     mutationFn: (id) => {
@@ -35,35 +40,11 @@ const MyPage = () => {
   // 로그아웃
   const handleLogout = () => {
     if (window.confirm("로그아웃 하시겠습니까?")) {
-      //logout.mutate(myInfo.domain);
-
-      // if (myInfo.domain === 'kakako') {
-      //   logout.mutate(myInfo.domain);
-      // } else {
-      //네이버 구글 
       localStorage.clear();
       navigate("/");
       //}
     }
   }
-
-  //로그아웃
-  const logout = useMutation({
-    mutationFn: (domain) => {
-      if (domain === 'kakao') {
-        return myPageApis.kakaologoutAX(domain);
-      } else {
-        return myPageApis.logoutAX();
-      }
-
-    },
-    onSuccess: res => {
-      if (res.data.status === 200) {
-        localStorage.clear();
-        navigate("/");
-      }
-    },
-  })
 
   if (isLoading) {
     return < PageState
