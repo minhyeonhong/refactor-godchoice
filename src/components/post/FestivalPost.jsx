@@ -18,6 +18,7 @@ import useImgUpload from '../../hooks/useImgUpload';
 import useInput from '../../hooks/useInput';
 import { fsUploadImage, insertPost } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
+import { today, writeTime } from '../common/Date';
 
 const FestivalPost = () => {
     const navigate = useNavigate();
@@ -48,10 +49,6 @@ const FestivalPost = () => {
         setIsPopupOpen(!isPopupOpen)
     }
 
-    //날짜 제한
-    const getDate = new Date();
-    const today = `${getDate.getFullYear()}-${(getDate.getMonth() + 1)}-${getDate.getDate()}`;
-
     //주소 앞에 두글자 따기
     const region = postAddress.split("")[0] + postAddress.split("")[1]
 
@@ -73,15 +70,13 @@ const FestivalPost = () => {
         if (festival.startPeriod === "") { return alert('행사시작 일자를 입력하세요') }
         if (festival.endPeriod === "") { return alert('행사마감 일자를 입력하세요') }
         if (postAddress === "") { return alert('주소를 등록하세요') }
-        //         //링크 검사
+        //링크 검사
         const link = /(http|https):\/\//.test(festival.postLink)
         if (festival.postLink !== "") {
             if (link === false) {
                 return alert("'http://' 또는 'https://'가 포함된 링크를 입력해주세요.")
             }
         }
-
-        const writeTime = `${today} ${getDate.getHours()}:${getDate.getMinutes()}:${getDate.getSeconds()}:${getDate.getMilliseconds()}`;
 
         const obj = {
             category: festival.category,
@@ -94,24 +89,39 @@ const FestivalPost = () => {
             postLink: festival.postLink,
             writer: localStorage.getItem('uid'),
             writeTime: writeTime,
+            writerNickName: localStorage.getItem('nickname'),
+            writerProfileImg: localStorage.getItem('profile_image_url'),
             photoURIs: [],
         }
 
+
         if (files.length > 0) {
-            files.forEach(async (file) => {
-                const getImageURI = await fsUploadImage("images/post", file, `${localStorage.getItem('uid')}_${file.name}_${writeTime}`)
-                obj.photoURIs.push(getImageURI)
+            files.map(async (file, i) => {
+                const getImageURI = await fsUploadImage("images/post", file, `${localStorage.getItem('uid')}_${file.name}_${writeTime}`);
+                obj.photoURIs.push(getImageURI);
+                if (files.length === (i + 1)) {
+                    insertPost(obj)
+                        .then(response => {
+                            const postID = response._key.path.segments[1];
+                            navigate(`/event/${postID}`, { replace: true });
+                        })
+                        .catch(error => {
+                            console.log("fireStore insert error", error);
+                        })
+                }
             })
+        } else {
+            insertPost(obj)
+                .then(response => {
+                    const postID = response._key.path.segments[1];
+                    navigate(`/event/${postID}`, { replace: true });
+                })
+                .catch(error => {
+                    console.log("fireStore insert error", error);
+                })
         }
 
-        insertPost(obj)
-            .then(response => {
-                const postID = response._key.path.segments[1];
-                navigate(`/event/${postID}`, { replace: true });
-            })
-            .catch(error => {
-                console.log("fireStore insert error", error);
-            })
+
     }
 
     return (
