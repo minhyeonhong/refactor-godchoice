@@ -56,6 +56,13 @@ export const getPost = async (postID) => {
     return await getDoc(doc(db, "post", postID));
 }
 
+export const getPosts = async () => {
+    const response = await getDocs(collection(db, "post"));
+    const datas = response.docs.map(doc => ({ ...doc.data(), postID: doc.id }));
+
+    return datas;
+}
+
 // let admin = require("firebase-admin");
 
 // let serviceAccount = require("path/to/serviceAccountKey.json");
