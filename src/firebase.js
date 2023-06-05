@@ -9,7 +9,11 @@ import {
     getDoc,
     updateDoc,
     query,
-    namedQuery
+    namedQuery,
+    limit,
+    orderBy,
+    startAfter,
+    startAt,
 } from 'firebase/firestore';
 import { ref, getDownloadURL, uploadBytes, deleteObject, getStorage } from "firebase/storage"
 
@@ -28,6 +32,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const storage = getStorage(app);
+
+const pageLimit = 3;
 
 export const fsUploadImage = async (imgURL, imgFile, imgFileName) => {
     const storageRef = ref(storage, `${imgURL}/${imgFileName}`);
@@ -56,11 +62,13 @@ export const getPost = async (postID) => {
     return await getDoc(doc(db, "post", postID));
 }
 
-export const getPosts = async () => {
-    const response = await getDocs(collection(db, "post"));
+export const getPosts = async (searchState, startAfterSnapshot = {}) => {
+    const response = await getDocs(query(collection(db, "post"), orderBy("writeTime", "desc"), startAfter(startAfterSnapshot), limit(pageLimit)));
     const datas = response.docs.map(doc => ({ ...doc.data(), postID: doc.id }));
 
-    return datas;
+    const lastSnapshot = response.docs[response.docs.length - 1];
+
+    return { datas, lastSnapshot };
 }
 
 // let admin = require("firebase-admin");
