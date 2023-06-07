@@ -68,7 +68,7 @@ export const getPosts = async (searchState, startAfterSnapshot = {}) => {
 
     const lastSnapshot = response.docs[response.docs.length - 1];
 
-    return { datas, lastSnapshot };
+    return { datas, isLastPage: datas.length !== pageLimit, lastSnapshot };
 }
 
 // let admin = require("firebase-admin");

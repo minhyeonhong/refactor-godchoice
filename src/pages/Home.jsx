@@ -14,7 +14,7 @@ import WritingToggle from "../components/elements/WritingToggle";
 import PageState from "../components/common/PageState";
 
 import { postApis } from "../api/api-functions/postApis";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import useInput from "../hooks/useInput";
 
 // 가이드 모달
@@ -29,6 +29,7 @@ import "swiper/css/pagination";
 import guide01 from "../assets/images/banner/guide/guide_01.png";
 import guide02 from "../assets/images/banner/guide/guide_02.png";
 import guide03 from "../assets/images/banner/guide/guide_03.png";
+import { getPosts } from "../firebase";
 
 SwiperCore.use([Pagination, Autoplay, Navigation]);
 
@@ -36,6 +37,8 @@ const Home = () => {
 
   //배너 가져오기
   //const banner = useQuery(['banner'], async () => await postApis.getAdminPostAX(), { cacheTime: 3000, refetchOnWindowFocus: false, retry: 1 })
+
+
 
   //유저 지역정보 가져오기
   const userAddressTag = localStorage.getItem('userAddressTag');
@@ -47,6 +50,17 @@ const Home = () => {
     sort: '최신순',
     search: '',
   });
+
+  //리스트 받아오기
+  const result = useInfiniteQuery({
+    queryKey: ['postList'],
+    queryFn: ({ startAfterSnapshot = {} }) => getPosts(searchState, startAfterSnapshot),
+    getNextPageParam: ({ isLastPage, startAfterSnapshot }) => {
+      if (!isLastPage) return startAfterSnapshot;
+    },
+    refetchOnWindowFocus: false,
+  })
+
   //검색어 state
   const [search, setSearch, searchHandle] = useInput({ search: '' });
   //검색어로 검색후 검색어를 지웠을때 처리
