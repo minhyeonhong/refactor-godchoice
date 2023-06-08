@@ -16,9 +16,10 @@ import noImg from '../../assets/images/common/noImg.png'
 
 import useImgUpload from '../../hooks/useImgUpload';
 import useInput from '../../hooks/useInput';
-import { fsUploadImage, insertPost } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
 import { today, writeTime } from '../common/Date';
+import { insertPost } from '../../firestore/module/post';
+import { fsUploadImage } from '../../firestore/module/image';
 
 const FestivalPost = () => {
     const navigate = useNavigate();
