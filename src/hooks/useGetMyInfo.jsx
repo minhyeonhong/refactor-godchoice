@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { doc, db, getDoc } from "../firebase";
+import { getUser } from '../firestore/module/users';
 
-function useGetMyInfo(fbCollection, docId) {
+function useGetMyInfo(uid) {
 
     const getFBUserInfo = async () => {
-        const response = await getDoc(doc(db, fbCollection, docId));
+        const response = await getUser(uid);
         return response._document.data.value.mapValue.fields;
     }
 

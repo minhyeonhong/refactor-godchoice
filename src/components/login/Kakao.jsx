@@ -1,7 +1,7 @@
 import PageState from '../common/PageState';
 import { useQuery } from '@tanstack/react-query';
 import { kakaoInstance } from '../../api/kakaoInstance';
-import { doc, setDoc, getDoc, db } from "../../firebase";
+import { getUser, joinUser } from '../../firestore/module/users';
 
 // 리다이렉트될 화면
 const Kakao = () => {
@@ -49,15 +49,18 @@ const Kakao = () => {
 				const { email, gender, profile } = kakao_account;
 				const { nickname, profile_image_url } = profile;
 
-				const haveUserInfo = (await getDoc(doc(db, "users", `UID_${id}`)))._document !== null;
+				const haveUserInfo = (await getUser(`UID_${id}`))._document !== null;
 
 				if (!haveUserInfo) {
-					await setDoc(doc(db, "users", `UID_${id}`), {
-						email,
-						gender,
-						nickname,
-						profile_image_url
-					})
+					await joinUser(
+						`UID_${id}`,
+						{
+							email,
+							gender,
+							nickname,
+							profile_image_url
+						}
+					)
 				}
 
 				localStorage.setItem("uid", `UID_${id}`);

@@ -29,7 +29,7 @@ import "swiper/css/pagination";
 import guide01 from "../assets/images/banner/guide/guide_01.png";
 import guide02 from "../assets/images/banner/guide/guide_02.png";
 import guide03 from "../assets/images/banner/guide/guide_03.png";
-import { getPosts } from "../firebase";
+import { getPosts } from "../firestore/module/post";
 
 SwiperCore.use([Pagination, Autoplay, Navigation]);
 

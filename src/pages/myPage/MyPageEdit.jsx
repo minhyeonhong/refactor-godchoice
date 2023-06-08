@@ -13,7 +13,8 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { myPageApis } from '../../api/api-functions/myPageApis';
 import PageState from "../../components/common/PageState";
 import useGetMyInfo from "../../hooks/useGetMyInfo";
-import { fsUploadImage, fsDeleteImage, updateDoc, doc, db } from "../../firebase";
+import { fsDeleteImage, fsUploadImage } from "../../firestore/module/image";
+import { updateUser } from "../../firestore/module/users";
 
 const MyPageEdit = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const MyPageEdit = () => {
   //이미지 업로드 인풋돔 선택 훅
   const imgRef = useRef();
 
-  const { userInfo, isLoading } = useGetMyInfo("users", localStorage.getItem("uid"));
+  const { userInfo, isLoading } = useGetMyInfo(localStorage.getItem("uid"));
 
 
   const onSubmit = async (event) => {
@@ -50,7 +51,7 @@ const MyPageEdit = () => {
       profile_image_url
     }
 
-    updateDoc(doc(db, "users", localStorage.getItem("uid")), modUserInfo)
+    updateUser(localStorage.getItem("uid"), modUserInfo)
       .then(() => {
         navigate("/mypage");
       })

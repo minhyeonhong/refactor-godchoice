@@ -25,6 +25,8 @@ const List = ({ searchState }) => {
         return { postList: content, isLastPage: content.length !== 10, nextPage: pageParam + 1 };
     }
 
+
+
     //리스트 받아오기
     // const result = useInfiniteQuery({
     //     queryKey: ['postList'],

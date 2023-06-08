@@ -17,7 +17,7 @@ import useGetMyInfo from '../../hooks/useGetMyInfo';
 const MyPage = () => {
   const navigate = useNavigate();
 
-  const { userInfo, isLoading } = useGetMyInfo("users", localStorage.getItem("uid"));
+  const { userInfo, isLoading } = useGetMyInfo(localStorage.getItem("uid"));
 
   useEffect(() => {
     localStorage.setItem("nickname", userInfo.nickname);

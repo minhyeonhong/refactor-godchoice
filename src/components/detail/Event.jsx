@@ -21,8 +21,8 @@ import { useCallback } from 'react';
 import styled from 'styled-components';
 import { useMemo } from 'react';
 import TextAreaAutoResize from "react-textarea-autosize";
-import { getPost } from '../../firebase';
 import { today } from '../common/Date';
+import { getPost } from '../../firestore/module/post';
 
 const Event = ({ postId, url }) => {
 
@@ -37,8 +37,6 @@ const Event = ({ postId, url }) => {
     );
 
     const post = result.data;
-
-    console.log(post);
 
 
     //업데이트 인풋
