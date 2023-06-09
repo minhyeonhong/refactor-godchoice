@@ -11,6 +11,7 @@ import { BookmarkFill } from "../../assets/index";
 import PageState from '../common/PageState';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { postApis } from '../../api/api-functions/postApis';
+import { getPosts } from '../../firestore/module/post';
 
 const List = ({ searchState }) => {
 
@@ -18,50 +19,41 @@ const List = ({ searchState }) => {
     const [ref, inView] = useInView();
 
     //리스트 받아오기
-    const getSearchPosts = async (searchState, pageParam) => {
-        const res = await postApis.searchPostAX(searchState, pageParam);
-        const content = res.data.data.content;
+    const result = useInfiniteQuery({
+        queryKey: ['postList'],
+        queryFn: ({ startAfterSnapshot = {} }) => getPosts(searchState, startAfterSnapshot),
+        getNextPageParam: (lastpage) => {
+            if (!lastpage.isLastPage) return lastpage.lastSnapshot;
+        },
+        refetchOnWindowFocus: false,
+    })
 
-        return { postList: content, isLastPage: content.length !== 10, nextPage: pageParam + 1 };
+    useEffect(() => {
+        // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니고 다음페이지가 있다면
+        if (inView && !result.isFetching && result.hasNextPage) {
+            console.log("nextFetch");
+            result.fetchNextPage();
+        }
+    }, [inView, result.isFetching])
+
+    useEffect(() => {
+        //검색상태가 바뀌면 server state refetch
+        if (!result.isFetching) result.refetch(searchState, 0);
+    }, [searchState])
+
+    if (result.isLoading) {
+        return null;
     }
-
-
-
-    //리스트 받아오기
-    // const result = useInfiniteQuery({
-    //     queryKey: ['postList'],
-    //     queryFn: ({ pageParam = 0 }) => getSearchPosts(searchState, pageParam),
-    //     getNextPageParam: ({ isLastPage, nextPage }) => {
-    //         if (!isLastPage) return nextPage;
-    //     },
-    //     refetchOnWindowFocus: false,
-    // })
-
-    // useEffect(() => {
-    //     // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니고 다음페이지가 있다면
-    //     if (inView && !result.isFetching && result.hasNextPage) {
-    //         result.fetchNextPage();
-    //     }
-    // }, [inView, result.isFetching])
-
-    // useEffect(() => {
-    //     //검색상태가 바뀌면 server state refetch
-    //     if (!result.isFetching) result.refetch(searchState, 0);
-    // }, [searchState])
-
-    // if (result.isLoading) {
-    //     return null;
-    // }
     return (
         <StCardWrap>
-            {/* <PageState display={result.data?.pages[0].postList.length === 0 ? 'flex' : 'none'} state='notFound' imgWidth='25%' height='60vh'
+            <PageState display={result.data?.pages[0].datas.length === 0 ? 'flex' : 'none'} state='notFound' imgWidth='25%' height='60vh'
                 text='리스트가 존재하지 않습니다.' />
 
             {result.data?.pages.map((page, i) => (
                 <Fragment key={i}>
-                    {page.postList.map((post) => (
-                        <StCardItem key={post.postId} onClick={() => { navigate(`/${searchState.main}posts/${post.postId}`) }}>
-                            <StImgBox imgUrl={post.imgUrl} >
+                    {page.datas.map((post) => (
+                        <StCardItem key={post.postID} onClick={() => { navigate(`/${searchState.main}posts/${post.postID}`) }}>
+                            <StImgBox imgUrl={post.photoURIs[0]} >
                                 {post.bookMarkStatus &&
                                     <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
                                 }
@@ -71,7 +63,7 @@ const List = ({ searchState }) => {
                                 <div>{post.category}</div>
                                 <div className='contentBox'>{post.content}</div>
                                 <div className='dtateBox'>
-                                    <div>{post.endPeriod}{post.date}</div>
+                                    <div>{post.endPeriod}</div>
                                     <div className='lookBox'>{post.viewCount}&nbsp;<BsEye style={{ width: '16px', height: '16px', marginTop: '2px' }} /></div>
                                 </div>
                             </StContentBox>
@@ -89,7 +81,7 @@ const List = ({ searchState }) => {
 
             {
                 result.hasNextPage && <div ref={ref} />
-            } */}
+            }
         </StCardWrap>
     );
 };
