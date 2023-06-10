@@ -11,6 +11,9 @@ import { BookmarkFill } from "../../assets/index";
 import PageState from '../common/PageState';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { postApis } from '../../api/api-functions/postApis';
+import { getPosts } from '../../firestore/module/post';
+import { useCallback } from 'react';
+import { useState } from 'react';
 
 const List = ({ searchState }) => {
 
@@ -18,28 +21,63 @@ const List = ({ searchState }) => {
     const [ref, inView] = useInView();
 
     //리스트 받아오기
-    const getSearchPosts = async (searchState, pageParam) => {
-        const res = await postApis.searchPostAX(searchState, pageParam);
-        const content = res.data.data.content;
-
-        return { postList: content, isLastPage: content.length !== 10, nextPage: pageParam + 1 };
-    }
-
-
-
-    //리스트 받아오기
     // const result = useInfiniteQuery({
     //     queryKey: ['postList'],
-    //     queryFn: ({ pageParam = 0 }) => getSearchPosts(searchState, pageParam),
-    //     getNextPageParam: ({ isLastPage, nextPage }) => {
-    //         if (!isLastPage) return nextPage;
+    //     queryFn: ({ startAfterSnapshot }) => getPosts(searchState, startAfterSnapshot),
+    //     getNextPageParam: ({ isLastPage, lastSnapshot }) => {
+    //         if (!isLastPage) return lastSnapshot;
     //     },
     //     refetchOnWindowFocus: false,
     // })
 
+    const [posts, setPosts] = useState();
+
+    const getFirst = useCallback(async () => {
+        try {
+            const res = await getPosts(searchState, {});
+
+            setPosts(res);
+        } catch (error) {
+            console.log("first error", error);
+        }
+    }, [getPosts]);
+
+    const getNext = useCallback(async (param) => {
+        try {
+            const res = await getPosts(searchState, param);
+
+            const obj = {
+                datas: [...posts.datas, ...res.datas],
+                isLastPage: res.isLastPage,
+                lastSnapshot: res.lastSnapshot
+            }
+
+            setPosts(obj);
+        } catch (error) {
+            console.log("next error", error);
+        }
+    }, [posts?.lastSnapshot]);
+
+    useEffect(() => {
+        getFirst();
+    }, [])
+
+    useEffect(() => {
+        console.log("posts", posts);
+    }, [posts])
+
+
+    useEffect(() => {
+        if (posts === undefined) return;
+        if (inView && !posts.isLastPage) {
+            getNext(posts.lastSnapshot);
+        }
+    }, [inView, posts])
+
     // useEffect(() => {
     //     // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니고 다음페이지가 있다면
     //     if (inView && !result.isFetching && result.hasNextPage) {
+    //         //console.log("nextFetch");
     //         result.fetchNextPage();
     //     }
     // }, [inView, result.isFetching])
@@ -49,47 +87,49 @@ const List = ({ searchState }) => {
     //     if (!result.isFetching) result.refetch(searchState, 0);
     // }, [searchState])
 
-    // if (result.isLoading) {
-    //     return null;
-    // }
     return (
         <StCardWrap>
-            {/* <PageState display={result.data?.pages[0].postList.length === 0 ? 'flex' : 'none'} state='notFound' imgWidth='25%' height='60vh'
+            {/* <PageState display={result.data?.pages[0].datas.length === 0 ? 'flex' : 'none'} state='notFound' imgWidth='25%' height='60vh'
+                text='리스트가 존재하지 않습니다.' /> */}
+            <PageState display={posts?.datas.length === 0 ? 'flex' : 'none'} state='notFound' imgWidth='25%' height='60vh'
                 text='리스트가 존재하지 않습니다.' />
-
-            {result.data?.pages.map((page, i) => (
-                <Fragment key={i}>
-                    {page.postList.map((post) => (
-                        <StCardItem key={post.postId} onClick={() => { navigate(`/${searchState.main}posts/${post.postId}`) }}>
-                            <StImgBox imgUrl={post.imgUrl} >
-                                {post.bookMarkStatus &&
-                                    <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
-                                }
-                            </StImgBox>
-                            <StContentBox>
-                                <div className='titleBox'>{post.title.length > 10 ? post.title.substring(0, 9) + '...' : post.title}</div>
-                                <div>{post.category}</div>
-                                <div className='contentBox'>{post.content}</div>
-                                <div className='dtateBox'>
-                                    <div>{post.endPeriod}{post.date}</div>
-                                    <div className='lookBox'>{post.viewCount}&nbsp;<BsEye style={{ width: '16px', height: '16px', marginTop: '2px' }} /></div>
-                                </div>
-                            </StContentBox>
-                        </StCardItem>
-                    ))}
-                </Fragment>
+            {/* {result.data?.pages.map((page, i) => (
+                <Fragment key={i}> */}
+            {posts?.datas.map((post) => (
+                <StCardItem key={post.postID} onClick={() => { navigate(`/event/${post.postID}`) }}>
+                    <StImgBox imgUrl={post.photoURIs[0]} >
+                        {post.bookMarkStatus &&
+                            <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
+                        }
+                    </StImgBox>
+                    <StContentBox>
+                        <div className='titleBox'>{post.title.length > 10 ? post.title.substring(0, 9) + '...' : post.title}</div>
+                        <div>{post.category}</div>
+                        <div className='contentBox'>{post.content}</div>
+                        <div className='dtateBox'>
+                            <div>{post.endPeriod}</div>
+                            <div className='lookBox'>{post.viewCount}&nbsp;<BsEye style={{ width: '16px', height: '16px', marginTop: '2px' }} /></div>
+                        </div>
+                    </StContentBox>
+                </StCardItem>
             ))}
-            <PageState
+            {/* </Fragment>
+            ))} */}
+            {/* <PageState
                 display={result.isFetching ? 'flex' : 'none'}
                 state='notFound'
                 imgWidth='25%'
                 height=''
                 flexDirection='row'
-                text='검색중...' />
+                text='검색중...' /> */}
 
-            {
+            {/* {
                 result.hasNextPage && <div ref={ref} />
             } */}
+
+            {
+                !posts?.isLastPage && <div ref={ref} />
+            }
         </StCardWrap>
     );
 };

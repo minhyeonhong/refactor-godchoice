@@ -29,7 +29,6 @@ import "swiper/css/pagination";
 import guide01 from "../assets/images/banner/guide/guide_01.png";
 import guide02 from "../assets/images/banner/guide/guide_02.png";
 import guide03 from "../assets/images/banner/guide/guide_03.png";
-import { getPosts } from "../firestore/module/post";
 
 SwiperCore.use([Pagination, Autoplay, Navigation]);
 
@@ -51,15 +50,6 @@ const Home = () => {
     search: '',
   });
 
-  //리스트 받아오기
-  const result = useInfiniteQuery({
-    queryKey: ['postList'],
-    queryFn: ({ startAfterSnapshot = {} }) => getPosts(searchState, startAfterSnapshot),
-    getNextPageParam: ({ isLastPage, startAfterSnapshot }) => {
-      if (!isLastPage) return startAfterSnapshot;
-    },
-    refetchOnWindowFocus: false,
-  })
 
   //검색어 state
   const [search, setSearch, searchHandle] = useInput({ search: '' });

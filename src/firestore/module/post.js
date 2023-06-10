@@ -8,6 +8,7 @@ import {
     limit,
     orderBy,
     startAfter,
+    startAt,
 } from 'firebase/firestore';
 import { db } from "../firebase";
 
@@ -21,8 +22,22 @@ export const getPost = async (postID) => {
     return await getDoc(doc(db, "post", postID));
 }
 
-export const getPosts = async (searchState, startAfterSnapshot = {}) => {
-    const response = await getDocs(query(collection(db, "post"), orderBy("writeTime", "desc"), startAfter(startAfterSnapshot), limit(pageLimit)));
+export const getPosts = async (searchState, startAfterSnapshot) => {
+    const response = await getDocs(
+        startAfterSnapshot ?
+            query(
+                collection(db, "post"),
+                orderBy("writeTime", "desc"),
+                startAfter(startAfterSnapshot),
+                limit(pageLimit)
+            )
+            :
+            query(
+                collection(db, "post"),
+                orderBy("writeTime", "desc"),
+                limit(pageLimit)
+            )
+    );
     const datas = response.docs.map(doc => ({ ...doc.data(), postID: doc.id }));
 
     const lastSnapshot = response.docs[response.docs.length - 1];
