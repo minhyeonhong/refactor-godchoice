@@ -24,17 +24,17 @@ export const getPost = async (postID) => {
 
 export const getPosts = async (searchState, startAfterSnapshot) => {
     const response = await getDocs(
-        Object.keys(startAfterSnapshot).length === 0 ?
+        startAfterSnapshot ?
             query(
                 collection(db, "post"),
                 orderBy("writeTime", "desc"),
+                startAfter(startAfterSnapshot),
                 limit(pageLimit)
             )
             :
             query(
                 collection(db, "post"),
                 orderBy("writeTime", "desc"),
-                startAfter(startAfterSnapshot),
                 limit(pageLimit)
             )
     );
