@@ -44,3 +44,14 @@ export const getPosts = async (searchState, startAfterSnapshot) => {
 
     return { datas, isLastPage: datas.length !== pageLimit, lastSnapshot };
 }
+
+export const insertBanner = async (banner) => {
+    return await addDoc(collection(db, "banners"), banner);
+}
+
+export const getBanners = async () => {
+    const response = await getDocs(query(collection(db, "banners")));
+    const datas = response.docs.map(doc => ({ ...doc.data(), postID: doc.id }));
+
+    return datas;
+}
