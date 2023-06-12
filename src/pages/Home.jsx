@@ -29,15 +29,14 @@ import "swiper/css/pagination";
 import guide01 from "../assets/images/banner/guide/guide_01.png";
 import guide02 from "../assets/images/banner/guide/guide_02.png";
 import guide03 from "../assets/images/banner/guide/guide_03.png";
+import { getBanners } from "../firestore/module/post";
 
 SwiperCore.use([Pagination, Autoplay, Navigation]);
 
 const Home = () => {
 
   //배너 가져오기
-  //const banner = useQuery(['banner'], async () => await postApis.getAdminPostAX(), { cacheTime: 3000, refetchOnWindowFocus: false, retry: 1 })
-
-
+  const banners = useQuery(['getBanners'], () => getBanners(), { refetchOnWindowFocus: false });
 
   //유저 지역정보 가져오기
   const userAddressTag = localStorage.getItem('userAddressTag');
@@ -65,7 +64,6 @@ const Home = () => {
 
   // 가이드 모달
   const [guideOn, setGuideOn] = useState(false);
-  const guides = [guide01, guide02, guide03];
   // ------------- 여기까지 ---------------
 
   return (
@@ -154,8 +152,8 @@ const Home = () => {
         {/* 슬라이드 */}
         <StCarouselWrap>
           <Carousel >
-            {/* {!banner.isLoading &&
-              banner.data?.data.data.length === 0 ?
+            {!banners.isLoading &&
+              banners.data.length === 0 ?
               <Carousel.Item>
                 <PageState
                   display='flex'
@@ -163,26 +161,26 @@ const Home = () => {
                   text='등록된 배너가 없습니다.' />
               </Carousel.Item>
               :
-              banner.data?.data.data.map((post) => {
+              banners.data.map((banner) => {
                 return (
-                  <Carousel.Item key={post.id} onClick={() => {
-                    if (post.postLink === "https://이용방법") {
+                  <Carousel.Item key={banner.postID} onClick={() => {
+                    if (banner.postLink === "이용방법") {
                       setGuideOn(!guideOn);
                     } else {
-                      window.open(post.postLink, post.title)
+                      window.open(banner.postLink, banner.title);
                     }
                   }}>
                     <img style={{ height: "180px" }}
                       className="d-block w-100"
-                      src={post.imgLink}
+                      src={banner.photoURIs[0]}
                       alt="First slide"
                     />
                     <Carousel.Caption>
-                      <h3>{post.title}</h3>
+                      <h3>{banner.title}</h3>
                     </Carousel.Caption>
                   </Carousel.Item>
                 )
-              })} */}
+              })}
           </Carousel>
         </StCarouselWrap>
 
