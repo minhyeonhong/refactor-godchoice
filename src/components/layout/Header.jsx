@@ -111,7 +111,7 @@ const Header = () => {
                             <StBell>
                                 {/* {alramNum > 0 && <div className='bellNum'>{alramNum}</div>} */}
                                 {/* {result.data.unReadNum > 0 && <div className='bellNum'>{result.data.unReadNum}</div>} */}
-                                <Bell style={{ height: "48px", marginRight: "15px", padding: "2px", cursor: "pointer" }} onClick={popUpNotice} />
+                                {/* <Bell style={{ height: "48px", marginRight: "15px", padding: "2px", cursor: "pointer" }} onClick={popUpNotice} /> */}
                             </StBell>
                             <MyPage style={{ height: "48px", marginRight: "5px", padding: "2px", cursor: "pointer" }}
                                 onClick={() => { navigate("/mypage") }} />

@@ -27,8 +27,8 @@ const Login = () => {
         <Container>
           <Link to='/' > <Logo style={{ cursor: "pointer" }}> <img src={home_logo} alt="logo" /> </Logo></Link>
           <KakaoBtn style={{ width: "100%", cursor: "pointer" }} onClick={() => onClickHandler("k")} />
-          <NaverBtn style={{ width: "100%", cursor: "pointer" }} onClick={() => onClickHandler("n")} />
-          <GoogleBtn style={{ width: "100%", cursor: "pointer" }} onClick={() => onClickHandler("g")} />
+          {/* <NaverBtn style={{ width: "100%", cursor: "pointer" }} onClick={() => onClickHandler("n")} />
+          <GoogleBtn style={{ width: "100%", cursor: "pointer" }} onClick={() => onClickHandler("g")} /> */}
           {/* <button onClick={() => window.location.href = GITHUB_AUTH_URL}>github login</button> */}
         </Container>
       </LoginWrap>
