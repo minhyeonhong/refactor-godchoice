@@ -4,6 +4,7 @@ import {
     addDoc,
     doc,
     getDoc,
+    updateDoc,
     query,
     limit,
     orderBy,
@@ -43,6 +44,10 @@ export const getPosts = async (searchState, startAfterSnapshot) => {
     const lastSnapshot = response.docs[response.docs.length - 1];
 
     return { datas, isLastPage: datas.length !== pageLimit, lastSnapshot };
+}
+
+export const updatePost = async (postID, post) => {
+    return await updateDoc(doc(db, "post", postID), post);
 }
 
 export const insertBanner = async (banner) => {
