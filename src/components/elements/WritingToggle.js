@@ -8,7 +8,7 @@ const WritingToggle = ({ modalOn, setModalOn }) => {
     const navigate = useNavigate();
 
     const writePost = (url) => {
-        if (localStorage.getItem('uid') === undefined || localStorage.getItem('uid') === '') {
+        if (localStorage.getItem('uid') === null || localStorage.getItem('uid') === '') {
             alert('로그인 해주세요.');
             //window.location.replace('/login');
             navigate("/login", { replace: true });
