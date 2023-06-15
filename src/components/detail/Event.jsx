@@ -19,13 +19,12 @@ import useInput from '../../hooks/useInput';
 import PageState from '../common/PageState';
 import { useCallback } from 'react';
 import styled from 'styled-components';
-import { useMemo } from 'react';
 import TextAreaAutoResize from "react-textarea-autosize";
-import { today } from '../common/Date';
-import { getPost } from '../../firestore/module/post';
+import { today, writeTime } from '../common/Date';
+import { getPost, updatePost } from '../../firestore/module/post';
+import { fsDeleteImage, fsUploadImage } from '../../firestore/module/image';
 
 const Event = ({ postId, url }) => {
-
     //디테일 페이지 불러오기
     const getEventPost = async () => {
         const response = await getPost(postId);
@@ -40,10 +39,15 @@ const Event = ({ postId, url }) => {
 
 
     //업데이트 인풋
-    const [modPost, setmodPost, modPostHandle] = useInput(result.data);
+    const [modPost, setmodPost, modPostHandle] = useInput();
 
     //상세글 수정하기 상태
     const [mod, setMod] = useState(false);
+
+    const setUpdateMod = () => {
+        setMod(!mod);
+        setmodPost(post);
+    }
 
     // 주소 API 팝업창 상태 관리
     const [isAddressModal, setIsAddressModal] = useState(false);
@@ -66,32 +70,17 @@ const Event = ({ postId, url }) => {
 
     // //기존 프리뷰 지울 state
     const [delImg, setDelImg] = useState([]);
+    const [delImgName, setDelImgName] = useState([]);
 
-
-    // //게시글 수정
-    const putEventPost = useMutation({
-        mutationFn: (obj) => {
-            return postApis.putEventPostAx(obj);
-        },
-        onSuccess: res => {
-            if (res.data.status === 200) {
-                window.location.reload();
-            }
-        },
-    })
 
     //submit
     const putPostSubmit = () => {
-
-        const formData = new FormData();
-
-        if (files.length > 0) {
-            files.forEach((file) => {
-                formData.append("multipartFile", file);
-            })
-        } else {
-            formData.append("multipartFile", null);
-        }
+        //카테고리, 행사시작, 행사마감, 글작성, content 검사
+        if (modPost.title === "") { return alert('제목을 입력하세요') }
+        if (modPost.content === "") { return alert('내용을 입력하세요') }
+        if (modPost.category === "") { return alert('카테고리를 입력하세요') }
+        if (modPost.startPeriod === "") { return alert('행사시작 일자를 입력하세요') }
+        if (modPost.endPeriod === "") { return alert('행사마감 일자를 입력하세요') }
 
         //링크 검사(행사장링크 필수 아님)
         const link = /(http|https):\/\//.test(modPost.postLink)
@@ -101,31 +90,66 @@ const Event = ({ postId, url }) => {
             }
         }
 
-        const detail = modPost.detailAddress === undefined ? "" : modPost.detailAddress
+        const detailAddress = modPost.detailAddress === undefined ? "" : modPost.detailAddress
 
         const obj = {
-            imgId: delImg.join(),
             category: modPost.category,
             startPeriod: modPost.startPeriod,
             endPeriod: modPost.endPeriod,
             title: modPost.title,
             content: modPost.content,
+            contentType: modPost.contentType,
+            postAddress: modPost.postAddress + detailAddress,
             postLink: modPost.postLink,
-            postAddress: modPost.postAddress + detail
+            //writer: localStorage.getItem('uid'),
+            writeTime: writeTime,
+            writerNickName: localStorage.getItem('nickname'),
+            writerProfileImg: localStorage.getItem('profile_image_url'),
+            photoURIs: [...modPost.photoURIs.filter((item, i) => delImg.indexOf(item) === -1)],
         }
 
-        //폼 데이터에 글작성 데이터 넣기
-        formData.append("eventPostPutReqDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
 
-        //Api 날리기
-        putEventPost.mutate({ postId, content: formData });
+        if (delImgName.length > 0) {
+            delImgName.map(async (fileName) => {
+                await fsDeleteImage("images/post", fileName)
+            })
+        }
+
+        if (files.length > 0) {
+            files.map(async (file, i) => {
+                const getImageURI = await fsUploadImage("images/post", file, `${localStorage.getItem('uid')}_${file.name}_${writeTime}`);
+                obj.photoURIs.push(getImageURI);
+                if (files.length === (i + 1)) {
+                    updatePost(postId, obj)
+                        .then(() => {
+                            window.location.reload()
+                        })
+                        .catch(error => {
+                            console.log("fireStore update error", error);
+                        })
+                }
+            })
+        } else {
+            updatePost(postId, obj)
+                .then(() => {
+                    window.location.reload()
+                })
+                .catch(error => {
+                    console.log("fireStore update error", error);
+                })
+        }
+
     }
 
     const categoryOption = ['마라톤', '페스티벌', '전시회', '공연', '기타'];
 
     // //기존글의 삭제할 이미지
-    const delImgHandle = (postImgId) => {
-        setDelImg((e) => [...e, postImgId]);
+    const delImgHandle = (postImgURI) => {
+        const firstIdx = postImgURI.indexOf(localStorage.getItem("uid"));
+        const lastIdx = postImgURI.indexOf("?", firstIdx);
+        const imgName = decodeURI(postImgURI.substring(firstIdx, lastIdx));
+        setDelImg((e) => [...e, postImgURI]);
+        setDelImgName((e) => [...e, imgName])
     }
 
     // //새로추가한 글 삭제할 이미지
@@ -162,9 +186,9 @@ const Event = ({ postId, url }) => {
             text='잠시만 기다려 주세요.' />;
     }
 
+
     return (
         <StWrap>
-
             {!mod ?
                 post === undefined ?
                     <PageState display='flex'
@@ -210,11 +234,15 @@ const Event = ({ postId, url }) => {
                         </STBox2>
 
                         <div style={{ margin: "10px 0" }}>
-                            {post.writerProfileImg === "" ?
-                                < img src={`${process.env.PUBLIC_URL}/kakao_base_profil.jpg`} style={{ width: "36px", height: "36px", borderRadius: "30px" }} alt="user iamage" />
-                                :
-                                <img src={post.writerProfileImg} style={{ width: "36px", height: "36px", borderRadius: "30px" }} alt="user iamage" />
-                            }
+
+                            <img
+                                src={post.writerProfileImg}
+                                onError={(e) => {
+                                    e.target.src = `${process.env.PUBLIC_URL}/kakao_base_profil.jpg`
+                                }}
+                                style={{ width: "36px", height: "36px", borderRadius: "30px" }}
+                                alt="user iamage"
+                            />
                             <STUsername>{post.writerNickName}</STUsername>
                         </div>
 
@@ -261,11 +289,11 @@ const Event = ({ postId, url }) => {
                             )
                         }
                         {
-                            modPost.postAddress && (
+                            post.postAddress && (
                                 <>
                                     <div>행사장소</div>
                                     <div style={{ display: "flex", marginBottom: "8px" }}>
-                                        <STAddressButton style={{ flex: "2" }}>#{modPost.postAddress.split('')[0] + modPost.postAddress.split('')[1]}</STAddressButton>
+                                        <STAddressButton style={{ flex: "2" }}>#{post.postAddress.split('')[0] + post.postAddress.split('')[1]}</STAddressButton>
                                         <STInput style={{ flex: "8", marginLeft: "5px" }}>{post.postAddress}</STInput>
                                     </div>
                                 </>
@@ -275,8 +303,8 @@ const Event = ({ postId, url }) => {
 
                         {localStorage.getItem('uid') === post.writer &&
                             (<div>
-                                <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={() => { onEventDelete(postId); }}>삭제</STEditButton>
-                                <STEditButton onClick={() => { setMod(true) }}>수정</STEditButton>
+                                <STEditButton style={{ background: "#8f94b6", marginLeft: "5px" }} onClick={() => { onEventDelete(postId); }}>삭제</STEditButton>
+                                <STEditButton onClick={setUpdateMod}>수정</STEditButton>
                             </div>)}
 
                     </>
@@ -412,7 +440,7 @@ const Event = ({ postId, url }) => {
                             modPost.postAddress && (
                                 <>
                                     <div style={{ display: "flex", marginTop: "14px" }}>
-                                        <STAddressDiv style={{ marginRight: "5px" }}>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressDiv>
+                                        <STAddressDiv style={{ marginRight: "5px" }}>#{modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressDiv>
                                         <STInput >{modPost.postAddress}</STInput>
                                     </div>
                                 </>
@@ -427,7 +455,7 @@ const Event = ({ postId, url }) => {
 
 
                     <div>
-                        <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={() => setMod(false)}>취소</STEditButton>
+                        <STEditButton style={{ background: "#8f94b6", marginLeft: "5px" }} onClick={setUpdateMod}>취소</STEditButton>
                         <STEditButton onClick={putPostSubmit}>수정완료</STEditButton>
                     </div>
 
