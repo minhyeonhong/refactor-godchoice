@@ -27,6 +27,8 @@ const List = ({ searchState }) => {
         refetchOnWindowFocus: false,
     })
 
+    console.log(searchState.main)
+
     useEffect(() => {
         // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니고 다음페이지가 있다면
         if (inView && !result.isFetching && result.hasNextPage) {
@@ -45,24 +47,26 @@ const List = ({ searchState }) => {
                 text='리스트가 존재하지 않습니다.' />
             {result.data?.pages.map((page, i) => (
                 <Fragment key={i}>
-                    {page.datas.map((post) => (
-                        <StCardItem key={post.postID} onClick={() => { navigate(`/event/${post.postID}`) }}>
-                            <StImgBox imgUrl={post.photoURIs[0]} >
-                                {post.bookMarkStatus &&
-                                    <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
-                                }
-                            </StImgBox>
-                            <StContentBox>
-                                <div className='titleBox'>{post.title.length > 10 ? post.title.substring(0, 9) + '...' : post.title}</div>
-                                <div>{post.category}</div>
-                                <div className='contentBox'>{post.content}</div>
-                                <div className='dtateBox'>
-                                    <div>{post.endPeriod}</div>
-                                    <div className='lookBox'>{post.viewCount}&nbsp;<BsEye style={{ width: '16px', height: '16px', marginTop: '2px' }} /></div>
-                                </div>
-                            </StContentBox>
-                        </StCardItem>
-                    ))}
+                    {page.datas
+                        .filter((post) => post.contentType === searchState.main)
+                        .map((post) => (
+                            <StCardItem key={post.postID} onClick={() => { navigate(`/event/${post.postID}`) }}>
+                                <StImgBox imgUrl={post.photoURIs[0]} >
+                                    {post.bookMarkStatus &&
+                                        <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
+                                    }
+                                </StImgBox>
+                                <StContentBox>
+                                    <div className='titleBox'>{post.title.length > 10 ? post.title.substring(0, 9) + '...' : post.title}</div>
+                                    <div>{post.category}</div>
+                                    <div className='contentBox'>{post.content}</div>
+                                    <div className='dtateBox'>
+                                        <div>{post.endPeriod}</div>
+                                        <div className='lookBox'>{post.viewCount}&nbsp;<BsEye style={{ width: '16px', height: '16px', marginTop: '2px' }} /></div>
+                                    </div>
+                                </StContentBox>
+                            </StCardItem>
+                        ))}
                 </Fragment>
             ))}
             <PageState
