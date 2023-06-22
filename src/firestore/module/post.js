@@ -5,6 +5,7 @@ import {
     doc,
     getDoc,
     updateDoc,
+    deleteDoc,
     query,
     limit,
     orderBy,
@@ -48,6 +49,10 @@ export const getPosts = async (searchState, startAfterSnapshot) => {
 
 export const updatePost = async (postID, post) => {
     return await updateDoc(doc(db, "post", postID), post);
+}
+
+export const deletePost = async (postID) => {
+    return await deleteDoc(doc(db, "post", postID));
 }
 
 export const insertBanner = async (banner) => {
