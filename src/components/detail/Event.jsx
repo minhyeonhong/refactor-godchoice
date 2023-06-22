@@ -21,7 +21,7 @@ import { useCallback } from 'react';
 import styled from 'styled-components';
 import TextAreaAutoResize from "react-textarea-autosize";
 import { today, writeTime } from '../common/Date';
-import { getPost, updatePost } from '../../firestore/module/post';
+import { getPost, updatePost, deletePost } from '../../firestore/module/post';
 import { fsDeleteImage, fsUploadImage } from '../../firestore/module/image';
 
 const Event = ({ postId, url }) => {
@@ -162,20 +162,15 @@ const Event = ({ postId, url }) => {
     }
 
     // //게시글 삭제
-    const deleteEventPost = useMutation({
-        mutationFn: (obj) => {
-            return postApis.deleteEventPostAx(obj);
-        },
-        onSuccess: res => {
-            if (res.data.status === 200) {
-                window.location.replace('/');
-            }
-        },
-    })
-    // //게시글 삭제
     const onEventDelete = (postId) => {
         if (window.confirm("게시글을 삭제 하시겠습니까?")) {
-            deleteEventPost.mutate(postId);
+            deletePost(postId)
+                .then(() => {
+                    window.location.replace("/");
+                }).catch(error => {
+                    console.log(error);
+                })
+
         }
     }
 
