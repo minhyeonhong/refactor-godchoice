@@ -23,6 +23,7 @@ import TextAreaAutoResize from "react-textarea-autosize";
 import { today, writeTime } from '../common/Date';
 import { getPost, updatePost, deletePost } from '../../firestore/module/post';
 import { fsDeleteImage, fsUploadImage } from '../../firestore/module/image';
+import { deletePostPart } from '../../firestore/module/postPart';
 
 const Event = ({ postId, url }) => {
     //디테일 페이지 불러오기
@@ -166,9 +167,15 @@ const Event = ({ postId, url }) => {
         if (window.confirm("게시글을 삭제 하시겠습니까?")) {
             deletePost(postId)
                 .then(() => {
-                    window.location.replace("/");
+                    deletePostPart(postId)
+                        .then(() => {
+                            window.location.replace("/");
+                        })
+                        .catch(error => {
+                            console.log("deletePostPart error ", error)
+                        })
                 }).catch(error => {
-                    console.log(error);
+                    console.log("deletePost error ", error);
                 })
 
         }
@@ -457,7 +464,7 @@ const Event = ({ postId, url }) => {
 
                 </>
             }
-            {/* <Comment postId={postId} kind='event' style={{ marginTop: "20px" }} /> */}
+            <Comment postId={postId} kind='event' style={{ marginTop: "20px" }} />
         </StWrap >
     );
 };

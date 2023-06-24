@@ -20,6 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import { today, writeTime } from '../common/Date';
 import { insertPost } from '../../firestore/module/post';
 import { fsUploadImage } from '../../firestore/module/image';
+import { createPostPart } from '../../firestore/module/postPart';
 
 const FestivalPost = () => {
     const navigate = useNavigate();
@@ -104,7 +105,13 @@ const FestivalPost = () => {
                     insertPost(obj)
                         .then(response => {
                             const postID = response._key.path.segments[1];
-                            navigate(`/event/${postID}`, { replace: true });
+                            createPostPart(postID)
+                                .then(() => {
+                                    navigate(`/event/${postID}`, { replace: true });
+                                })
+                                .catch(error => {
+                                    console.log("createPostPart error", error)
+                                })
                         })
                         .catch(error => {
                             console.log("fireStore insert error", error);
@@ -115,7 +122,13 @@ const FestivalPost = () => {
             insertPost(obj)
                 .then(response => {
                     const postID = response._key.path.segments[1];
-                    navigate(`/event/${postID}`, { replace: true });
+                    createPostPart(postID)
+                        .then(() => {
+                            navigate(`/event/${postID}`, { replace: true });
+                        })
+                        .catch(error => {
+                            console.log("createPostPart error", error)
+                        })
                 })
                 .catch(error => {
                     console.log("fireStore insert error", error);
