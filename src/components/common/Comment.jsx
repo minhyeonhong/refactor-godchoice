@@ -8,47 +8,27 @@ import { CaretUp, CommentArrow, XBtn, ReComment } from '../../assets/index';
 
 import { commentApis } from "../../api/api-functions/commentApis"
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { getPostPart, updatePostPart } from '../../firestore/module/postPart';
+import { writeTime } from './Date';
 
 const Comment = ({ postId, kind }) => {
 
     //댓글 불러오기
-    // const getComments = async () => {
-    //     const res = await commentApis.getCommentAX({ postId, kind });
-    //     return res;
-    // }
-    // const result = useQuery(
-    //     ["comments", postId, kind],
-    //     getComments
-    // );
+    const getComments = async () => {
+        const response = await getPostPart(postId);
+        return response.data().comments;
+    }
+
+    const result = useQuery(
+        ["comments", postId, kind],
+        getComments
+    );
 
     // 댓글 server state
-    // const comments = result.data?.data.data;
-
-    //댓글 인풋
-    const [comment, setComment, commentHandle] = useInput({
-        content: ""
-    });
-    //대댓글 인풋
-    const [reComment, setReComment, reCommentHandle] = useInput({
-        content: ""
-    });
+    const comments = result.data
 
     //댓글 작성
-    // const insertMutation = useMutation({
-    //     mutationFn: (obj) => {
-    //         return commentApis.insertCommentAX(obj);
-    //     },
-    //     onSuccess: res => {
-    //         if (res.data.status === 200) {
-    //             setComment({ content: "" });
-    //             setReComment({ content: "" });
-    //             result.refetch();
-    //         }
-    //     },
-    // })
-
-    //댓글 작성
-    const submit = (parentId, content) => {
+    const submit = () => {
         // const obj = {
         //     postId,
         //     kind,
@@ -64,6 +44,37 @@ const Comment = ({ postId, kind }) => {
         // }
 
         // insertMutation.mutate(obj);
+
+
+    }
+
+    const writeComment = () => {
+        const comment = document.getElementById("comment").value;
+        const uid = localStorage.getItem("uid");
+        const profile_image_url = localStorage.getItem("profile_image_url");
+        const nickname = localStorage.getItem("nickname");
+
+        if (comment === "") {
+            alert("댓글을 입력해 주세요");
+            return
+        }
+
+        const sendData = {
+            comment,
+            reComments: [],
+            uid,
+            profile_image_url,
+            writer: nickname,
+            writeTime
+        }
+
+        updatePostPart(postId, { comments: [...comments, sendData] })
+            .then(() => {
+                result.refetch();
+            })
+            .catch((error) => {
+                console.log("comment error", error);
+            })
     }
 
     //댓글 삭제
@@ -85,16 +96,15 @@ const Comment = ({ postId, kind }) => {
     }
 
     //대댓글 인풋 온오프
-    const [openReComment, setOpenReComment] = useState([]);
-    const isOpenReComment = (idx, onOff) => {
-        let newArr = [...openReComment];
-        newArr[idx] = onOff;
-        setOpenReComment(newArr);
+    const onReComment = (idx) => {
+        const writeReComment = document.getElementsByClassName("writeReComment")[idx];
+        if (writeReComment.style.display === "none") {
+            writeReComment.style.display = "flex";
+        } else {
+            writeReComment.style.display = "none";
+        }
     }
 
-    // if (result.isLoading) {
-    //     return null;
-    // }
 
     return (
         <StCommentWrap>
@@ -107,119 +117,80 @@ const Comment = ({ postId, kind }) => {
                             e.target.src = `${process.env.PUBLIC_URL}/kakao_base_profil.jpg`
                         }} />
                     <div className='inputBox'>
-                        <input type='text' name="content" value={comment.content || ""} onChange={commentHandle} />
-                        <Button btnType='svg' margin='0 5px' backgroundColor='#3556E1' onClick={() => submit(null, comment.content)}><CaretUp /></Button>
+                        <input type='text' id="comment" />
+                        <Button btnType='svg' margin='0 5px' backgroundColor='#3556E1' onClick={writeComment}><CaretUp /></Button>
                     </div>
                 </StCommentInputBox>
             </StCommentAddBox>
             <StCommentListBox>
                 {/* 댓글 */}
                 {
-                    // comments?.map((item, commentIdx) => {
-                    //     return (
-                    //         <StCommentBox key={item.commentId}>
-                    //             <StComment>
-                    //                 <div className='userBox'>
-                    //                     <div><StUserImg src={item.userImg} /> {item.userName}</div>
-                    //                     {
-                    //                         Number(localStorage.getItem('userId')) === item.userId &&
-                    //                         <Button btnType='svg' onClick={() => { delComment({ postId, commentId: item.commentId, kind }) }}><XBtn /></Button>
-                    //                     }
-                    //                 </div>
-                    //                 {/* <textarea value={item.content} readOnly /> */}
-                    //                 <div className='contentBox'>{item.content}</div>
-                    //                 <div className='dateBox'>
-                    //                     <div className='date'>{item.commentWriteDate}</div>
-                    //                     {
-                    //                         item.content !== '알수없음' &&
-                    //                         <Button btnType='svg' onClick={() => isOpenReComment(commentIdx, true)}><ReComment /></Button>
-                    //                     }
-                    //                 </div>
+                    comments?.map((item, commentIdx) => {
+                        return (
+                            <StCommentBox key={commentIdx}>
+                                <StComment>
+                                    <div className='userBox'>
+                                        <div><StUserImg
+                                            src={item.profile_image_url}
+                                            onError={(e) => {
+                                                e.target.src = `${process.env.PUBLIC_URL}/kakao_base_profil.jpg`
+                                            }} /> {item.nickname}</div>
+                                        {
+                                            localStorage.getItem('uid') === item.uid &&
+                                            <Button btnType='svg' onClick={() => { delComment({ postId, commentId: item.commentId, kind }) }}><XBtn /></Button>
+                                        }
+                                    </div>
+                                    {/* <textarea value={item.content} readOnly /> */}
+                                    <div className='contentBox'>{item.comment}</div>
+                                    <div className='dateBox'>
+                                        <div className='date'>{item.writeTime}</div>
+                                        {
+                                            item.comment !== '알수없음' &&
+                                            <Button btnType='svg' onClick={() => onReComment(commentIdx)}><ReComment /></Button>
+                                        }
+                                    </div>
 
-                    //             </StComment>
-                    //             <StCommentInputBox style={{ display: openReComment[commentIdx] ? "flex" : "none" }}>
-                    //                 <StUserImg src={localStorage.getItem('userImgUrl')} />
-                    //                 <div className='inputBox'>
-                    //                     <input type='text' name="content" value={reComment.content || ""} onChange={reCommentHandle} />
-                    //                     <Button btnType='svg' margin='0 5px' backgroundColor='#3556E1' onClick={() => {
-                    //                         submit(item.commentId, reComment.content);
-                    //                         isOpenReComment(commentIdx, false);
-                    //                     }}><CaretUp /></Button>
-                    //                 </div>
-                    //             </StCommentInputBox>
-                    //             {/* 대댓글 */}
-                    //             {
-                    //                 kind === 'event' &&
-                    //                 item.eventPostCommentChildren.map((child) => {
-                    //                     return (
-                    //                         <StReCommentBox key={child.commentId}>
-                    //                             <div><CommentArrow /></div>
-                    //                             <StComment>
-                    //                                 <div className='userBox'>
-                    //                                     <div><StUserImg src={child.userImg} /> {child.userName}</div>
-                    //                                     {
-                    //                                         Number(localStorage.getItem('userId')) === child.userId &&
-                    //                                         <Button btnType='svg' onClick={() => { delComment({ postId, commentId: child.commentId, kind }) }}><XBtn /></Button>
-                    //                                     }
-                    //                                 </div>
-                    //                                 <div className='contentBox'>{child.content}</div>
-                    //                                 <div className='dateBox'>
-                    //                                     <div className='date'>{child.commentWriteDate}</div>
-                    //                                 </div>
-                    //                             </StComment>
-                    //                         </StReCommentBox>
-                    //                     )
-                    //                 })
-                    //             }
-                    //             {
-                    //                 kind === 'gather' &&
-                    //                 item.gatherPostCommentChildren.map((child) => {
-                    //                     return (
-                    //                         <StReCommentBox key={child.commentId}>
-                    //                             <div><CommentArrow /></div>
-                    //                             <StComment>
-                    //                                 <div className='userBox'>
-                    //                                     <div><StUserImg src={child.userImg} /> {child.userName}</div>
-                    //                                     {
-                    //                                         Number(localStorage.getItem('userId')) === child.userId &&
-                    //                                         <Button btnType='svg' onClick={() => { delComment({ postId, commentId: child.commentId, kind }) }}><XBtn /></Button>
-                    //                                     }
-                    //                                 </div>
-                    //                                 <div className='contentBox'>{child.content}</div>
-                    //                                 <div className='dateBox'>
-                    //                                     <div className='date'>{child.commentWriteDate}</div>
-                    //                                 </div>
-                    //                             </StComment>
-                    //                         </StReCommentBox>
-                    //                     )
-                    //                 })
-                    //             }
-                    //             {
-                    //                 kind === 'ask' &&
-                    //                 item.askPostCommentChildren.map((child) => {
-                    //                     return (
-                    //                         <StReCommentBox key={child.commentId}>
-                    //                             <div><CommentArrow /></div>
-                    //                             <StComment>
-                    //                                 <div className='userBox'>
-                    //                                     <div><StUserImg src={child.userImg} /> {child.userName}</div>
-                    //                                     {
-                    //                                         Number(localStorage.getItem('userId')) === child.userId &&
-                    //                                         <Button btnType='svg' onClick={() => { delComment({ postId, commentId: child.commentId, kind }) }}><XBtn /></Button>
-                    //                                     }
-                    //                                 </div>
-                    //                                 <div className='contentBox'>{child.content}</div>
-                    //                                 <div className='dateBox'>
-                    //                                     <div className='date'>{child.commentWriteDate}</div>
-                    //                                 </div>
-                    //                             </StComment>
-                    //                         </StReCommentBox>
-                    //                     )
-                    //                 })
-                    //             }
-                    //         </StCommentBox>
-                    //     )
-                    // })
+                                </StComment>
+                                <StCommentInputBox className='writeReComment' style={{ display: "none" }}>
+                                    <StUserImg
+                                        src={localStorage.getItem('profile_image_url') === null ? "" : localStorage.getItem('profile_image_url')}
+                                        onError={(e) => {
+                                            e.target.src = `${process.env.PUBLIC_URL}/kakao_base_profil.jpg`
+                                        }}
+                                    />
+                                    <div className='inputBox'>
+                                        <input type='text' className='reComment' />
+                                        <Button btnType='svg' margin='0 5px' backgroundColor='#3556E1' onClick={() => {
+                                            onReComment(commentIdx);
+                                        }}><CaretUp /></Button>
+                                    </div>
+                                </StCommentInputBox>
+                                {/* 대댓글 */}
+                                {
+                                    item.reComments?.map((child) => {
+                                        return (
+                                            <StReCommentBox key={child.commentId}>
+                                                <div><CommentArrow /></div>
+                                                <StComment>
+                                                    <div className='userBox'>
+                                                        <div><StUserImg src={child.userImg} /> {child.userName}</div>
+                                                        {
+                                                            Number(localStorage.getItem('userId')) === child.userId &&
+                                                            <Button btnType='svg' onClick={() => { delComment({ postId, commentId: child.commentId, kind }) }}><XBtn /></Button>
+                                                        }
+                                                    </div>
+                                                    <div className='contentBox'>{child.content}</div>
+                                                    <div className='dateBox'>
+                                                        <div className='date'>{child.commentWriteDate}</div>
+                                                    </div>
+                                                </StComment>
+                                            </StReCommentBox>
+                                        )
+                                    })
+                                }
+                            </StCommentBox>
+                        )
+                    })
 
                 }
             </StCommentListBox>
