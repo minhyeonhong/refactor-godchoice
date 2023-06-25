@@ -107,7 +107,7 @@ const FestivalPost = () => {
                             const postID = response._key.path.segments[1];
                             createPostPart(postID)
                                 .then(() => {
-                                    navigate(`/event/${postID}`, { replace: true });
+                                    window.location.replace(`/event/${postID}`);
                                 })
                                 .catch(error => {
                                     console.log("createPostPart error", error)
@@ -124,7 +124,7 @@ const FestivalPost = () => {
                     const postID = response._key.path.segments[1];
                     createPostPart(postID)
                         .then(() => {
-                            navigate(`/event/${postID}`, { replace: true });
+                            window.location.replace(`/event/${postID}`);
                         })
                         .catch(error => {
                             console.log("createPostPart error", error)
