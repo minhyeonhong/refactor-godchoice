@@ -6,8 +6,7 @@ import useInput from '../../hooks/useInput';
 import Button from '../elements/Button';
 import { CaretUp, CommentArrow, XBtn, ReComment } from '../../assets/index';
 
-import { commentApis } from "../../api/api-functions/commentApis"
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getPostPart, updatePostPart } from '../../firestore/module/postPart';
 import { writeTime } from './Date';
 
@@ -25,42 +24,29 @@ const Comment = ({ postId, kind }) => {
     );
 
     // 댓글 server state
-    const comments = result.data
+    const comments = result.data;
 
-    //댓글 작성
-    const submit = () => {
-        // const obj = {
-        //     postId,
-        //     kind,
-        //     comment: {
-        //         content,
-        //         parentId
-        //     }
-        // }
-
-        // if (content === "") {
-        //     alert("댓글을 입력해 주세요");
-        //     return
-        // }
-
-        // insertMutation.mutate(obj);
-
-
-    }
+    //댓글 인풋
+    const [comment, setComment, commentHandle] = useInput({
+        content: ""
+    });
+    //대댓글 인풋
+    const [reComment, setReComment, reCommentHandle] = useInput({
+        content: ""
+    });
 
     const writeComment = () => {
-        const comment = document.getElementById("comment").value;
         const uid = localStorage.getItem("uid");
         const profile_image_url = localStorage.getItem("profile_image_url");
         const nickname = localStorage.getItem("nickname");
 
-        if (comment === "") {
+        if (comment.content === "") {
             alert("댓글을 입력해 주세요");
             return
         }
 
         const sendData = {
-            comment,
+            comment: comment.content,
             reComments: [],
             uid,
             profile_image_url,
@@ -70,29 +56,99 @@ const Comment = ({ postId, kind }) => {
 
         updatePostPart(postId, { comments: [...comments, sendData] })
             .then(() => {
+                setComment({ content: "" });
                 result.refetch();
             })
             .catch((error) => {
-                console.log("comment error", error);
+                console.log("writeComment error", error);
+            })
+    }
+
+    const writeReComment = (idx) => {
+        const uid = localStorage.getItem("uid");
+        const profile_image_url = localStorage.getItem("profile_image_url");
+        const nickname = localStorage.getItem("nickname");
+
+        if (reComment.content === "") {
+            alert("댓글을 입력해 주세요");
+            return
+        }
+
+        const sendData = {
+            ...comments[idx],
+            reComments: [
+                ...comments[idx].reComments,
+                {
+                    comment: reComment.content,
+                    uid,
+                    profile_image_url,
+                    writer: nickname,
+                    writeTime
+                }
+            ]
+        }
+
+        comments.splice(idx, 1, sendData);
+
+        updatePostPart(postId, { comments })
+            .then(() => {
+                setReComment({ content: "" });
+                onReComment(idx);
+                result.refetch();
+            })
+            .catch((error) => {
+                console.log("writeReComment error", error);
             })
     }
 
     //댓글 삭제
-    const deleteMutation = useMutation({
-        mutationFn: (obj) => {
-            return commentApis.deleteCommentAX(obj);
-        },
-        onSuccess: res => {
-            if (res.data.status === 200) {
-                //result.refetch();
+    const delComment = (commentIdx) => {
+        if (!window.confirm("댓글을 삭제 하시겠습니까?")) return;
+
+        const hasReComment = comments[commentIdx].reComments.length > 0;
+        const modComments = comments.map(comment => { return { ...comment, reComments: comment.reComments.map(reComment => reComment) } });
+
+        if (hasReComment) {
+            const sendData = {
+                ...comments[commentIdx],
+                comment: "알수없음",
             }
-        },
-    })
-    //댓글 삭제
-    const delComment = (obj) => {
-        if (window.confirm("댓글을 삭제 하시겠습니까?")) {
-            deleteMutation.mutate(obj);
+
+            modComments.splice(commentIdx, 1, sendData);
+        } else {
+            modComments.splice(commentIdx, 1);
         }
+
+        updatePostPart(postId, { comments: modComments })
+            .then(() => {
+                result.refetch();
+            })
+            .catch((error) => {
+                console.log("delComment error", error);
+            })
+    }
+
+    //대댓글 삭제
+    const delReComment = (commentIdx, reCommentIdx) => {
+        if (!window.confirm("댓글을 삭제 하시겠습니까?")) return;
+
+        const isReCommentCountOne = comments[commentIdx].reComments.length === 1;
+
+        const modComments = comments.map(comment => { return { ...comment, reComments: comment.reComments.map(reComment => reComment) } });
+
+        if (isReCommentCountOne && comments[commentIdx].comment === "알수없음") {
+            modComments.splice(commentIdx, 1);
+        } else {
+            modComments[commentIdx].reComments.splice(reCommentIdx, 1);
+        }
+
+        updatePostPart(postId, { comments: modComments })
+            .then(() => {
+                result.refetch();
+            })
+            .catch((error) => {
+                console.log("delComment error", error);
+            })
     }
 
     //대댓글 인풋 온오프
@@ -117,7 +173,7 @@ const Comment = ({ postId, kind }) => {
                             e.target.src = `${process.env.PUBLIC_URL}/kakao_base_profil.jpg`
                         }} />
                     <div className='inputBox'>
-                        <input type='text' id="comment" />
+                        <input type='text' name="content" value={comment.content || ""} onChange={commentHandle} />
                         <Button btnType='svg' margin='0 5px' backgroundColor='#3556E1' onClick={writeComment}><CaretUp /></Button>
                     </div>
                 </StCommentInputBox>
@@ -125,27 +181,27 @@ const Comment = ({ postId, kind }) => {
             <StCommentListBox>
                 {/* 댓글 */}
                 {
-                    comments?.map((item, commentIdx) => {
+                    comments?.map((comment, commentIdx) => {
                         return (
                             <StCommentBox key={commentIdx}>
                                 <StComment>
                                     <div className='userBox'>
                                         <div><StUserImg
-                                            src={item.profile_image_url}
+                                            src={comment.profile_image_url}
                                             onError={(e) => {
                                                 e.target.src = `${process.env.PUBLIC_URL}/kakao_base_profil.jpg`
-                                            }} /> {item.nickname}</div>
+                                            }} /> {comment.nickname}</div>
                                         {
-                                            localStorage.getItem('uid') === item.uid &&
-                                            <Button btnType='svg' onClick={() => { delComment({ postId, commentId: item.commentId, kind }) }}><XBtn /></Button>
+                                            localStorage.getItem('uid') === comment.uid && comment.comment !== '알수없음' &&
+                                            <Button btnType='svg' onClick={() => { delComment(commentIdx) }}><XBtn /></Button>
                                         }
                                     </div>
                                     {/* <textarea value={item.content} readOnly /> */}
-                                    <div className='contentBox'>{item.comment}</div>
+                                    <div className='contentBox'>{comment.comment}</div>
                                     <div className='dateBox'>
-                                        <div className='date'>{item.writeTime}</div>
+                                        <div className='date'>{comment.writeTime}</div>
                                         {
-                                            item.comment !== '알수없음' &&
+                                            comment.comment !== '알수없음' &&
                                             <Button btnType='svg' onClick={() => onReComment(commentIdx)}><ReComment /></Button>
                                         }
                                     </div>
@@ -159,29 +215,29 @@ const Comment = ({ postId, kind }) => {
                                         }}
                                     />
                                     <div className='inputBox'>
-                                        <input type='text' className='reComment' />
+                                        <input type='text' name="content" value={reComment.content || ""} onChange={reCommentHandle} />
                                         <Button btnType='svg' margin='0 5px' backgroundColor='#3556E1' onClick={() => {
-                                            onReComment(commentIdx);
+                                            writeReComment(commentIdx);
                                         }}><CaretUp /></Button>
                                     </div>
                                 </StCommentInputBox>
                                 {/* 대댓글 */}
                                 {
-                                    item.reComments?.map((child) => {
+                                    comment.reComments?.map((reComment, reCommentIdx) => {
                                         return (
-                                            <StReCommentBox key={child.commentId}>
+                                            <StReCommentBox key={reCommentIdx}>
                                                 <div><CommentArrow /></div>
                                                 <StComment>
                                                     <div className='userBox'>
-                                                        <div><StUserImg src={child.userImg} /> {child.userName}</div>
+                                                        <div><StUserImg src={reComment.profile_image_url} /> {reComment.nickname}</div>
                                                         {
-                                                            Number(localStorage.getItem('userId')) === child.userId &&
-                                                            <Button btnType='svg' onClick={() => { delComment({ postId, commentId: child.commentId, kind }) }}><XBtn /></Button>
+                                                            localStorage.getItem('uid') === reComment.uid &&
+                                                            <Button btnType='svg' onClick={() => { delReComment(commentIdx, reCommentIdx) }}><XBtn /></Button>
                                                         }
                                                     </div>
-                                                    <div className='contentBox'>{child.content}</div>
+                                                    <div className='contentBox'>{reComment.comment}</div>
                                                     <div className='dateBox'>
-                                                        <div className='date'>{child.commentWriteDate}</div>
+                                                        <div className='date'>{reComment.writeTime}</div>
                                                     </div>
                                                 </StComment>
                                             </StReCommentBox>
