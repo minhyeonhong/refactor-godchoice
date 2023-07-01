@@ -6,25 +6,12 @@ import useInput from '../../hooks/useInput';
 import Button from '../elements/Button';
 import { CaretUp, CommentArrow, XBtn, ReComment } from '../../assets/index';
 
-import { useQuery } from "@tanstack/react-query";
-import { getPostPart, updatePostPart } from '../../firestore/module/postPart';
+import { useQueryClient } from "@tanstack/react-query";
+import { updatePostPart } from '../../firestore/module/postPart';
 import { writeTime } from './Date';
 
-const Comment = ({ postId, kind }) => {
-
-    //댓글 불러오기
-    const getComments = async () => {
-        const response = await getPostPart(postId);
-        return response.data().comments;
-    }
-
-    const result = useQuery(
-        ["comments", postId, kind],
-        getComments
-    );
-
-    // 댓글 server state
-    const comments = result.data;
+const Comment = ({ postId, comments }) => {
+    const queryClient = useQueryClient();
 
     //댓글 인풋
     const [comment, setComment, commentHandle] = useInput({
@@ -57,7 +44,7 @@ const Comment = ({ postId, kind }) => {
         updatePostPart(postId, { comments: [...comments, sendData] })
             .then(() => {
                 setComment({ content: "" });
-                result.refetch();
+                queryClient.prefetchQuery(["getFBPostPart"]);
             })
             .catch((error) => {
                 console.log("writeComment error", error);
@@ -94,7 +81,7 @@ const Comment = ({ postId, kind }) => {
             .then(() => {
                 setReComment({ content: "" });
                 onReComment(idx);
-                result.refetch();
+                queryClient.prefetchQuery(["getFBPostPart"]);
             })
             .catch((error) => {
                 console.log("writeReComment error", error);
@@ -121,7 +108,7 @@ const Comment = ({ postId, kind }) => {
 
         updatePostPart(postId, { comments: modComments })
             .then(() => {
-                result.refetch();
+                queryClient.prefetchQuery(["getFBPostPart"]);
             })
             .catch((error) => {
                 console.log("delComment error", error);
@@ -144,7 +131,7 @@ const Comment = ({ postId, kind }) => {
 
         updatePostPart(postId, { comments: modComments })
             .then(() => {
-                result.refetch();
+                queryClient.prefetchQuery(["getFBPostPart"]);
             })
             .catch((error) => {
                 console.log("delComment error", error);

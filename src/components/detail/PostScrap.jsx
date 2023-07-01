@@ -1,41 +1,40 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { BookmarkStroke, BookmarkFill } from "../../assets/index";
-import { useMutation } from "@tanstack/react-query";
-import { postApis } from "../../api/api-functions/postApis";
+import { updateScrapUsers } from "../../hooks/usePost";
+import { useQueryClient } from "@tanstack/react-query";
 
-const PostScrap = ({ bookMarkStatus }) => {
+const PostScrap = ({ postId, scrapUsers }) => {
 
-  const { url, postId } = useParams();
-
-  // bookMark server state
-  const [scrapState, setScrapState] = useState(null);
+  const [scrapState, setScrapState] = useState(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (bookMarkStatus !== undefined) {
-      setScrapState(bookMarkStatus);
+    if (scrapUsers.indexOf(localStorage.getItem("uid")) === -1) {
+      setScrapState(false);
+    } else {
+      setScrapState(true);
     }
-  }, [bookMarkStatus])
-
-  const postScrap = useMutation({
-    mutationFn: (obj) => {
-      return postApis.postScrapAx(obj);
-    },
-    onSuccess: res => {
-      if (res.data.status === 200) {
-        setScrapState(!scrapState);
-      }
-    },
-  })
+  }, [scrapUsers])
 
   const scrapHandler = () => {
-    postScrap.mutate({ kind: url.split('posts')[0].toString(), postId: Number(postId) });
+    const copyScrapUsers = [...scrapUsers];
+    const scrapIdx = scrapUsers.indexOf(localStorage.getItem("uid"));
+
+    if (scrapIdx === -1) {
+      copyScrapUsers.push(localStorage.getItem("uid"));
+    } else {
+      copyScrapUsers.splice(scrapIdx, 1);
+    }
+
+    updateScrapUsers(postId, copyScrapUsers);
+
+    queryClient.prefetchQuery(["getFBPostPart"]);
   };
 
   return (
     <>
-      <div onClick={() => scrapHandler()}>
-        {scrapState !== null && scrapState ? <BookmarkFill /> : <BookmarkStroke />}
+      <div onClick={scrapHandler}>
+        {scrapState ? <BookmarkFill /> : <BookmarkStroke />}
       </div>
     </>
   );
