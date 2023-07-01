@@ -13,31 +13,16 @@ import KakaoMap from '../common/KakaoMap';
 
 // 스크랩
 import PostScrap from './PostScrap';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { postApis } from '../../api/api-functions/postApis';
 import useInput from '../../hooks/useInput';
 import PageState from '../common/PageState';
-import { useCallback } from 'react';
 import styled from 'styled-components';
 import TextAreaAutoResize from "react-textarea-autosize";
 import { today, writeTime } from '../common/Date';
-import { getPost, updatePost, deletePost } from '../../firestore/module/post';
-import { fsDeleteImage, fsUploadImage } from '../../firestore/module/image';
-import { deletePostPart } from '../../firestore/module/postPart';
+import { useGetPost, onDeletePost, onUpdate, usePostParts, updateViewUsers } from '../../hooks/usePost';
 
 const Event = ({ postId, url }) => {
-    //디테일 페이지 불러오기
-    const getEventPost = async () => {
-        const response = await getPost(postId);
-        return response.data();
-    }
-    const result = useQuery(
-        ["getEventPost"],
-        getEventPost,
-    );
 
-    const post = result.data;
-
+    const { post, postIsLoading } = useGetPost(postId);
 
     //업데이트 인풋
     const [modPost, setmodPost, modPostHandle] = useInput();
@@ -49,6 +34,17 @@ const Event = ({ postId, url }) => {
         setMod(!mod);
         setmodPost(post);
     }
+
+    const { comments, scrapUsers, viewUsers, postPartIsLoading } = usePostParts(postId);
+
+    useEffect(() => {
+        const isView = viewUsers.indexOf(localStorage.getItem("uid"));
+        const copyViewUsers = [...viewUsers];
+        if (isView === -1) {
+            copyViewUsers.push(localStorage.getItem("uid"));
+            updateViewUsers(postId, copyViewUsers);
+        }
+    }, [])
 
     // 주소 API 팝업창 상태 관리
     const [isAddressModal, setIsAddressModal] = useState(false);
@@ -109,37 +105,7 @@ const Event = ({ postId, url }) => {
             photoURIs: [...modPost.photoURIs.filter((item, i) => delImg.indexOf(item) === -1)],
         }
 
-
-        if (delImgName.length > 0) {
-            delImgName.map(async (fileName) => {
-                await fsDeleteImage("images/post", fileName)
-            })
-        }
-
-        if (files.length > 0) {
-            files.map(async (file, i) => {
-                const getImageURI = await fsUploadImage("images/post", file, `${localStorage.getItem('uid')}_${file.name}_${writeTime}`);
-                obj.photoURIs.push(getImageURI);
-                if (files.length === (i + 1)) {
-                    updatePost(postId, obj)
-                        .then(() => {
-                            window.location.reload()
-                        })
-                        .catch(error => {
-                            console.log("fireStore update error", error);
-                        })
-                }
-            })
-        } else {
-            updatePost(postId, obj)
-                .then(() => {
-                    window.location.reload()
-                })
-                .catch(error => {
-                    console.log("fireStore update error", error);
-                })
-        }
-
+        onUpdate(delImgName, files, postId, obj);
     }
 
     const categoryOption = ['마라톤', '페스티벌', '전시회', '공연', '기타'];
@@ -162,26 +128,7 @@ const Event = ({ postId, url }) => {
         setImgFiles(imgdelete);
     }
 
-    // //게시글 삭제
-    const onEventDelete = (postId) => {
-        if (window.confirm("게시글을 삭제 하시겠습니까?")) {
-            deletePost(postId)
-                .then(() => {
-                    deletePostPart(postId)
-                        .then(() => {
-                            window.location.replace("/");
-                        })
-                        .catch(error => {
-                            console.log("deletePostPart error ", error)
-                        })
-                }).catch(error => {
-                    console.log("deletePost error ", error);
-                })
-
-        }
-    }
-
-    if (result.isLoading) {
+    if (postIsLoading && postPartIsLoading) {
         return < PageState
             display={'flex'}
             state='loading' imgWidth='25%' height='100vh'
@@ -212,8 +159,7 @@ const Event = ({ postId, url }) => {
                                         <div style={{ background: "white", width: "70px", height: "45px" }}>
                                             <div style={{ margin: "0 5px 0 18px", paddingTop: "10px" }}>
                                                 <img src={Views} style={{ width: "20px", height: "20px", flex: "2", marginRight: "4px" }} alt="views icon" />
-                                                {/* {post.viewCount} */}
-                                                1
+                                                {viewUsers.length}
                                             </div>
                                         </div>
                                     </STImg>
@@ -221,8 +167,7 @@ const Event = ({ postId, url }) => {
 
                             </div>
                             <div>
-                                {/* <PostScrap style={{ right: "0px" }} bookMarkStatus={post.bookMarkStatus} /> */}
-                                북마크
+                                <PostScrap style={{ right: "0px" }} postId={postId} scrapUsers={scrapUsers} />
                             </div>
 
                         </STIng>
@@ -305,7 +250,7 @@ const Event = ({ postId, url }) => {
 
                         {localStorage.getItem('uid') === post.writer &&
                             (<div>
-                                <STEditButton style={{ background: "#8f94b6", marginLeft: "5px" }} onClick={() => { onEventDelete(postId); }}>삭제</STEditButton>
+                                <STEditButton style={{ background: "#8f94b6", marginLeft: "5px" }} onClick={() => { onDeletePost(postId); }}>삭제</STEditButton>
                                 <STEditButton onClick={setUpdateMod}>수정</STEditButton>
                             </div>)}
 
@@ -464,7 +409,7 @@ const Event = ({ postId, url }) => {
 
                 </>
             }
-            <Comment postId={postId} kind='event' style={{ marginTop: "20px" }} />
+            <Comment postId={postId} comments={comments} style={{ marginTop: "20px" }} />
         </StWrap >
     );
 };

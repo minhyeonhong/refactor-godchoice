@@ -27,8 +27,6 @@ const List = ({ searchState }) => {
         refetchOnWindowFocus: false,
     })
 
-    console.log(searchState.main)
-
     useEffect(() => {
         // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니고 다음페이지가 있다면
         if (inView && !result.isFetching && result.hasNextPage) {
