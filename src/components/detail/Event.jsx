@@ -20,7 +20,7 @@ import TextAreaAutoResize from "react-textarea-autosize";
 import { today, writeTime } from '../common/Date';
 import { useGetPost, onDeletePost, onUpdate, usePostParts, updateViewUsers } from '../../hooks/usePost';
 
-const Event = ({ postId, url }) => {
+const Event = ({ postId }) => {
 
     const { post, postIsLoading } = useGetPost(postId);
 
