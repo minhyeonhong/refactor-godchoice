@@ -14,8 +14,10 @@ import noImg from '../../assets/images/common/noImg.png'
 
 import useImgUpload from '../../hooks/useImgUpload';
 import useInput from '../../hooks/useInput';
-import { useMutation } from '@tanstack/react-query';
-import { postApis } from '../../api/api-functions/postApis';
+import { insertPost } from '../../firestore/module/post';
+import { createPostPart } from '../../firestore/module/postPart';
+import { fsUploadImage } from '../../firestore/module/image';
+import { writeTime } from '../common/Date';
 
 
 const GatherPost = () => {
@@ -32,15 +34,15 @@ const GatherPost = () => {
     //2-2 게시글 작성 - 모집글
 
     //모집인원
-    const [counter, setCounter] = useState(0);
+    const [memberCounter, setMemberCounter] = useState(0);
 
-    const handleAdd = (e) => {
-        setCounter(counter + 1);
+    const memberCounterAdd = (e) => {
+        setMemberCounter(memberCounter + 1);
     }
 
-    const handleminus = (e) => {
-        if (counter > 0) {
-            setCounter(counter - 1)
+    const memberCounterMinus = (e) => {
+        if (memberCounter > 0) {
+            setMemberCounter(memberCounter - 1)
         }
     }
     // 남녀 성비
@@ -67,26 +69,13 @@ const GatherPost = () => {
         detailAddress: ""
     })
 
-
-    //게시글 작성
-    const insertGatherPost = useMutation({
-        mutationFn: (obj) => {
-            return postApis.addGatherPostAx(obj);
-        },
-        onSuccess: res => {
-            if (res.data.status === 200) {
-                window.location.replace(`/gatherposts/${res.data.data.postId}`);
-            }
-        },
-    })
-
     const onSubmit = () => {
 
         // //모집인원, 카테고리, 성비관련, 행사시작, 연령대, 제목, 내용, 카카오링크
         if (gatherPosts.title === "") { return alert('제목을 입력하세요') }
         if (gatherPosts.content === "") { return alert('내용을 입력하세요') }
         if (gatherPosts.category === "") { return alert('카테고리를 입력하세요') }
-        if (counter < 1) { return alert('모집인원을 입력하세요') }
+        if (memberCounter < 1) { return alert('모집인원을 입력하세요') }
         if (gatherPosts.startAge === "" || gatherPosts.endAge === "") { return alert('연령대를 입력하세요') }
         if (sexValue === "") { return (alert('성비를 선택하세요')) }
         if (gatherPosts.date === "") { return alert('만날 날짜를 입력하세요') }
@@ -101,21 +90,10 @@ const GatherPost = () => {
             }
         }
 
-        const formData = new FormData();
-
-        if (files.length > 0) {
-            files.forEach((file) => {
-                formData.append("multipartFile", file);
-            })
-        } else {
-            formData.append("multipartFile", null);
-        }
-
         const obj = {
-
             category: gatherPosts.category,
-            date: gatherPosts.date,
-            number: counter,
+            dateToMeet: gatherPosts.date,
+            memberCounter,
             kakaoLink: gatherPosts.kakaoLink,
             sex: sexValue,
             startAge: gatherPosts.startAge,
@@ -123,10 +101,53 @@ const GatherPost = () => {
             title: gatherPosts.title,
             content: gatherPosts.content,
             postLink: gatherPosts.postLink,
+            contentType: "gather",
             postAddress: postAddress + gatherPosts.detailAddress,
+            postLink: gatherPosts.postLink,
+            writer: localStorage.getItem('uid'),
+            writeTime: writeTime,
+            writerNickName: localStorage.getItem('nickname'),
+            writerProfileImg: localStorage.getItem('profile_image_url'),
+            photoURIs: [],
         }
-        formData.append("gatherPostDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
-        insertGatherPost.mutate(formData);
+
+        if (files.length > 0) {
+            files.map(async (file, i) => {
+                const getImageURI = await fsUploadImage("images/post", file, `${localStorage.getItem('uid')}_${file.name}_${writeTime}`);
+                obj.photoURIs.push(getImageURI);
+                if (files.length === (i + 1)) {
+                    insertPost(obj)
+                        .then(response => {
+                            const postID = response._key.path.segments[1];
+                            createPostPart(postID)
+                                .then(() => {
+                                    window.location.replace(`/event/${postID}`);
+                                })
+                                .catch(error => {
+                                    console.log("createPostPart error", error)
+                                })
+                        })
+                        .catch(error => {
+                            console.log("fireStore insert error", error);
+                        })
+                }
+            })
+        } else {
+            insertPost(obj)
+                .then(response => {
+                    const postID = response._key.path.segments[1];
+                    createPostPart(postID)
+                        .then(() => {
+                            window.location.replace(`/event/${postID}`);
+                        })
+                        .catch(error => {
+                            console.log("createPostPart error", error)
+                        })
+                })
+                .catch(error => {
+                    console.log("fireStore insert error", error);
+                })
+        }
     }
 
 
@@ -202,9 +223,9 @@ const GatherPost = () => {
                             <option value="기타">기타</option>
                         </STSelect>
                         <STDiv style={{ flex: "1", textAlign: "center", display: "flex" }}>
-                            <STButton style={{ flex: "0.7" }} onClick={handleAdd}>+</STButton>
-                            <div style={{ flex: "2", lineHeight: "40px" }}>{counter === 0 ? "모집인원" : counter}</div>
-                            <STButton style={{ flex: "0.7", right: "0px" }} onClick={handleminus}>-</STButton>
+                            <STButton style={{ flex: "0.7" }} onClick={memberCounterAdd}>+</STButton>
+                            <div style={{ flex: "2", lineHeight: "40px" }}>{memberCounter === 0 ? "모집인원" : memberCounter}</div>
+                            <STButton style={{ flex: "0.7", right: "0px" }} onClick={memberCounterMinus}>-</STButton>
                         </STDiv>
                     </div>
 
