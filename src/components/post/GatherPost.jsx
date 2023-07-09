@@ -103,7 +103,6 @@ const GatherPost = () => {
             postLink: gatherPosts.postLink,
             contentType: "gather",
             postAddress: postAddress + gatherPosts.detailAddress,
-            postLink: gatherPosts.postLink,
             writer: localStorage.getItem('uid'),
             writeTime: writeTime,
             writerNickName: localStorage.getItem('nickname'),

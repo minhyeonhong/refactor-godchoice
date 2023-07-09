@@ -11,8 +11,10 @@ import Carousel from 'react-bootstrap/Carousel';
 
 import useImgUpload from '../../hooks/useImgUpload';
 import useInput from '../../hooks/useInput';
-import { useMutation } from '@tanstack/react-query';
-import { postApis } from '../../api/api-functions/postApis';
+import { fsUploadImage } from '../../firestore/module/image';
+import { insertPost } from '../../firestore/module/post';
+import { createPostPart } from '../../firestore/module/postPart';
+import { writeTime } from '../common/Date';
 
 const QuestionPost = () => {
 
@@ -39,17 +41,6 @@ const QuestionPost = () => {
     //이미지 업로드 인풋돔 선택 훅
     const imgRef = useRef();
 
-    //게시글 작성
-    const insertAskPost = useMutation({
-        mutationFn: (obj) => {
-            return postApis.addAskPostAx(obj);
-        },
-        onSuccess: res => {
-            if (res.data.status === 200) {
-                window.location.replace(`/askposts/${res.data.data.postId}`);
-            }
-        },
-    })
 
     const onSubmit = () => {
 
@@ -65,28 +56,57 @@ const QuestionPost = () => {
             }
         }
 
-        const formData = new FormData();
-
-        if (files.length > 0) {
-            files.forEach((file) => {
-                formData.append("multipartFile", file);
-            })
-        } else {
-            formData.append("multipartFile", null);
-        }
 
         const obj = {
             title: question.title,
             content: question.content,
             postLink: question.postLink,
+            contentType: "ask",
             postAddress: postAddress + question.detailAddress,
+            writer: localStorage.getItem('uid'),
+            writeTime: writeTime,
+            writerNickName: localStorage.getItem('nickname'),
+            writerProfileImg: localStorage.getItem('profile_image_url'),
+            photoURIs: [],
         }
 
-        formData.append(
-            "askPostRequestDto",
-            new Blob([JSON.stringify(obj)], { type: "application/json" })
-        );
-        insertAskPost.mutate(formData);
+        if (files.length > 0) {
+            files.map(async (file, i) => {
+                const getImageURI = await fsUploadImage("images/post", file, `${localStorage.getItem('uid')}_${file.name}_${writeTime}`);
+                obj.photoURIs.push(getImageURI);
+                if (files.length === (i + 1)) {
+                    insertPost(obj)
+                        .then(response => {
+                            const postID = response._key.path.segments[1];
+                            createPostPart(postID)
+                                .then(() => {
+                                    window.location.replace(`/event/${postID}`);
+                                })
+                                .catch(error => {
+                                    console.log("createPostPart error", error)
+                                })
+                        })
+                        .catch(error => {
+                            console.log("fireStore insert error", error);
+                        })
+                }
+            })
+        } else {
+            insertPost(obj)
+                .then(response => {
+                    const postID = response._key.path.segments[1];
+                    createPostPart(postID)
+                        .then(() => {
+                            window.location.replace(`/event/${postID}`);
+                        })
+                        .catch(error => {
+                            console.log("createPostPart error", error)
+                        })
+                })
+                .catch(error => {
+                    console.log("fireStore insert error", error);
+                })
+        }
     }
 
     //주소 앞에 두글자 따기
