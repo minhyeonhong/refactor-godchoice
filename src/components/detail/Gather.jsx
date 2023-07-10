@@ -3,7 +3,6 @@ import Comment from '../common/Comment';
 import KakaoMap from '../common/KakaoMap';
 import Carousel from 'react-bootstrap/Carousel';
 import { FiSearch } from 'react-icons/fi'
-import Form from 'react-bootstrap/Form';
 import {
     STLinkTextarea, STTitleInput, ModalWrap, StWrap, STSelect, AllTextarea, StCarouselWrap, STUploadButton, STIng, STIngDiv, STInput, STButton, STButton2, STBox2, StContent, STAddressButton, STEditButton, STImg, SelectWrap, SelTop, SelBottom, STInput2, STInput3, StRadioBox, StSearchBox, STAddressDiv, STDiv, STCountButton
 } from '../styles/DetailPost.styled.js'
@@ -15,54 +14,64 @@ import Views from '../../assets/icon/Views.svg'
 import GenderFemale from '../../assets/icon/GenderFemale.svg'
 import GenderIntersex from '../../assets/icon/GenderIntersex.svg'
 import GenderMale from '../../assets/icon/GenderMale.svg'
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { postApis } from '../../api/api-functions/postApis';
 import useInput from '../../hooks/useInput';
 import PageState from '../common/PageState';
 import TextAreaAutoResize from "react-textarea-autosize";
+import { onDeletePost, onUpdate, updateViewUsers, useGetPost, usePostParts } from '../../hooks/usePost';
+import { writeTime, today } from '../common/Date';
 
-const Gather = ({ postId, url }) => {
+const Gather = ({ postId }) => {
 
-    //디테일 페이지 불러오기
-    const getGatherPost = async () => {
-        const res = await postApis.getPostAX({ url, postId });
-        return res;
-    }
-    const result = useQuery(
-        ["getGatherPost", url, postId],
-        getGatherPost,
-    );
-    //디테일 페이지 server state
-    const post = result.data?.data.data;
-    //업데이트 인풋
-    const [modPost, setmodPost, modPostHandle] = useInput(result.data?.data.data);
+    const { post, postIsLoading } = useGetPost(postId);
+
+    const [modPost, setmodPost, modPostHandle] = useInput();
+
+
     //수정하기
     const [edit, setEdit] = useState(false);
-    const toggleEdit = () => { setEdit(!edit); };
+    const [memberCounter, setMemberCounter] = useState(0);
+    const handleAdd = () => {
+        setMemberCounter(memberCounter + 1);
+    }
+
+    const handleminus = () => {
+        if (memberCounter > 0) {
+            setMemberCounter(memberCounter - 1);
+        }
+    }
+
+    const toggleEdit = () => {
+        setEdit(!edit);
+        setmodPost(post);
+        setMemberCounter(post.memberCounter);
+        setPostAddress(post.postAddress);
+    };
+
+
+
+    const { comments, scrapUsers, viewUsers, postPartIsLoading } = usePostParts(postId);
+
+    useEffect(() => {
+        const isView = viewUsers.indexOf(localStorage.getItem("uid"));
+        const copyViewUsers = [...viewUsers];
+        if (isView === -1) {
+            copyViewUsers.push(localStorage.getItem("uid"));
+            updateViewUsers(postId, copyViewUsers);
+        }
+    }, [])
 
     //이미지 업로드 훅
     const [files, fileUrls, uploadHandle, setImgFiles, setImgUrls] = useImgUpload(5, true, 0.5, 1000);
+    const imgRef = useRef();
 
     //기존 프리뷰 지울 state
     const [delImg, setDelImg] = useState([]);
-    const imgRef = useRef();
-
-    //게시글 수정
-    const putGatherPost = useMutation({
-        mutationFn: (obj) => {
-            return postApis.putGatherPostAx(obj);
-        },
-        onSuccess: res => {
-            if (res.data.status === 200) {
-                window.location.reload();
-            }
-        },
-    })
+    const [delImgName, setDelImgName] = useState([]);
 
     //submit
     const onSubmitGather = () => {
 
-        if (counter < 1) { return alert('모집인원을 입력하세요') }
+        if (modPost.memberCounter < 1) { return alert('모집인원을 입력하세요') }
         if (modPost.kakaoLink === "") { return alert('연락할 카카오 링크를 입력하세요') }
         if (modPost.sex === "") { return alert('성비를 선택하세요') }
         if (modPost.startAge === "" || modPost.endAge === "") { return alert('연령대를 입력하세요') }
@@ -78,62 +87,29 @@ const Gather = ({ postId, url }) => {
             }
         }
 
-        const formData = new FormData();
-
-        if (files.length > 0) {
-            files.forEach((file) => {
-                formData.append("multipartFile", file);
-            })
-        } else {
-            formData.append("multipartFile", null);
-        }
         const detail = modPost.detailAddress === undefined ? "" : modPost.detailAddress
 
         const obj = {
             category: modPost.category,
             content: modPost.content,
-            date: modPost.date,
+            contentType: modPost.contentType,
+            dateToMeet: modPost.dateToMeet,
             endAge: modPost.endAge,
-            imgId: delImg.join(),
             kakaoLink: modPost.kakaoLink,
-            number: counter,
-            postAddress: modPost.postAddress + detail,
+            memberCounter,
+            postAddress: postAddress + detail,
             postLink: modPost.postLink,
             sex: modPost.sex,
             startAge: modPost.startAge,
             title: modPost.title,
-            postState: modPost.postState,
+            writeTime: writeTime,
+            writerNickName: localStorage.getItem('nickname'),
+            writerProfileImg: localStorage.getItem('profile_image_url'),
+            photoURIs: [...modPost.photoURIs.filter((item, i) => delImg.indexOf(item) === -1)],
         }
 
-        formData.append("gatherPostDto", new Blob([JSON.stringify(obj)], { type: "application/json" }));
-        putGatherPost.mutate({ postId, content: formData });
+        onUpdate(delImgName, files, postId, obj);
     }
-
-    //날짜 제한
-    const today = new Date();
-    const day = today.getDate();
-    const month = today.getMonth() + 1;
-    const year = today.getFullYear()
-    const today2 = year + '-' + month + '-' + day;
-
-
-
-    //모집인원 counter 세기
-    const [counter, setCounter] = useState();
-
-    const handleAdd = () => { setCounter(counter + 1); }
-
-    const handleminus = () => {
-        if (counter > 0) {
-            setCounter(counter - 1)
-        }
-    }
-
-    useEffect(() => {
-        if (post?.number !== NaN) {
-            setCounter(post?.number)
-        }
-    }, [post?.number])
 
     // 주소 API 팝업창 상태 관리& useState
     const [isPopupOpen, setIsPopupOpen] = useState(false)
@@ -141,41 +117,21 @@ const Gather = ({ postId, url }) => {
     const [postAddress, setPostAddress] = useState("")
 
     //기존글의 삭제할 이미지
-    const delImgHandle = (postImgId) => {
-        setDelImg((e) => [...e, postImgId]);
+    const delImgHandle = (postImgURI) => {
+        const firstIdx = postImgURI.indexOf(localStorage.getItem("uid"));
+        const lastIdx = postImgURI.indexOf("?", firstIdx);
+        const imgName = decodeURIComponent(postImgURI.substring(firstIdx, lastIdx));
+        setDelImg((e) => [...e, postImgURI]);
+        setDelImgName((e) => [...e, imgName])
     }
 
-    useEffect(() => {
-        if (postAddress !== "") {
-            setmodPost({ ...modPost, postAddress })
-        }
-    }, [postAddress])
-
-    //게시글 삭제
-    const deleteGatherPost = useMutation({
-        mutationFn: (obj) => {
-            return postApis.deleteGatherPostAx(obj);
-        },
-        onSuccess: res => {
-            if (res.data.status === 200) {
-                window.location.replace('/');
-            }
-        },
-    })
-    //게시글 삭제하기
-    const onGatherDelete = (postId) => {
-        if (window.confirm("게시글을 삭제 하시겠습니까?")) {
-            deleteGatherPost.mutate(postId);
-        }
-    }
-
-    const ingHandle = (e) => {
-        if (e.target.checked) {
-            setmodPost({ ...modPost, postState: "진행중" });
-        } else {
-            setmodPost({ ...modPost, postState: "마감" });
-        }
-    }
+    // const ingHandle = (e) => {
+    //     if (e.target.checked) {
+    //         setmodPost({ ...modPost, postState: "진행중" });
+    //     } else {
+    //         setmodPost({ ...modPost, postState: "마감" });
+    //     }
+    // }
 
     //새로추가한 글 삭제할 이미지
     function deleteNewFile(e) {
@@ -185,7 +141,7 @@ const Gather = ({ postId, url }) => {
         const imgdelete = files.filter((file, index) => index !== e);
         setImgFiles(imgdelete);
     }
-    if (result.isLoading) {
+    if (postIsLoading && postPartIsLoading) {
         return < PageState
             display={'flex'}
             state='loading' imgWidth='25%' height='100vh'
@@ -207,15 +163,15 @@ const Gather = ({ postId, url }) => {
                             <StCarouselWrap>
                                 <Carousel>
 
-                                    {delImg === "" || modPost.postImgInfo.length - delImg.length > 0 && modPost.postImgInfo[0].postImgId !== null &&
-                                        modPost.postImgInfo
-                                            .filter((item, i) => delImg.indexOf(item.postImgId) === -1)
+                                    {delImg === "" || modPost.photoURIs.length - delImg.length > 0 && modPost.photoURIs[0] !== null &&
+                                        modPost.photoURIs
+                                            .filter((item, i) => delImg.indexOf(item) === -1)
                                             .map((imgInfo, i) => {
                                                 return (
-                                                    <Carousel.Item key={imgInfo.id}>
+                                                    <Carousel.Item key={i}>
                                                         <img style={{ width: "100%", height: "396px", borderRadius: "10px", objectFit: "contain" }}
                                                             className="d-block w-100"
-                                                            src={imgInfo.postImgUrl}
+                                                            src={imgInfo}
                                                             alt={`slide${i + 1}`}
                                                         />
                                                     </Carousel.Item>
@@ -234,12 +190,12 @@ const Gather = ({ postId, url }) => {
                                     })}
                                 </Carousel>
 
-                                {modPost.postImgInfo.map((imgInfo, i) => {
+                                {modPost.photoURIs.map((img, i) => {
                                     return (
-                                        imgInfo.postImgId &&
-                                        <button style={{ display: delImg.indexOf(imgInfo.postImgId) > -1 ? "none" : "inline-block" }}
-                                            onClick={() => delImgHandle(imgInfo.postImgId)} key={i}>
-                                            <img style={{ width: '60px', height: '60px' }} src={imgInfo.postImgUrl} alt={"post image" + i} />
+                                        img &&
+                                        <button style={{ display: delImg.indexOf(img) > -1 ? "none" : "inline-block" }}
+                                            onClick={() => delImgHandle(img)} key={i}>
+                                            <img style={{ width: '60px', height: '60px' }} src={img} alt={"post image" + i} />
                                         </button>
                                     )
                                 })}
@@ -305,7 +261,7 @@ const Gather = ({ postId, url }) => {
                                         <option value="공연">공연</option>
                                         <option value="기타">기타</option>
                                     </STSelect>
-                                    <STInput2 style={{ width: "50%" }} type="date" name="date" defaultValue={modPost.date || ""} onChange={modPostHandle} min={today2} />
+                                    <STInput2 style={{ width: "50%" }} type="date" name="date" defaultValue={modPost.dateToMeet || ""} onChange={modPostHandle} min={today} />
                                 </SelTop>
 
                                 <div style={{ display: "flex", marginLeft: "10px", marginBottom: "5px" }}>
@@ -321,7 +277,7 @@ const Gather = ({ postId, url }) => {
                                     </STSelect>
                                     <STDiv style={{ width: "50%", textAlign: "center", display: "flex" }}>
                                         <STCountButton style={{ flex: "0.7" }} onClick={handleAdd}>+</STCountButton>
-                                        <div style={{ flex: "1" }}>{counter}</div>
+                                        <div style={{ flex: "1" }}>{memberCounter}</div>
                                         <STCountButton style={{ flex: "0.7", right: "0px" }} onClick={handleminus}>-</STCountButton>
                                     </STDiv>
                                 </SelBottom>
@@ -354,34 +310,34 @@ const Gather = ({ postId, url }) => {
 
                                 <div style={{ margin: "0px 20px" }}>
                                     {
-                                        modPost.postAddress && (
+                                        postAddress && (
                                             <>
                                                 <div style={{ display: "flex", marginTop: "14px" }}>
-                                                    <STAddressDiv>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressDiv>
-                                                    <STInput style={{ marginLeft: "10px" }}>{modPost.postAddress}</STInput>
+                                                    <STAddressDiv>#{postAddress.split(' ')[0].length < 2 ? postAddress.split(' ')[0] : postAddress.split(' ')[0].substring(0, 2)}</STAddressDiv>
+                                                    <STInput style={{ marginLeft: "10px" }}>{postAddress}</STInput>
                                                 </div>
                                             </>
                                         )}
 
 
                                     {
-                                        modPost.postAddress !== post.postAddress && <STInput3 style={{ marginBottom: "10px", float: "right", width: "100%", marginTop: "10px" }} type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle} />
+                                        postAddress !== post.postAddress && <STInput3 style={{ marginBottom: "10px", float: "right", width: "100%", marginTop: "10px" }} type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle} />
                                     }
 
-                                    <KakaoMap address={modPost.postAddress} width='100%' height='130px' />
+                                    <KakaoMap address={postAddress} width='100%' height='130px' />
                                 </div>
 
                             </div>
-                            <div style={{ marginTop: "10px", marginBottom: "10px" }}>
-                                <StRadioBox>
-                                    <label>{modPost.postState}</label>
+                            <div style={{ marginTop: "20px", marginBottom: "10px" }}>
+                                {/* <StRadioBox>
+                                    <label>{modPost.dateToMeet > today ? '진행중' : '마감'}</label>
                                     <Form.Check
                                         type="switch"
                                         id="custom-switch"
-                                        checked={modPost.postState === '진행중' ? true : false}
+                                        checked={modPost.dateToMeet >= today ? true : false}
                                         onChange={ingHandle}
                                     />
-                                </StRadioBox>
+                                </StRadioBox> */}
                                 <div >
                                     <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={toggleEdit}>취소</STEditButton>
                                     <STEditButton onClick={onSubmitGather}>수정완료</STEditButton>
@@ -401,10 +357,10 @@ const Gather = ({ postId, url }) => {
                                 <STIng style={{ margin: "14px 0" }}>
                                     <div style={{ display: "flex" }}>
                                         <div>
-                                            {post.postState === "진행중" ?
-                                                (<STIngDiv><div>{post.postState}</div></STIngDiv>)
+                                            {post.dateToMeet >= today ?
+                                                (<STIngDiv><div>진행중</div></STIngDiv>)
                                                 :
-                                                (<STIngDiv style={{ background: "#727785" }}>{post.postState}</STIngDiv>)
+                                                (<STIngDiv style={{ background: "#727785" }}>마감</STIngDiv>)
                                             }
                                         </div>
                                         <div>
@@ -412,7 +368,7 @@ const Gather = ({ postId, url }) => {
                                                 <div style={{ background: "white", width: "70px", height: "45px" }}>
                                                     <div style={{ margin: "0 5px 0 18px", paddingTop: "10px" }}>
                                                         <img src={Views} style={{ width: "20px", height: "20px", flex: "2", marginRight: "4px" }} alt="views icon" />
-                                                        {post.viewCount}
+                                                        {viewUsers.length}
                                                     </div>
                                                 </div>
                                             </STImg>
@@ -420,7 +376,7 @@ const Gather = ({ postId, url }) => {
 
                                     </div>
                                     <div>
-                                        <PostScrap style={{ right: "0px" }} bookMarkStatus={post.bookMarkStatus} />
+                                        <PostScrap style={{ right: "0px" }} postId={postId} scrapUsers={scrapUsers} />
                                     </div>
 
                                 </STIng>
@@ -428,10 +384,10 @@ const Gather = ({ postId, url }) => {
                                 <STBox2 style={{ marginBottom: "14px", display: "flex" }}>
                                     <STButton style={{ width: "70px", flex: "2", padding: "0 3px", fontSize: "15px" }}>모집글</STButton>
                                     <STButton style={{ width: "70px", flex: "2", padding: "0 3px", fontSize: "15px" }}>{post.category}</STButton>
-                                    <STButton2 style={{ color: "#424754", backgroundColor: "white", width: "208px", flex: "4", padding: "0 3px", fontSize: "15px" }}>약속날짜 | {post.date}</STButton2>
+                                    <STButton2 style={{ color: "#424754", backgroundColor: "white", width: "208px", flex: "4", padding: "0 3px", fontSize: "15px" }}>약속날짜 | {post.dateToMeet}</STButton2>
                                 </STBox2>
                                 <STBox2 style={{ marginBottom: "14px", display: "flex" }}>
-                                    <STButton2 style={{ width: "159px", flex: "2", padding: "0 3px", fontSize: "15px" }}>모집인원 | {post.number}명</STButton2>
+                                    <STButton2 style={{ width: "159px", flex: "2", padding: "0 3px", fontSize: "15px" }}>모집인원 | {post.memberCounter}명</STButton2>
                                     <STButton2 style={{ width: "67px", flex: "1", padding: "0 3px", fontSize: "15px" }}>
                                         {post.sex === 'M' && <img src={GenderMale} alt="male icon" />}
                                         {post.sex === 'W' && <img src={GenderFemale} alt="female icon" />}
@@ -444,12 +400,12 @@ const Gather = ({ postId, url }) => {
                                 <div>
                                     <Carousel>
                                         {
-                                            post.postImgInfo
-                                            && post.postImgInfo.map((img, i) => {
+                                            post.photoURIs
+                                            && post.photoURIs.map((img, i) => {
                                                 return (
-                                                    <Carousel.Item key={img.id + i}>
+                                                    <Carousel.Item key={i}>
                                                         <img style={{ width: "100%", height: "396px", objectFit: "contain" }}
-                                                            src={img.postImgUrl} alt={"post image" + i} />
+                                                            src={img} alt={"post image" + i} />
                                                     </Carousel.Item>)
                                             })
                                         }
@@ -495,9 +451,9 @@ const Gather = ({ postId, url }) => {
                                     )
                                 }
 
-                                {localStorage.getItem('userId') === post.userId.toString() &&
+                                {localStorage.getItem('uid') === post.writer &&
                                     (<div style={{ float: "right", marginTop: "10px" }}>
-                                        <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={() => { onGatherDelete(postId); }}>삭제</STEditButton>
+                                        <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={() => { onDeletePost(postId); }}>삭제</STEditButton>
                                         <STEditButton onClick={toggleEdit}>수정</STEditButton>
                                     </div>)}
 
@@ -505,7 +461,7 @@ const Gather = ({ postId, url }) => {
                         )
             }
 
-            <Comment postId={postId} kind='gather' style={{ marginTop: "20px" }} />
+            <Comment postId={postId} comments={comments} style={{ marginTop: "20px" }} />
 
         </StWrap>
     );

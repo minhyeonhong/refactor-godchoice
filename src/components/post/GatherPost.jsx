@@ -120,7 +120,7 @@ const GatherPost = () => {
                             const postID = response._key.path.segments[1];
                             createPostPart(postID)
                                 .then(() => {
-                                    window.location.replace(`/event/${postID}`);
+                                    window.location.replace(`/gather/${postID}`);
                                 })
                                 .catch(error => {
                                     console.log("createPostPart error", error)

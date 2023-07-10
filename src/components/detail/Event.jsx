@@ -98,7 +98,6 @@ const Event = ({ postId }) => {
             contentType: modPost.contentType,
             postAddress: modPost.postAddress + detailAddress,
             postLink: modPost.postLink,
-            //writer: localStorage.getItem('uid'),
             writeTime: writeTime,
             writerNickName: localStorage.getItem('nickname'),
             writerProfileImg: localStorage.getItem('profile_image_url'),
@@ -114,7 +113,7 @@ const Event = ({ postId }) => {
     const delImgHandle = (postImgURI) => {
         const firstIdx = postImgURI.indexOf(localStorage.getItem("uid"));
         const lastIdx = postImgURI.indexOf("?", firstIdx);
-        const imgName = decodeURI(postImgURI.substring(firstIdx, lastIdx));
+        const imgName = decodeURIComponent(postImgURI.substring(firstIdx, lastIdx));
         setDelImg((e) => [...e, postImgURI]);
         setDelImgName((e) => [...e, imgName])
     }
