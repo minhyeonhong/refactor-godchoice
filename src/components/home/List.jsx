@@ -48,7 +48,7 @@ const List = ({ searchState }) => {
                     {page.datas
                         .filter((post) => post.contentType === searchState.main)
                         .map((post) => (
-                            <StCardItem key={post.postID} onClick={() => { navigate(`/event/${post.postID}`) }}>
+                            <StCardItem key={post.postID} onClick={() => { navigate(`/${post.contentType}/${post.postID}`) }}>
                                 <StImgBox imgUrl={post.photoURIs[0]} >
                                     {post.bookMarkStatus &&
                                         <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
