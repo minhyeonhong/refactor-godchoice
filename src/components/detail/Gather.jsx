@@ -44,7 +44,6 @@ const Gather = ({ postId }) => {
         setEdit(!edit);
         setmodPost(post);
         setMemberCounter(post.memberCounter);
-        setPostAddress(post.postAddress);
     };
 
 
@@ -115,6 +114,12 @@ const Gather = ({ postId }) => {
     const [isPopupOpen, setIsPopupOpen] = useState(false)
     const popupPostCode = () => { setIsPopupOpen(!isPopupOpen) }
     const [postAddress, setPostAddress] = useState("")
+
+    useEffect(() => {
+        if (postAddress !== "") {
+            setmodPost({ ...modPost, postAddress })
+        }
+    }, [postAddress])
 
     //기존글의 삭제할 이미지
     const delImgHandle = (postImgURI) => {
@@ -310,21 +315,21 @@ const Gather = ({ postId }) => {
 
                                 <div style={{ margin: "0px 20px" }}>
                                     {
-                                        postAddress && (
+                                        modPost.postAddress && (
                                             <>
                                                 <div style={{ display: "flex", marginTop: "14px" }}>
-                                                    <STAddressDiv>#{postAddress.split(' ')[0].length < 2 ? postAddress.split(' ')[0] : postAddress.split(' ')[0].substring(0, 2)}</STAddressDiv>
-                                                    <STInput style={{ marginLeft: "10px" }}>{postAddress}</STInput>
+                                                    <STAddressDiv>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substring(0, 2)}</STAddressDiv>
+                                                    <STInput style={{ marginLeft: "10px" }}>{modPost.postAddress}</STInput>
                                                 </div>
                                             </>
                                         )}
 
 
                                     {
-                                        postAddress !== post.postAddress && <STInput3 style={{ marginBottom: "10px", float: "right", width: "100%", marginTop: "10px" }} type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle} />
+                                        modPost.postAddress !== post.postAddress && <STInput3 style={{ marginBottom: "10px", float: "right", width: "100%", marginTop: "10px" }} type="text" placeholder='상세주소' name="detailAddress" onChange={modPostHandle} />
                                     }
 
-                                    <KakaoMap address={postAddress} width='100%' height='130px' />
+                                    <KakaoMap address={modPost.postAddress} width='100%' height='130px' />
                                 </div>
 
                             </div>
@@ -439,11 +444,11 @@ const Gather = ({ postId }) => {
                                     </>
                                 }
                                 {
-                                    modPost.postAddress && (
+                                    post.postAddress && (
                                         <>
                                             <div>행사장소</div>
                                             <div style={{ marginBottom: "8px", display: "flex" }}>
-                                                <STAddressButton style={{ flex: "1" }}>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressButton>
+                                                <STAddressButton style={{ flex: "1" }}>#{post.postAddress.split(' ')[0].length < 2 ? post.postAddress.split(' ')[0] : post.postAddress.split(' ')[0].substr(0, 2)}</STAddressButton>
                                                 <STInput style={{ marginLeft: "5px", flex: "4" }}>{post.postAddress}</STInput>
                                             </div>
                                             <KakaoMap address={post.postAddress} width='100%' height='144px' />
