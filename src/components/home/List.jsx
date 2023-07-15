@@ -59,7 +59,9 @@ const List = ({ searchState }) => {
                                     <div>{post.category}</div>
                                     <div className='contentBox'>{post.content}</div>
                                     <div className='dtateBox'>
-                                        <div>{post.endPeriod}</div>
+                                        {post.contentType === "event" && <div>{post.endPeriod}</div>}
+                                        {post.contentType === "gather" && <div>{post.dateToMeet}</div>}
+                                        {post.contentType === "ask" && <div>{post.writeTime.split(" ")[0]}</div>}
                                         <div className='lookBox'>{post.viewCount}&nbsp;<BsEye style={{ width: '16px', height: '16px', marginTop: '2px' }} /></div>
                                     </div>
                                 </StContentBox>
