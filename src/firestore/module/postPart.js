@@ -1,9 +1,12 @@
 import {
+    collection,
     doc,
     setDoc,
     getDoc,
     updateDoc,
     deleteDoc,
+    getDocs,
+    query,
 } from 'firebase/firestore';
 import { db } from "../firebase";
 
@@ -15,6 +18,10 @@ export const createPostPart = async (postID) => {
     }
 
     return await setDoc(doc(db, "postPart", postID), initPart);
+}
+
+export const getPostParts = async () => {
+    return (await getDocs(query(collection(db, "postPart")))).docs.map(doc => ({ ...doc.data(), postID: doc.id }));
 }
 
 export const getPostPart = async (postID) => {

@@ -9,8 +9,9 @@ import { useNavigate } from 'react-router-dom';
 
 import { BookmarkFill } from "../../assets/index";
 import PageState from '../common/PageState';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { getPosts } from '../../firestore/module/post';
+import { getPostParts } from '../../firestore/module/postPart';
 
 const List = ({ searchState }) => {
 
@@ -26,6 +27,8 @@ const List = ({ searchState }) => {
         },
         refetchOnWindowFocus: false,
     })
+
+    const postParts = useQuery(["getPostParts"], getPostParts);
 
     useEffect(() => {
         // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니고 다음페이지가 있다면
@@ -62,7 +65,9 @@ const List = ({ searchState }) => {
                                         {post.contentType === "event" && <div>{post.endPeriod}</div>}
                                         {post.contentType === "gather" && <div>{post.dateToMeet}</div>}
                                         {post.contentType === "ask" && <div>{post.writeTime.split(" ")[0]}</div>}
-                                        <div className='lookBox'>{post.viewCount}&nbsp;<BsEye style={{ width: '16px', height: '16px', marginTop: '2px' }} /></div>
+                                        <div className='lookBox'>{
+                                            postParts.data.filter(e => e.postID === post.postID)[0]?.viewUsers.length
+                                        }&nbsp;<BsEye style={{ width: '16px', height: '16px', marginTop: '2px' }} /></div>
                                     </div>
                                 </StContentBox>
                             </StCardItem>
