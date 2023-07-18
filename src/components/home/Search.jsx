@@ -19,8 +19,20 @@ const Search = ({ searchState, setSearchState, search, searchHandle }) => {
         }
     }
     //태그 핸들
-    const tagHandle = (val) => {
-        setSearchState({ ...searchState, tag: val });
+    const tagHandle = (val, id) => {
+
+        const idx = searchState.tag.indexOf(val);
+
+        if (idx === -1) {
+            setSearchState({ ...searchState, tag: [...searchState.tag, val] });
+            document.getElementById(id).style.color = "white";
+            document.getElementById(id).style.backgroundColor = `#3556E1`;
+        } else {
+            searchState.tag.splice(idx, 1);
+            setSearchState({ ...searchState, tag: [...searchState.tag] });
+            document.getElementById(id).style.color = "black";
+            document.getElementById(id).style.backgroundColor = `#B8C4FF`;
+        }
     }
     //정렬 핸들
     const sortHandle = (e) => {
@@ -37,23 +49,21 @@ const Search = ({ searchState, setSearchState, search, searchHandle }) => {
                     <FiSearch style={{ width: '24px', height: '24px', color: '#3556E1' }} />
                 </button>
                 <input name='search' placeholder="검색어를 입력해주세요" value={search.search || ""} onChange={searchHandle}
-                    onKeyPress={(e) => {
+                    onKeyUp={(e) => {
                         if (e.key === 'Enter') {
                             setSearchState({ ...searchState, search: search.search })
                         }
                     }} />
             </StSearchBox>
             <StTagBox ref={scrollRef}>
-                <ToggleButtonGroup type="checkbox" value={searchState.tag} onChange={tagHandle}>
-                    {searchState.main !== 'ask' &&
-                        tagList.map((tag, i) => {
-                            return (
-                                <ToggleButton id={`tbg-btn-${i + 1}`} onClick={onHomeClick} value={tag} key={i}>
-                                    #{tag}
-                                </ToggleButton>
-                            )
-                        })}
-                </ToggleButtonGroup>
+                {searchState.main !== 'ask' &&
+                    tagList.map((tag, i) => {
+                        return (
+                            <button id={`tbg-btn-${i + 1}`} onClick={() => tagHandle(tag, `tbg-btn-${i + 1}`)} key={i}>
+                                #{tag}
+                            </button>
+                        )
+                    })}
             </StTagBox>
             <StFilterBox>
                 <div>
@@ -122,6 +132,15 @@ const StTagBox = styled.div`
   /* 가로 스크롤 */
   overflow: auto;
   white-space: nowrap;
+  gap : 5px;
+  button {
+    border-radius : 15px;
+    border : solid 0px;
+    padding : 3px 6px;
+    margin-bottom: 5px;
+    font-weight: 800;
+    background-color : #B8C4FF;
+  }
   ::-webkit-scrollbar {
     display: none; 
   }
@@ -133,41 +152,14 @@ const StTagBox = styled.div`
   ::-webkit-scrollbar-tranck {
     background-color: #e4e4e4;
     border-radius: 100px;
-    /* background-color:#dce0f1; */
   }
   ::-webkit-scrollbar-thumb {
-    /* border-radius: 100px;
-    background-image: linear-gradient(180deg, #d0368a 0%, #708ad4 99%); */
     background-color:#dce0f1; /*스크롤바의 색상*/
     border-radius: 50px;
     box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
   }
 }
 
-  .btn-group {
-    gap: 5px;
-    margin: 5px 0 ;
-  }
-  .btn-primary {
-    font-weight: bold;
-    color: black;
-    --bs-btn-color: black;
-    --bs-btn-bg: #dce0f1;
-    --bs-btn-border-color: #dce0f1;
-    /*  */
-    --bs-btn-active-bg: #2d4fda;
-    --bs-btn-active-color: white;
-  }
-  .btn-group > .btn:not(:last-child):not(.dropdown-toggle) {
-    border: none;
-    border-radius: 50px;
-    z-index: 0;
-  }
-  .btn-group > :not(.btn-check:first-child) + .btn {
-    border: none;
-    border-radius: 50px;
-    z-index: 0;
-  }
 `;
 
 const StFilterBox = styled.div`
