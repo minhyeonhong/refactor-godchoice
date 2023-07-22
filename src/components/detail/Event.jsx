@@ -18,7 +18,8 @@ import PageState from '../common/PageState';
 import styled from 'styled-components';
 import TextAreaAutoResize from "react-textarea-autosize";
 import { today, writeTime } from '../common/Date';
-import { useGetPost, onDeletePost, onUpdate, usePostParts, updateViewUsers } from '../../hooks/usePost';
+import { useGetPost, onDeletePost, onUpdate, updatePost } from '../../firestore/module/post';
+import { useComment } from '../../firestore/module/comment';
 
 const Event = ({ postId }) => {
 
@@ -35,14 +36,14 @@ const Event = ({ postId }) => {
         setmodPost(post);
     }
 
-    const { comments, scrapUsers, viewUsers, postPartIsLoading } = usePostParts(postId);
+    const { comments, commentsIsLoading } = useComment(postId);
 
     useEffect(() => {
-        const isView = viewUsers.indexOf(localStorage.getItem("uid"));
-        const copyViewUsers = [...viewUsers];
+        const isView = post.viewUsers.indexOf(localStorage.getItem("uid"));
+        const copyViewUsers = [...post.viewUsers];
         if (isView === -1) {
             copyViewUsers.push(localStorage.getItem("uid"));
-            updateViewUsers(postId, copyViewUsers);
+            updatePost(postId, { viewUsers: copyViewUsers });
         }
     }, [])
 
@@ -127,7 +128,7 @@ const Event = ({ postId }) => {
         setImgFiles(imgdelete);
     }
 
-    if (postIsLoading && postPartIsLoading) {
+    if (postIsLoading && commentsIsLoading) {
         return < PageState
             display={'flex'}
             state='loading' imgWidth='25%' height='100vh'
@@ -158,7 +159,7 @@ const Event = ({ postId }) => {
                                         <div style={{ background: "white", width: "70px", height: "45px" }}>
                                             <div style={{ margin: "0 5px 0 18px", paddingTop: "10px" }}>
                                                 <img src={Views} style={{ width: "20px", height: "20px", flex: "2", marginRight: "4px" }} alt="views icon" />
-                                                {viewUsers.length}
+                                                {post.viewUsers.length}
                                             </div>
                                         </div>
                                     </STImg>
@@ -166,7 +167,7 @@ const Event = ({ postId }) => {
 
                             </div>
                             <div>
-                                <PostScrap style={{ right: "0px" }} postId={postId} scrapUsers={scrapUsers} />
+                                <PostScrap style={{ right: "0px" }} postId={postId} scrapUsers={post.scrapUsers} />
                             </div>
 
                         </STIng>

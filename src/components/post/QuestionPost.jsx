@@ -13,8 +13,8 @@ import useImgUpload from '../../hooks/useImgUpload';
 import useInput from '../../hooks/useInput';
 import { fsUploadImage } from '../../firestore/module/image';
 import { insertPost } from '../../firestore/module/post';
-import { createPostPart } from '../../firestore/module/postPart';
 import { writeTime } from '../common/Date';
+import { createComment } from '../../firestore/module/comment';
 
 const QuestionPost = () => {
 
@@ -68,6 +68,8 @@ const QuestionPost = () => {
             writerNickName: localStorage.getItem('nickname'),
             writerProfileImg: localStorage.getItem('profile_image_url'),
             photoURIs: [],
+            viewUsers: [],
+            scrapUsers: [],
         }
 
         if (files.length > 0) {
@@ -78,12 +80,12 @@ const QuestionPost = () => {
                     insertPost(obj)
                         .then(response => {
                             const postID = response._key.path.segments[1];
-                            createPostPart(postID)
+                            createComment(postID)
                                 .then(() => {
-                                    window.location.replace(`/event/${postID}`);
+                                    window.location.replace(`/ask/${postID}`);
                                 })
                                 .catch(error => {
-                                    console.log("createPostPart error", error)
+                                    console.log("createComment error", error)
                                 })
                         })
                         .catch(error => {
@@ -95,12 +97,12 @@ const QuestionPost = () => {
             insertPost(obj)
                 .then(response => {
                     const postID = response._key.path.segments[1];
-                    createPostPart(postID)
+                    createComment(postID)
                         .then(() => {
-                            window.location.replace(`/event/${postID}`);
+                            window.location.replace(`/ask/${postID}`);
                         })
                         .catch(error => {
-                            console.log("createPostPart error", error)
+                            console.log("createComment error", error)
                         })
                 })
                 .catch(error => {

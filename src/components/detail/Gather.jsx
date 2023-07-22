@@ -17,8 +17,9 @@ import GenderMale from '../../assets/icon/GenderMale.svg'
 import useInput from '../../hooks/useInput';
 import PageState from '../common/PageState';
 import TextAreaAutoResize from "react-textarea-autosize";
-import { onDeletePost, onUpdate, updateViewUsers, useGetPost, usePostParts } from '../../hooks/usePost';
+import { useGetPost, onDeletePost, onUpdate, updatePost } from '../../firestore/module/post';
 import { writeTime, today } from '../common/Date';
+import { useComment } from '../../firestore/module/comment';
 
 const Gather = ({ postId }) => {
 
@@ -46,16 +47,14 @@ const Gather = ({ postId }) => {
         setMemberCounter(post.memberCounter);
     };
 
-
-
-    const { comments, scrapUsers, viewUsers, postPartIsLoading } = usePostParts(postId);
+    const { comments, commentsIsLoading } = useComment(postId);
 
     useEffect(() => {
-        const isView = viewUsers.indexOf(localStorage.getItem("uid"));
-        const copyViewUsers = [...viewUsers];
+        const isView = post.viewUsers.indexOf(localStorage.getItem("uid"));
+        const copyViewUsers = [...post.viewUsers];
         if (isView === -1) {
             copyViewUsers.push(localStorage.getItem("uid"));
-            updateViewUsers(postId, copyViewUsers);
+            updatePost(postId, { viewUsers: copyViewUsers });
         }
     }, [])
 
@@ -146,7 +145,7 @@ const Gather = ({ postId }) => {
         const imgdelete = files.filter((file, index) => index !== e);
         setImgFiles(imgdelete);
     }
-    if (postIsLoading && postPartIsLoading) {
+    if (postIsLoading && commentsIsLoading) {
         return < PageState
             display={'flex'}
             state='loading' imgWidth='25%' height='100vh'
@@ -373,7 +372,7 @@ const Gather = ({ postId }) => {
                                                 <div style={{ background: "white", width: "70px", height: "45px" }}>
                                                     <div style={{ margin: "0 5px 0 18px", paddingTop: "10px" }}>
                                                         <img src={Views} style={{ width: "20px", height: "20px", flex: "2", marginRight: "4px" }} alt="views icon" />
-                                                        {viewUsers.length}
+                                                        {post.viewUsers.length}
                                                     </div>
                                                 </div>
                                             </STImg>
@@ -381,7 +380,7 @@ const Gather = ({ postId }) => {
 
                                     </div>
                                     <div>
-                                        <PostScrap style={{ right: "0px" }} postId={postId} scrapUsers={scrapUsers} />
+                                        <PostScrap style={{ right: "0px" }} postId={postId} scrapUsers={post.scrapUsers} />
                                     </div>
 
                                 </STIng>

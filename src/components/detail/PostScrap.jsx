@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BookmarkStroke, BookmarkFill } from "../../assets/index";
-import { updateScrapUsers } from "../../hooks/usePost";
 import { useQueryClient } from "@tanstack/react-query";
+import { updatePost } from "../../firestore/module/post";
 
 const PostScrap = ({ postId, scrapUsers }) => {
 
@@ -26,14 +26,14 @@ const PostScrap = ({ postId, scrapUsers }) => {
       copyScrapUsers.splice(scrapIdx, 1);
     }
 
-    updateScrapUsers(postId, copyScrapUsers);
+    updatePost(postId, { scrapUsers: copyScrapUsers });
 
-    queryClient.prefetchQuery(["getFBPostPart"]);
+    queryClient.prefetchQuery(["getFBPost"]);
   };
 
   return (
     <>
-      <div onClick={scrapHandler}>
+      <div onClick={scrapHandler} style={{ cursor: "pointer" }}>
         {scrapState ? <BookmarkFill /> : <BookmarkStroke />}
       </div>
     </>

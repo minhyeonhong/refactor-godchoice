@@ -11,7 +11,7 @@ import { BookmarkFill } from "../../assets/index";
 import PageState from '../common/PageState';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { getPosts } from '../../firestore/module/post';
-import { getPostParts } from '../../firestore/module/postPart';
+import { today } from '../common/Date';
 
 const List = ({ searchState }) => {
 
@@ -28,19 +28,12 @@ const List = ({ searchState }) => {
         refetchOnWindowFocus: false,
     })
 
-    const postParts = useQuery(["getPostParts"], getPostParts);
-
     useEffect(() => {
         // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니고 다음페이지가 있다면
         if (inView && !result.isFetching && result.hasNextPage) {
             result.fetchNextPage();
         }
     }, [inView, result.isFetching])
-
-    useEffect(() => {
-        //검색상태가 바뀌면 server state refetch
-        if (!result.isFetching) result.refetch(searchState, 0);
-    }, [searchState])
 
     return (
         <StCardWrap>
@@ -49,6 +42,19 @@ const List = ({ searchState }) => {
             {result.data?.pages.map((page, i) => (
                 <Fragment key={i}>
                     {page.datas
+                        .filter((post) =>
+                            post.title.toUpperCase()
+                                .includes((searchState.search || '').toUpperCase())
+                        )
+                        // .filter((post) =>
+                        //     searchState.tag.map(tag => post.postAddress.includes(tag))
+                        // )
+                        .filter((post) =>
+                            post.contentType === "ask" ? post : searchState.progress === "진행중" ?
+                                post.endPeriod >= today || post.dateToMeet >= today
+                                :
+                                post.endPeriod < today || post.dateToMeet < today
+                        )
                         .filter((post) => post.contentType === searchState.main)
                         .map((post) => (
                             <StCardItem key={post.postID} onClick={() => { navigate(`/${post.contentType}/${post.postID}`) }}>
@@ -66,7 +72,7 @@ const List = ({ searchState }) => {
                                         {post.contentType === "gather" && <div>{post.dateToMeet}</div>}
                                         {post.contentType === "ask" && <div>{post.writeTime.split(" ")[0]}</div>}
                                         <div className='lookBox'>{
-                                            postParts.data.filter(e => e.postID === post.postID)[0]?.viewUsers.length
+                                            post.viewUsers.length
                                         }&nbsp;<BsEye style={{ width: '16px', height: '16px', marginTop: '2px' }} /></div>
                                     </div>
                                 </StContentBox>

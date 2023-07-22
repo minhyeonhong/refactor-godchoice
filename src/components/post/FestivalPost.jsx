@@ -20,7 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import { today, writeTime } from '../common/Date';
 import { insertPost } from '../../firestore/module/post';
 import { fsUploadImage } from '../../firestore/module/image';
-import { createPostPart } from '../../firestore/module/postPart';
+import { createComment } from '../../firestore/module/comment';
 
 const FestivalPost = () => {
     const navigate = useNavigate();
@@ -94,6 +94,8 @@ const FestivalPost = () => {
             writerNickName: localStorage.getItem('nickname'),
             writerProfileImg: localStorage.getItem('profile_image_url'),
             photoURIs: [],
+            viewUsers: [],
+            scrapUsers: [],
         }
 
 
@@ -105,12 +107,12 @@ const FestivalPost = () => {
                     insertPost(obj)
                         .then(response => {
                             const postID = response._key.path.segments[1];
-                            createPostPart(postID)
+                            createComment(postID)
                                 .then(() => {
                                     window.location.replace(`/event/${postID}`);
                                 })
                                 .catch(error => {
-                                    console.log("createPostPart error", error)
+                                    console.log("createComment error", error)
                                 })
                         })
                         .catch(error => {
@@ -122,12 +124,12 @@ const FestivalPost = () => {
             insertPost(obj)
                 .then(response => {
                     const postID = response._key.path.segments[1];
-                    createPostPart(postID)
+                    createComment(postID)
                         .then(() => {
                             window.location.replace(`/event/${postID}`);
                         })
                         .catch(error => {
-                            console.log("createPostPart error", error)
+                            console.log("createComment error", error)
                         })
                 })
                 .catch(error => {

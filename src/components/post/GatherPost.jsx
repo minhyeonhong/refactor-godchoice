@@ -15,9 +15,9 @@ import noImg from '../../assets/images/common/noImg.png'
 import useImgUpload from '../../hooks/useImgUpload';
 import useInput from '../../hooks/useInput';
 import { insertPost } from '../../firestore/module/post';
-import { createPostPart } from '../../firestore/module/postPart';
 import { fsUploadImage } from '../../firestore/module/image';
 import { writeTime } from '../common/Date';
+import { createComment } from '../../firestore/module/comment';
 
 
 const GatherPost = () => {
@@ -108,6 +108,8 @@ const GatherPost = () => {
             writerNickName: localStorage.getItem('nickname'),
             writerProfileImg: localStorage.getItem('profile_image_url'),
             photoURIs: [],
+            viewUsers: [],
+            scrapUsers: [],
         }
 
         if (files.length > 0) {
@@ -118,12 +120,12 @@ const GatherPost = () => {
                     insertPost(obj)
                         .then(response => {
                             const postID = response._key.path.segments[1];
-                            createPostPart(postID)
+                            createComment(postID)
                                 .then(() => {
                                     window.location.replace(`/gather/${postID}`);
                                 })
                                 .catch(error => {
-                                    console.log("createPostPart error", error)
+                                    console.log("createComment error", error)
                                 })
                         })
                         .catch(error => {
@@ -135,12 +137,12 @@ const GatherPost = () => {
             insertPost(obj)
                 .then(response => {
                     const postID = response._key.path.segments[1];
-                    createPostPart(postID)
+                    createComment(postID)
                         .then(() => {
-                            window.location.replace(`/event/${postID}`);
+                            window.location.replace(`/gather/${postID}`);
                         })
                         .catch(error => {
-                            console.log("createPostPart error", error)
+                            console.log("createComment error", error)
                         })
                 })
                 .catch(error => {
