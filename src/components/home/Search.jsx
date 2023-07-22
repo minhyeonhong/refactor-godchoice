@@ -31,17 +31,14 @@ const Search = ({ searchState, setSearchState, search, searchHandle }) => {
             searchState.tag.splice(idx, 1);
             setSearchState({ ...searchState, tag: [...searchState.tag] });
             document.getElementById(id).style.color = "black";
-            document.getElementById(id).style.backgroundColor = `#B8C4FF`;
+            document.getElementById(id).style.backgroundColor = `#DCE0F1`;
         }
     }
     //정렬 핸들
     const sortHandle = (e) => {
         setSearchState({ ...searchState, [e.target.name]: e.target.value });
     }
-    const scrollRef = useRef(null);
-    const onHomeClick = () => {
-        scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
+
     return (
         <StSearchWrap>
             <StSearchBox>
@@ -55,7 +52,7 @@ const Search = ({ searchState, setSearchState, search, searchHandle }) => {
                         }
                     }} />
             </StSearchBox>
-            <StTagBox ref={scrollRef}>
+            <StTagBox>
                 {searchState.main !== 'ask' &&
                     tagList.map((tag, i) => {
                         return (
@@ -139,7 +136,7 @@ const StTagBox = styled.div`
     padding : 3px 6px;
     margin-bottom: 5px;
     font-weight: 800;
-    background-color : #B8C4FF;
+    background-color : #DCE0F1;
   }
   ::-webkit-scrollbar {
     display: none; 

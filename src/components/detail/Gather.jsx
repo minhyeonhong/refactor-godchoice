@@ -17,8 +17,9 @@ import GenderMale from '../../assets/icon/GenderMale.svg'
 import useInput from '../../hooks/useInput';
 import PageState from '../common/PageState';
 import TextAreaAutoResize from "react-textarea-autosize";
-import { onDeletePost, onUpdate, updateViewUsers, useGetPost, usePostParts } from '../../hooks/usePost';
+import { useGetPost, onDeletePost, onUpdate, updatePost } from '../../firestore/module/post';
 import { writeTime, today } from '../common/Date';
+import { useComment } from '../../firestore/module/comment';
 
 const Gather = ({ postId }) => {
 
@@ -46,16 +47,14 @@ const Gather = ({ postId }) => {
         setMemberCounter(post.memberCounter);
     };
 
-
-
-    const { comments, scrapUsers, viewUsers, postPartIsLoading } = usePostParts(postId);
+    const { comments, commentsIsLoading } = useComment(postId);
 
     useEffect(() => {
-        const isView = viewUsers.indexOf(localStorage.getItem("uid"));
-        const copyViewUsers = [...viewUsers];
+        const isView = post.viewUsers.indexOf(localStorage.getItem("uid"));
+        const copyViewUsers = [...post.viewUsers];
         if (isView === -1) {
             copyViewUsers.push(localStorage.getItem("uid"));
-            updateViewUsers(postId, copyViewUsers);
+            updatePost(postId, { viewUsers: copyViewUsers });
         }
     }, [])
 
@@ -96,7 +95,8 @@ const Gather = ({ postId }) => {
             endAge: modPost.endAge,
             kakaoLink: modPost.kakaoLink,
             memberCounter,
-            postAddress: postAddress + detail,
+            postAddress: postAddress,
+            postAddressDetail: detail,
             postLink: modPost.postLink,
             sex: modPost.sex,
             startAge: modPost.startAge,
@@ -146,7 +146,7 @@ const Gather = ({ postId }) => {
         const imgdelete = files.filter((file, index) => index !== e);
         setImgFiles(imgdelete);
     }
-    if (postIsLoading && postPartIsLoading) {
+    if (postIsLoading && commentsIsLoading) {
         return < PageState
             display={'flex'}
             state='loading' imgWidth='25%' height='100vh'
@@ -319,7 +319,7 @@ const Gather = ({ postId }) => {
                                             <>
                                                 <div style={{ display: "flex", marginTop: "14px" }}>
                                                     <STAddressDiv>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substring(0, 2)}</STAddressDiv>
-                                                    <STInput style={{ marginLeft: "10px" }}>{modPost.postAddress}</STInput>
+                                                    <STInput style={{ marginLeft: "10px" }}>{`${modPost.postAddress} ${modPost.postAddressDetail}`}</STInput>
                                                 </div>
                                             </>
                                         )}
@@ -373,7 +373,7 @@ const Gather = ({ postId }) => {
                                                 <div style={{ background: "white", width: "70px", height: "45px" }}>
                                                     <div style={{ margin: "0 5px 0 18px", paddingTop: "10px" }}>
                                                         <img src={Views} style={{ width: "20px", height: "20px", flex: "2", marginRight: "4px" }} alt="views icon" />
-                                                        {viewUsers.length}
+                                                        {post.viewUsers.length}
                                                     </div>
                                                 </div>
                                             </STImg>
@@ -381,7 +381,7 @@ const Gather = ({ postId }) => {
 
                                     </div>
                                     <div>
-                                        <PostScrap style={{ right: "0px" }} postId={postId} scrapUsers={scrapUsers} />
+                                        <PostScrap style={{ right: "0px" }} postId={postId} scrapUsers={post.scrapUsers} />
                                     </div>
 
                                 </STIng>
@@ -449,7 +449,7 @@ const Gather = ({ postId }) => {
                                             <div>행사장소</div>
                                             <div style={{ marginBottom: "8px", display: "flex" }}>
                                                 <STAddressButton style={{ flex: "1" }}>#{post.postAddress.split(' ')[0].length < 2 ? post.postAddress.split(' ')[0] : post.postAddress.split(' ')[0].substr(0, 2)}</STAddressButton>
-                                                <STInput style={{ marginLeft: "5px", flex: "4" }}>{post.postAddress}</STInput>
+                                                <STInput style={{ marginLeft: "5px", flex: "4" }}>{`${post.postAddress} ${post.postAddressDetail}`}</STInput>
                                             </div>
                                             <KakaoMap address={post.postAddress} width='100%' height='144px' />
                                         </>

@@ -7,8 +7,8 @@ import Button from '../elements/Button';
 import { CaretUp, CommentArrow, XBtn, ReComment } from '../../assets/index';
 
 import { useQueryClient } from "@tanstack/react-query";
-import { updatePostPart } from '../../firestore/module/postPart';
 import { writeTime } from './Date';
+import { updateComment } from '../../firestore/module/comment';
 
 const Comment = ({ postId, comments }) => {
     const queryClient = useQueryClient();
@@ -41,10 +41,10 @@ const Comment = ({ postId, comments }) => {
             writeTime
         }
 
-        updatePostPart(postId, { comments: [...comments, sendData] })
+        updateComment(postId, { comments: [...comments, sendData] })
             .then(() => {
                 setComment({ content: "" });
-                queryClient.prefetchQuery(["getFBPostPart"]);
+                queryClient.prefetchQuery(["getFBComment"]);
             })
             .catch((error) => {
                 console.log("writeComment error", error);
@@ -77,11 +77,11 @@ const Comment = ({ postId, comments }) => {
 
         comments.splice(idx, 1, sendData);
 
-        updatePostPart(postId, { comments })
+        updateComment(postId, { comments })
             .then(() => {
                 setReComment({ content: "" });
                 onReComment(idx);
-                queryClient.prefetchQuery(["getFBPostPart"]);
+                queryClient.prefetchQuery(["getFBComment"]);
             })
             .catch((error) => {
                 console.log("writeReComment error", error);
@@ -106,9 +106,9 @@ const Comment = ({ postId, comments }) => {
             modComments.splice(commentIdx, 1);
         }
 
-        updatePostPart(postId, { comments: modComments })
+        updateComment(postId, { comments: modComments })
             .then(() => {
-                queryClient.prefetchQuery(["getFBPostPart"]);
+                queryClient.prefetchQuery(["getFBComment"]);
             })
             .catch((error) => {
                 console.log("delComment error", error);
@@ -129,9 +129,9 @@ const Comment = ({ postId, comments }) => {
             modComments[commentIdx].reComments.splice(reCommentIdx, 1);
         }
 
-        updatePostPart(postId, { comments: modComments })
+        updateComment(postId, { comments: modComments })
             .then(() => {
-                queryClient.prefetchQuery(["getFBPostPart"]);
+                queryClient.prefetchQuery(["getFBComment"]);
             })
             .catch((error) => {
                 console.log("delComment error", error);

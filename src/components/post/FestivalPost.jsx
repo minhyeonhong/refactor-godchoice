@@ -20,7 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import { today, writeTime } from '../common/Date';
 import { insertPost } from '../../firestore/module/post';
 import { fsUploadImage } from '../../firestore/module/image';
-import { createPostPart } from '../../firestore/module/postPart';
+import { createComment } from '../../firestore/module/comment';
 
 const FestivalPost = () => {
     const navigate = useNavigate();
@@ -52,7 +52,7 @@ const FestivalPost = () => {
     }
 
     //주소 앞에 두글자 따기
-    const region = postAddress.split("")[0] + postAddress.split("")[1]
+    const region = postAddress.substring(0, 2);
 
     const [isAdmin, setIsAdmin] = useState(false);
     const adminPostHandle = (e) => {
@@ -87,13 +87,16 @@ const FestivalPost = () => {
             title: festival.title,
             content: festival.content,
             contentType: "event",
-            postAddress: postAddress + festival.detailAddress,
+            postAddress: postAddress,
+            postAddressDetail: festival.detailAddress,
             postLink: festival.postLink,
             writer: localStorage.getItem('uid'),
             writeTime: writeTime,
             writerNickName: localStorage.getItem('nickname'),
             writerProfileImg: localStorage.getItem('profile_image_url'),
             photoURIs: [],
+            viewUsers: [],
+            scrapUsers: [],
         }
 
 
@@ -105,12 +108,12 @@ const FestivalPost = () => {
                     insertPost(obj)
                         .then(response => {
                             const postID = response._key.path.segments[1];
-                            createPostPart(postID)
+                            createComment(postID)
                                 .then(() => {
                                     window.location.replace(`/event/${postID}`);
                                 })
                                 .catch(error => {
-                                    console.log("createPostPart error", error)
+                                    console.log("createComment error", error)
                                 })
                         })
                         .catch(error => {
@@ -122,12 +125,12 @@ const FestivalPost = () => {
             insertPost(obj)
                 .then(response => {
                     const postID = response._key.path.segments[1];
-                    createPostPart(postID)
+                    createComment(postID)
                         .then(() => {
                             window.location.replace(`/event/${postID}`);
                         })
                         .catch(error => {
-                            console.log("createPostPart error", error)
+                            console.log("createComment error", error)
                         })
                 })
                 .catch(error => {

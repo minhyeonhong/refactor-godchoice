@@ -13,8 +13,8 @@ import useImgUpload from '../../hooks/useImgUpload';
 import useInput from '../../hooks/useInput';
 import { fsUploadImage } from '../../firestore/module/image';
 import { insertPost } from '../../firestore/module/post';
-import { createPostPart } from '../../firestore/module/postPart';
 import { writeTime } from '../common/Date';
+import { createComment } from '../../firestore/module/comment';
 
 const QuestionPost = () => {
 
@@ -62,12 +62,15 @@ const QuestionPost = () => {
             content: question.content,
             postLink: question.postLink,
             contentType: "ask",
-            postAddress: postAddress + question.detailAddress,
+            postAddress: postAddress,
+            postAddressDetail: question.detailAddress,
             writer: localStorage.getItem('uid'),
             writeTime: writeTime,
             writerNickName: localStorage.getItem('nickname'),
             writerProfileImg: localStorage.getItem('profile_image_url'),
             photoURIs: [],
+            viewUsers: [],
+            scrapUsers: [],
         }
 
         if (files.length > 0) {
@@ -78,12 +81,12 @@ const QuestionPost = () => {
                     insertPost(obj)
                         .then(response => {
                             const postID = response._key.path.segments[1];
-                            createPostPart(postID)
+                            createComment(postID)
                                 .then(() => {
-                                    window.location.replace(`/event/${postID}`);
+                                    window.location.replace(`/ask/${postID}`);
                                 })
                                 .catch(error => {
-                                    console.log("createPostPart error", error)
+                                    console.log("createComment error", error)
                                 })
                         })
                         .catch(error => {
@@ -95,12 +98,12 @@ const QuestionPost = () => {
             insertPost(obj)
                 .then(response => {
                     const postID = response._key.path.segments[1];
-                    createPostPart(postID)
+                    createComment(postID)
                         .then(() => {
-                            window.location.replace(`/event/${postID}`);
+                            window.location.replace(`/ask/${postID}`);
                         })
                         .catch(error => {
-                            console.log("createPostPart error", error)
+                            console.log("createComment error", error)
                         })
                 })
                 .catch(error => {
@@ -176,10 +179,10 @@ const QuestionPost = () => {
                                 <div>
                                     <div style={{ display: "flex", marginBottom: "5px" }}>
                                         <STAddressButton style={{ marginRight: "10px", flex: "2" }}>{"#" + region}</STAddressButton>
-                                        <STInput3 type="text" defaultvalue={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{ flex: "8" }}>{postAddress}</STInput3>
+                                        <STInput3 type="text" defaultvalue={postAddress} placeholder='우편번호 검색을 클릭해주세요' style={{ flex: "8", padding: "5px", lineHeight: "20px", height: "auto", minHeight: "45px" }}>{postAddress}</STInput3>
                                     </div>
-                                    <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={questionHandle} style={{ width: "78%", float: "right", marginBottom: "10px" }} /><br />
-                                    <KakaoMap address={postAddress} width="328px" height="300px" marginTop="10px" />
+                                    <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={questionHandle} style={{ marginBottom: "10px", padding: "5px", lineHeight: "20px", height: "auto", minHeight: "45px" }} />
+                                    <KakaoMap address={postAddress} width="100%" height="300px" marginTop="10px" />
                                 </div>)
                         }
                     </AddressBox >

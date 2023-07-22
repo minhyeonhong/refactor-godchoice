@@ -13,8 +13,7 @@ import WritingToggle from "../components/elements/WritingToggle";
 
 import PageState from "../components/common/PageState";
 
-import { postApis } from "../api/api-functions/postApis";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import useInput from "../hooks/useInput";
 
 // 가이드 모달

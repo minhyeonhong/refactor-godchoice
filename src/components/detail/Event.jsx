@@ -18,7 +18,8 @@ import PageState from '../common/PageState';
 import styled from 'styled-components';
 import TextAreaAutoResize from "react-textarea-autosize";
 import { today, writeTime } from '../common/Date';
-import { useGetPost, onDeletePost, onUpdate, usePostParts, updateViewUsers } from '../../hooks/usePost';
+import { useGetPost, onDeletePost, onUpdate, updatePost } from '../../firestore/module/post';
+import { useComment } from '../../firestore/module/comment';
 
 const Event = ({ postId }) => {
 
@@ -35,14 +36,14 @@ const Event = ({ postId }) => {
         setmodPost(post);
     }
 
-    const { comments, scrapUsers, viewUsers, postPartIsLoading } = usePostParts(postId);
+    const { comments, commentsIsLoading } = useComment(postId);
 
     useEffect(() => {
-        const isView = viewUsers.indexOf(localStorage.getItem("uid"));
-        const copyViewUsers = [...viewUsers];
+        const isView = post.viewUsers.indexOf(localStorage.getItem("uid"));
+        const copyViewUsers = [...post.viewUsers];
         if (isView === -1) {
             copyViewUsers.push(localStorage.getItem("uid"));
-            updateViewUsers(postId, copyViewUsers);
+            updatePost(postId, { viewUsers: copyViewUsers });
         }
     }, [])
 
@@ -96,7 +97,8 @@ const Event = ({ postId }) => {
             title: modPost.title,
             content: modPost.content,
             contentType: modPost.contentType,
-            postAddress: modPost.postAddress + detailAddress,
+            postAddress: modPost.postAddress,
+            postAddressDetail: detailAddress,
             postLink: modPost.postLink,
             writeTime: writeTime,
             writerNickName: localStorage.getItem('nickname'),
@@ -127,7 +129,7 @@ const Event = ({ postId }) => {
         setImgFiles(imgdelete);
     }
 
-    if (postIsLoading && postPartIsLoading) {
+    if (postIsLoading && commentsIsLoading) {
         return < PageState
             display={'flex'}
             state='loading' imgWidth='25%' height='100vh'
@@ -158,7 +160,7 @@ const Event = ({ postId }) => {
                                         <div style={{ background: "white", width: "70px", height: "45px" }}>
                                             <div style={{ margin: "0 5px 0 18px", paddingTop: "10px" }}>
                                                 <img src={Views} style={{ width: "20px", height: "20px", flex: "2", marginRight: "4px" }} alt="views icon" />
-                                                {viewUsers.length}
+                                                {post.viewUsers.length}
                                             </div>
                                         </div>
                                     </STImg>
@@ -166,7 +168,7 @@ const Event = ({ postId }) => {
 
                             </div>
                             <div>
-                                <PostScrap style={{ right: "0px" }} postId={postId} scrapUsers={scrapUsers} />
+                                <PostScrap style={{ right: "0px" }} postId={postId} scrapUsers={post.scrapUsers} />
                             </div>
 
                         </STIng>
@@ -240,7 +242,7 @@ const Event = ({ postId }) => {
                                     <div>행사장소</div>
                                     <div style={{ display: "flex", marginBottom: "8px" }}>
                                         <STAddressButton style={{ flex: "2" }}>#{post.postAddress.split('')[0] + post.postAddress.split('')[1]}</STAddressButton>
-                                        <STInput style={{ flex: "8", marginLeft: "5px" }}>{post.postAddress}</STInput>
+                                        <STInput style={{ flex: "8", marginLeft: "5px" }}>{`${post.postAddress} ${post.postAddressDetail}`}</STInput>
                                     </div>
                                 </>
                             )
@@ -387,7 +389,7 @@ const Event = ({ postId }) => {
                                 <>
                                     <div style={{ display: "flex", marginTop: "14px" }}>
                                         <STAddressDiv style={{ marginRight: "5px" }}>#{modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressDiv>
-                                        <STInput >{modPost.postAddress}</STInput>
+                                        <STInput >{`${modPost.postAddress} ${modPost.postAddressDetail}`}</STInput>
                                     </div>
                                 </>
                             )

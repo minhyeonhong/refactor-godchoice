@@ -15,9 +15,9 @@ import noImg from '../../assets/images/common/noImg.png'
 import useImgUpload from '../../hooks/useImgUpload';
 import useInput from '../../hooks/useInput';
 import { insertPost } from '../../firestore/module/post';
-import { createPostPart } from '../../firestore/module/postPart';
 import { fsUploadImage } from '../../firestore/module/image';
 import { writeTime } from '../common/Date';
+import { createComment } from '../../firestore/module/comment';
 
 
 const GatherPost = () => {
@@ -102,12 +102,15 @@ const GatherPost = () => {
             content: gatherPosts.content,
             postLink: gatherPosts.postLink,
             contentType: "gather",
-            postAddress: postAddress + gatherPosts.detailAddress,
+            postAddress: postAddress,
+            postAddressDetail: gatherPosts.detailAddress,
             writer: localStorage.getItem('uid'),
             writeTime: writeTime,
             writerNickName: localStorage.getItem('nickname'),
             writerProfileImg: localStorage.getItem('profile_image_url'),
             photoURIs: [],
+            viewUsers: [],
+            scrapUsers: [],
         }
 
         if (files.length > 0) {
@@ -118,12 +121,12 @@ const GatherPost = () => {
                     insertPost(obj)
                         .then(response => {
                             const postID = response._key.path.segments[1];
-                            createPostPart(postID)
+                            createComment(postID)
                                 .then(() => {
                                     window.location.replace(`/gather/${postID}`);
                                 })
                                 .catch(error => {
-                                    console.log("createPostPart error", error)
+                                    console.log("createComment error", error)
                                 })
                         })
                         .catch(error => {
@@ -135,12 +138,12 @@ const GatherPost = () => {
             insertPost(obj)
                 .then(response => {
                     const postID = response._key.path.segments[1];
-                    createPostPart(postID)
+                    createComment(postID)
                         .then(() => {
-                            window.location.replace(`/event/${postID}`);
+                            window.location.replace(`/gather/${postID}`);
                         })
                         .catch(error => {
-                            console.log("createPostPart error", error)
+                            console.log("createComment error", error)
                         })
                 })
                 .catch(error => {
@@ -285,10 +288,10 @@ const GatherPost = () => {
                                 <>
                                     <div style={{ display: "flex", marginBottom: "10px" }}>
                                         <STAddressButton style={{ marginRight: "10px", flex: "2" }}>{"#" + region}</STAddressButton>
-                                        <STInput3 type="text" value={postAddress} style={{ flex: "8" }} readOnly>{postAddress}</STInput3>
+                                        <STInput3 type="text" value={postAddress} style={{ flex: "8", padding: "5px", lineHeight: "20px", height: "auto", minHeight: "45px" }} readOnly>{postAddress}</STInput3>
                                     </div>
-                                    <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={gatherPostsHandle} style={{ width: "78%", marginBottom: "10px", float: "right" }} />
-                                    <KakaoMap address={postAddress} width="328px" height="300px" />
+                                    <STInput type="text" name="detailAddress" placeholder='상세주소' onChange={gatherPostsHandle} style={{ marginBottom: "10px", padding: "5px", lineHeight: "20px", height: "auto", minHeight: "45px" }} />
+                                    <KakaoMap address={postAddress} width="100%" height="300px" />
                                 </>)
                         }
                     </AddressBox >
