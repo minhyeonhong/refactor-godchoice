@@ -58,8 +58,8 @@ const List = ({ searchState }) => {
                         .filter((post) => post.contentType === searchState.main)
                         .map((post) => (
                             <StCardItem key={post.postID} onClick={() => { navigate(`/${post.contentType}/${post.postID}`) }}>
-                                <StImgBox imgUrl={post.photoURIs[0]} >
-                                    {post.bookMarkStatus &&
+                                <StImgBox imgUrl={post.photoURIs[0] || `${process.env.PUBLIC_URL}/No_Image_Available.jpg`} >
+                                    {post.scrapUsers.includes(localStorage.getItem('uid')) &&
                                         <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
                                     }
                                 </StImgBox>
