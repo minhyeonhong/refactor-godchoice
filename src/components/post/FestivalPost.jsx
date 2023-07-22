@@ -52,7 +52,7 @@ const FestivalPost = () => {
     }
 
     //주소 앞에 두글자 따기
-    const region = postAddress.split("")[0] + postAddress.split("")[1]
+    const region = postAddress.substring(0, 2);
 
     const [isAdmin, setIsAdmin] = useState(false);
     const adminPostHandle = (e) => {
@@ -87,7 +87,8 @@ const FestivalPost = () => {
             title: festival.title,
             content: festival.content,
             contentType: "event",
-            postAddress: postAddress + festival.detailAddress,
+            postAddress: postAddress,
+            postAddressDetail: festival.detailAddress,
             postLink: festival.postLink,
             writer: localStorage.getItem('uid'),
             writeTime: writeTime,

@@ -95,7 +95,8 @@ const Gather = ({ postId }) => {
             endAge: modPost.endAge,
             kakaoLink: modPost.kakaoLink,
             memberCounter,
-            postAddress: postAddress + detail,
+            postAddress: postAddress,
+            postAddressDetail: detail,
             postLink: modPost.postLink,
             sex: modPost.sex,
             startAge: modPost.startAge,
@@ -318,7 +319,7 @@ const Gather = ({ postId }) => {
                                             <>
                                                 <div style={{ display: "flex", marginTop: "14px" }}>
                                                     <STAddressDiv>#{modPost.postAddress.split(' ')[0].length < 2 ? modPost.postAddress.split(' ')[0] : modPost.postAddress.split(' ')[0].substring(0, 2)}</STAddressDiv>
-                                                    <STInput style={{ marginLeft: "10px" }}>{modPost.postAddress}</STInput>
+                                                    <STInput style={{ marginLeft: "10px" }}>{`${modPost.postAddress} ${modPost.postAddressDetail}`}</STInput>
                                                 </div>
                                             </>
                                         )}
@@ -448,7 +449,7 @@ const Gather = ({ postId }) => {
                                             <div>행사장소</div>
                                             <div style={{ marginBottom: "8px", display: "flex" }}>
                                                 <STAddressButton style={{ flex: "1" }}>#{post.postAddress.split(' ')[0].length < 2 ? post.postAddress.split(' ')[0] : post.postAddress.split(' ')[0].substr(0, 2)}</STAddressButton>
-                                                <STInput style={{ marginLeft: "5px", flex: "4" }}>{post.postAddress}</STInput>
+                                                <STInput style={{ marginLeft: "5px", flex: "4" }}>{`${post.postAddress} ${post.postAddressDetail}`}</STInput>
                                             </div>
                                             <KakaoMap address={post.postAddress} width='100%' height='144px' />
                                         </>

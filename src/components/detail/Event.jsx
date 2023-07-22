@@ -97,7 +97,8 @@ const Event = ({ postId }) => {
             title: modPost.title,
             content: modPost.content,
             contentType: modPost.contentType,
-            postAddress: modPost.postAddress + detailAddress,
+            postAddress: modPost.postAddress,
+            postAddressDetail: detailAddress,
             postLink: modPost.postLink,
             writeTime: writeTime,
             writerNickName: localStorage.getItem('nickname'),
@@ -241,7 +242,7 @@ const Event = ({ postId }) => {
                                     <div>행사장소</div>
                                     <div style={{ display: "flex", marginBottom: "8px" }}>
                                         <STAddressButton style={{ flex: "2" }}>#{post.postAddress.split('')[0] + post.postAddress.split('')[1]}</STAddressButton>
-                                        <STInput style={{ flex: "8", marginLeft: "5px" }}>{post.postAddress}</STInput>
+                                        <STInput style={{ flex: "8", marginLeft: "5px" }}>{`${post.postAddress} ${post.postAddressDetail}`}</STInput>
                                     </div>
                                 </>
                             )
@@ -388,7 +389,7 @@ const Event = ({ postId }) => {
                                 <>
                                     <div style={{ display: "flex", marginTop: "14px" }}>
                                         <STAddressDiv style={{ marginRight: "5px" }}>#{modPost.postAddress.split(' ')[0].substr(0, 2)}</STAddressDiv>
-                                        <STInput >{modPost.postAddress}</STInput>
+                                        <STInput >{`${modPost.postAddress} ${modPost.postAddressDetail}`}</STInput>
                                     </div>
                                 </>
                             )
