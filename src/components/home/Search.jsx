@@ -1,14 +1,25 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Form from 'react-bootstrap/Form';
 import { FiSearch } from 'react-icons/fi';
-import ToggleButton from 'react-bootstrap/ToggleButton';
-import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { getPosts } from '../../firestore/module/post';
 
-//const Search = ({ updateSearchInfo, searchState }) => {
 const Search = ({ searchState, setSearchState, search, searchHandle }) => {
 
-    const tagList = ['서울', '인천', '세종', '대구', '부산', '울산', '광주', '대전', '제주도', '경기도', '강원도', '충청도', '경상도', '전라도'];
+    //const tagList = ['서울', '인천', '세종', '대구', '부산', '울산', '광주', '대전', '제주도', '경기도', '강원도', '충청도', '경상도', '전라도'];
+
+    const result = useInfiniteQuery({
+        queryKey: ['postList'],
+        queryFn: ({ pageParam }) => getPosts(searchState, pageParam),
+        getNextPageParam: ({ isLastPage, lastSnapshot }) => {
+            if (!isLastPage) return lastSnapshot;
+        },
+        refetchOnWindowFocus: false,
+    })
+
+    const getTags = result.data?.pages.map(page => page.datas.map(post => post.postAddress.substring(0, 2)));
+    const tagList = [...new Set(getTags.reduce((prev, next) => (prev.concat(next))))];
 
     //진행중 마감 핸들
     const stateHandle = (e) => {
@@ -64,7 +75,7 @@ const Search = ({ searchState, setSearchState, search, searchHandle }) => {
             </StTagBox>
             <StFilterBox>
                 <div>
-                    <select name='sort' onChange={sortHandle}>
+                    <select name='sort' onChange={sortHandle} style={{ cursor: "pointer" }}>
                         <option value="최신순">최신순</option>
                         <option value="인기순">인기순</option>
                     </select>

@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { BookmarkFill } from "../../assets/index";
 import PageState from '../common/PageState';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { getPosts } from '../../firestore/module/post';
 import { today } from '../common/Date';
 
@@ -41,14 +41,21 @@ const List = ({ searchState }) => {
                 text='리스트가 존재하지 않습니다.' />
             {result.data?.pages.map((page, i) => (
                 <Fragment key={i}>
-                    {page.datas
+                    {(searchState.sort === "최신순" ?
+                        page.datas.sort((a, b) => (new Date(b.writeTime) - new Date(a.writeTime)))
+                        :
+                        page.datas.sort((a, b) => (b.viewUsers.length - a.viewUsers.length))
+                    )
                         .filter((post) =>
                             post.title.toUpperCase()
                                 .includes((searchState.search || '').toUpperCase())
                         )
-                        // .filter((post) =>
-                        //     searchState.tag.map(tag => post.postAddress.includes(tag))
-                        // )
+                        .filter((post) =>
+                            searchState.tag.length > 0 ?
+                                searchState.tag.includes(post.postAddress.substring(0, 2))
+                                :
+                                post
+                        )
                         .filter((post) =>
                             post.contentType === "ask" ? post : searchState.progress === "진행중" ?
                                 post.endPeriod >= today || post.dateToMeet >= today
