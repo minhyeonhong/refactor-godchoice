@@ -4,6 +4,10 @@ import {
     getDoc,
     updateDoc,
     deleteDoc,
+    getDocs,
+    query,
+    collection,
+    where,
 } from 'firebase/firestore';
 import { db } from "../firebase";
 import { useQuery } from '@tanstack/react-query';
@@ -27,6 +31,29 @@ export const useComment = (postId) => {
     const result = useQuery(
         ["getFBComment"],
         getFBComment
+    );
+
+    return {
+        ...result.data,
+        commentsIsLoading: result.isLoading
+    }
+}
+
+export const useComments = (uid) => {
+    const getFBComments = async () => {
+        const response = await getDocs(query(collection(db, "test"), where("comments", "array-contains-any", [{ uid: "sss", reComments: [{ reUid: "asd" }] }])));
+        //const response = await getDocs(query(collection(db, "test"), where("comments", "array-contains", { reComments: [{ reUid: "asd" }] })));
+
+        const comments = response.docs.map(doc => ({ ...doc.data(), postID: doc.id }));//.filter(comments => comments.comments.length > 0);
+
+        console.log("comments", comments);
+
+        return { comments };
+    }
+
+    const result = useQuery(
+        ["getFBComments"],
+        getFBComments
     );
 
     return {
