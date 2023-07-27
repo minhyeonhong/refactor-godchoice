@@ -13,7 +13,7 @@ import { db } from "../firebase";
 import { useQuery } from '@tanstack/react-query';
 
 export const createComment = async (postID) => {
-    const initComment = { comments: [] };
+    const initComment = { comments: [], commentUids: [], reCommentUids: [] };
 
     return await setDoc(doc(db, "comment", postID), initComment);
 }
