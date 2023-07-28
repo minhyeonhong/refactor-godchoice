@@ -47,7 +47,7 @@ const Gather = ({ postId }) => {
         setMemberCounter(post.memberCounter);
     };
 
-    const { comments, commentsIsLoading } = useComment(postId);
+    const { comments, commentUids, reCommentUids, commentsIsLoading } = useComment(postId);
 
     useEffect(() => {
         const isView = post.viewUsers.indexOf(localStorage.getItem("uid"));
@@ -466,8 +466,11 @@ const Gather = ({ postId }) => {
                         )
             }
 
-            <Comment postId={postId} comments={comments} style={{ marginTop: "20px" }} />
-
+            <Comment postId={postId}
+                comments={comments}
+                commentUids={commentUids}
+                reCommentUids={reCommentUids}
+                style={{ marginTop: "20px" }} />
         </StWrap>
     );
 };
