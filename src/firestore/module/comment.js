@@ -8,6 +8,7 @@ import {
     query,
     collection,
     where,
+    or,
 } from 'firebase/firestore';
 import { db } from "../firebase";
 import { useQuery } from '@tanstack/react-query';
@@ -41,12 +42,15 @@ export const useComment = (postId) => {
 
 export const useComments = (uid) => {
     const getFBComments = async () => {
-        const response = await getDocs(query(collection(db, "test"), where("comments", "array-contains-any", [{ uid: "sss", reComments: [{ reUid: "asd" }] }])));
-        //const response = await getDocs(query(collection(db, "test"), where("comments", "array-contains", { reComments: [{ reUid: "asd" }] })));
+        const response = await getDocs(
+            query(collection(db, "comment"),
+                or(
+                    where("commentUids", "array-contains", uid),
+                    where("reCommentUids", "array-contains", uid)
+                )
+            ));
 
-        const comments = response.docs.map(doc => ({ ...doc.data(), postID: doc.id }));//.filter(comments => comments.comments.length > 0);
-
-        console.log("comments", comments);
+        const comments = response.docs.map(doc => doc.id);
 
         return { comments };
     }
