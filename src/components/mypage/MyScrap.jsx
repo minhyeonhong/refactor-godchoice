@@ -113,7 +113,7 @@ const MyScrap = () => {
                         <ItemTop>
                           <p style={{ fontWeight: 600, fontSize: "20px" }}>{post.title.length > 10 ? post.title.substring(0, 14) + '...' : post.title}</p>
                           <p>{post.category}</p>
-                          <p>{post.content}</p>
+                          <p>{post.content.length > 10 ? post.content.substring(0, 9) + '...' : post.content}</p>
                         </ItemTop>
                         <ItemBottom>
                           {post.contentType === "event" && <p>{post.endPeriod}</p>}

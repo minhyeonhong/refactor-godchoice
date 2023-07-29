@@ -85,7 +85,7 @@ const List = ({ searchState }) => {
                             <StContentBox>
                                 <div className='titleBox'>{post.title.length > 10 ? post.title.substring(0, 9) + '...' : post.title}</div>
                                 <div>{post.category}</div>
-                                <div className='contentBox'>{post.content}</div>
+                                <div className='contentBox'>{post.content.length > 10 ? post.content.substring(0, 9) + '...' : post.content}</div>
                                 <div className='dtateBox'>
                                     {post.contentType === "event" && <div>{post.endPeriod}</div>}
                                     {post.contentType === "gather" && <div>{post.dateToMeet}</div>}
