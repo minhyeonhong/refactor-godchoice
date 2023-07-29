@@ -25,6 +25,13 @@ const MyPost = () => {
     refetchOnWindowFocus: false,
   })
 
+  const posts = result.data?.pages.flat(Infinity).map(posts => posts.datas).flat(Infinity);
+  const postsLength = posts.filter(post => (
+    post.contentType === categoryTab
+  )).filter(post => (
+    localStorage.getItem('uid') === post.writer
+  )).length;
+
   useEffect(() => {
     // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니고 다음페이지가 있다면
     if (inView && !result.isFetching && result.hasNextPage) {
@@ -78,47 +85,44 @@ const MyPost = () => {
 
             <>
 
-              <PageState display={result.data?.pages[0].datas.length === 0 ? 'flex' : 'none'} state='notFound' imgWidth='25%' height='60vh'
+              <PageState display={postsLength === 0 ? 'flex' : 'none'} state='notFound' imgWidth='25%' height='60vh'
                 text='리스트가 존재하지 않습니다.' />
-              {result.data?.pages.map((page, i) => (
-                <Fragment key={i}>
-                  {page.datas
-                    .filter(post => (
-                      post.contentType === categoryTab
-                    ))
-                    .filter(post => (
-                      localStorage.getItem('uid') === post.writer
-                    ))
-                    .map(post => (
-                      <ListBox
-                        key={post.postID}
-                        onClick={() =>
-                          navigate(`/${post.contentType}/${post.postID}`)
+              {posts
+                .filter(post => (
+                  post.contentType === categoryTab
+                ))
+                .filter(post => (
+                  localStorage.getItem('uid') === post.writer
+                ))
+                .map(post => (
+                  <Fragment key={post.postID}>
+                    <ListBox
+                      onClick={() =>
+                        navigate(`/${post.contentType}/${post.postID}`)
+                      }
+                    >
+                      <ItemImg bgImg={post.photoURIs[0] || `${process.env.PUBLIC_URL}/No_Image_Available.jpg`}>
+                        {post.scrapUsers.includes(localStorage.getItem('uid')) &&
+                          <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
                         }
-                      >
-                        <ItemImg bgImg={post.photoURIs[0] || `${process.env.PUBLIC_URL}/No_Image_Available.jpg`}>
-                          {post.scrapUsers.includes(localStorage.getItem('uid')) &&
-                            <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
-                          }
-                        </ItemImg>
-                        <ItemContainer>
-                          <ItemTop>
-                            <p style={{ fontWeight: 600, fontSize: "20px" }}>{post.title.length > 10 ? post.title.substring(0, 14) + '...' : post.title}</p>
-                            <p>{post.category}</p>
-                            <p>{post.content}</p>
-                          </ItemTop>
-                          <ItemBottom>
-                            {post.contentType === "event" && <p>{post.endPeriod}</p>}
-                            {post.contentType === "gather" && <p>{post.dateToMeet}</p>}
-                            {post.contentType === "ask" && <p>{post.writeTime.split(" ")[0]}</p>}
-                            <p> <Views style={{ height: "19px" }} /> {post.viewUsers.length}</p>
-                          </ItemBottom>
-                        </ItemContainer>
-                      </ListBox>
-                    ))
-                  }
-                </Fragment>
-              ))}
+                      </ItemImg>
+                      <ItemContainer>
+                        <ItemTop>
+                          <p style={{ fontWeight: 600, fontSize: "20px" }}>{post.title.length > 10 ? post.title.substring(0, 14) + '...' : post.title}</p>
+                          <p>{post.category}</p>
+                          <p>{post.content}</p>
+                        </ItemTop>
+                        <ItemBottom>
+                          {post.contentType === "event" && <p>{post.endPeriod}</p>}
+                          {post.contentType === "gather" && <p>{post.dateToMeet}</p>}
+                          {post.contentType === "ask" && <p>{post.writeTime.split(" ")[0]}</p>}
+                          <p> <Views style={{ height: "19px" }} /> {post.viewUsers.length}</p>
+                        </ItemBottom>
+                      </ItemContainer>
+                    </ListBox>
+                  </Fragment>
+                ))
+              }
               <PageState
                 display={result.isFetching ? 'flex' : 'none'}
                 state='notFound'
