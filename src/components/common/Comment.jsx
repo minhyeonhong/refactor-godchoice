@@ -10,7 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { writeTime } from './Date';
 import { updateComment } from '../../firestore/module/comment';
 
-const Comment = ({ postId, comments }) => {
+const Comment = ({ postId, comments, commentUids, reCommentUids }) => {
     const queryClient = useQueryClient();
 
     //댓글 인풋
@@ -41,7 +41,12 @@ const Comment = ({ postId, comments }) => {
             writeTime
         }
 
-        updateComment(postId, { comments: [...comments, sendData] })
+        updateComment(postId,
+            commentUids.includes(uid) ?
+                { comments: [...comments, sendData] }
+                :
+                { comments: [...comments, sendData], commentUids: [...commentUids, uid] }
+        )
             .then(() => {
                 setComment({ content: "" });
                 queryClient.prefetchQuery(["getFBComment"]);
@@ -77,7 +82,12 @@ const Comment = ({ postId, comments }) => {
 
         comments.splice(idx, 1, sendData);
 
-        updateComment(postId, { comments })
+        updateComment(postId,
+            reCommentUids.includes(uid) ?
+                { comments }
+                :
+                { comments, reCommentUids: [...reCommentUids, uid] }
+        )
             .then(() => {
                 setReComment({ content: "" });
                 onReComment(idx);
@@ -95,6 +105,10 @@ const Comment = ({ postId, comments }) => {
         const hasReComment = comments[commentIdx].reComments.length > 0;
         const modComments = comments.map(comment => { return { ...comment, reComments: comment.reComments.map(reComment => reComment) } });
 
+        const uid = localStorage.getItem("uid");
+        const hasCommentUidsLength = comments.filter(comment => comment.uid === uid).length;
+        hasCommentUidsLength === 1 && commentUids.splice(commentUids.indexOf(uid), 1);
+
         if (hasReComment) {
             const sendData = {
                 ...comments[commentIdx],
@@ -106,7 +120,7 @@ const Comment = ({ postId, comments }) => {
             modComments.splice(commentIdx, 1);
         }
 
-        updateComment(postId, { comments: modComments })
+        updateComment(postId, { comments: modComments, commentUids })
             .then(() => {
                 queryClient.prefetchQuery(["getFBComment"]);
             })
@@ -120,8 +134,13 @@ const Comment = ({ postId, comments }) => {
         if (!window.confirm("댓글을 삭제 하시겠습니까?")) return;
 
         const isReCommentCountOne = comments[commentIdx].reComments.length === 1;
-
         const modComments = comments.map(comment => { return { ...comment, reComments: comment.reComments.map(reComment => reComment) } });
+
+        const uid = localStorage.getItem("uid");
+        const modReCommentUids = comments.map(comment => comment.reComments.filter(reComment => reComment.uid === uid).length);
+        const hasReCommentUidsLength = modReCommentUids.reduce((prev, curr) => { return prev + curr }, 0);
+
+        hasReCommentUidsLength === 1 && reCommentUids.splice(reCommentUids.indexOf(uid), 1);
 
         if (isReCommentCountOne && comments[commentIdx].comment === "알수없음") {
             modComments.splice(commentIdx, 1);
@@ -129,7 +148,7 @@ const Comment = ({ postId, comments }) => {
             modComments[commentIdx].reComments.splice(reCommentIdx, 1);
         }
 
-        updateComment(postId, { comments: modComments })
+        updateComment(postId, { comments: modComments, reCommentUids })
             .then(() => {
                 queryClient.prefetchQuery(["getFBComment"]);
             })

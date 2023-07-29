@@ -28,6 +28,19 @@ const List = ({ searchState }) => {
         refetchOnWindowFocus: false,
     })
 
+    const posts = result.data?.pages.flat(Infinity).map(posts => posts.datas).flat(Infinity);
+
+    const postsLength = posts.filter(post => post.contentType === searchState.main)
+        .filter(post => {
+            if (post.contentType === "event") {
+                return searchState.progress === "진행중" ? post.endPeriod >= today : post.endPeriod < today
+            } else if (post.contentType === "gather") {
+                return searchState.progress === "진행중" ? post.dateToMeet >= today : post.dateToMeet < today
+            } else {
+                return post
+            }
+        }).length;
+
     useEffect(() => {
         // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니고 다음페이지가 있다면
         if (inView && !result.isFetching && result.hasNextPage) {
@@ -37,56 +50,54 @@ const List = ({ searchState }) => {
 
     return (
         <StCardWrap>
-            <PageState display={result.data?.pages[0].datas.length === 0 ? 'flex' : 'none'} state='notFound' imgWidth='25%' height='60vh'
+            <PageState display={postsLength === 0 ? 'flex' : 'none'} state='notFound' imgWidth='25%' height='60vh'
                 text='리스트가 존재하지 않습니다.' />
-            {result.data?.pages.map((page, i) => (
-                <Fragment key={i}>
-                    {(searchState.sort === "최신순" ?
-                        page.datas.sort((a, b) => (new Date(b.writeTime) - new Date(a.writeTime)))
+            {(searchState.sort === "최신순" ?
+                posts.sort((a, b) => (new Date(b.writeTime) - new Date(a.writeTime)))
+                :
+                posts.sort((a, b) => (b.viewUsers.length - a.viewUsers.length))
+            )
+                .filter((post) =>
+                    post.title.toUpperCase()
+                        .includes((searchState.search || '').toUpperCase())
+                )
+                .filter((post) =>
+                    searchState.tag.length > 0 ?
+                        searchState.tag.includes(post.postAddress.substring(0, 2))
                         :
-                        page.datas.sort((a, b) => (b.viewUsers.length - a.viewUsers.length))
-                    )
-                        .filter((post) =>
-                            post.title.toUpperCase()
-                                .includes((searchState.search || '').toUpperCase())
-                        )
-                        .filter((post) =>
-                            searchState.tag.length > 0 ?
-                                searchState.tag.includes(post.postAddress.substring(0, 2))
-                                :
-                                post
-                        )
-                        .filter((post) =>
-                            post.contentType === "ask" ? post : searchState.progress === "진행중" ?
-                                post.endPeriod >= today || post.dateToMeet >= today
-                                :
-                                post.endPeriod < today || post.dateToMeet < today
-                        )
-                        .filter((post) => post.contentType === searchState.main)
-                        .map((post) => (
-                            <StCardItem key={post.postID} onClick={() => { navigate(`/${post.contentType}/${post.postID}`) }}>
-                                <StImgBox imgUrl={post.photoURIs[0] || `${process.env.PUBLIC_URL}/No_Image_Available.jpg`} >
-                                    {post.scrapUsers.includes(localStorage.getItem('uid')) &&
-                                        <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
-                                    }
-                                </StImgBox>
-                                <StContentBox>
-                                    <div className='titleBox'>{post.title.length > 10 ? post.title.substring(0, 9) + '...' : post.title}</div>
-                                    <div>{post.category}</div>
-                                    <div className='contentBox'>{post.content}</div>
-                                    <div className='dtateBox'>
-                                        {post.contentType === "event" && <div>{post.endPeriod}</div>}
-                                        {post.contentType === "gather" && <div>{post.dateToMeet}</div>}
-                                        {post.contentType === "ask" && <div>{post.writeTime.split(" ")[0]}</div>}
-                                        <div className='lookBox'>{
-                                            post.viewUsers.length
-                                        }&nbsp;<BsEye style={{ width: '16px', height: '16px', marginTop: '2px' }} /></div>
-                                    </div>
-                                </StContentBox>
-                            </StCardItem>
-                        ))}
-                </Fragment>
-            ))}
+                        post
+                )
+                .filter((post) =>
+                    post.contentType === "ask" ? post : searchState.progress === "진행중" ?
+                        post.endPeriod >= today || post.dateToMeet >= today
+                        :
+                        post.endPeriod < today || post.dateToMeet < today
+                )
+                .filter((post) => post.contentType === searchState.main)
+                .map((post) => (
+                    <Fragment key={post.postID}>
+                        <StCardItem onClick={() => { navigate(`/${post.contentType}/${post.postID}`) }}>
+                            <StImgBox imgUrl={post.photoURIs[0] || `${process.env.PUBLIC_URL}/No_Image_Available.jpg`} >
+                                {post.scrapUsers.includes(localStorage.getItem('uid')) &&
+                                    <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
+                                }
+                            </StImgBox>
+                            <StContentBox>
+                                <div className='titleBox'>{post.title.length > 10 ? post.title.substring(0, 9) + '...' : post.title}</div>
+                                <div>{post.category}</div>
+                                <div className='contentBox'>{post.content}</div>
+                                <div className='dtateBox'>
+                                    {post.contentType === "event" && <div>{post.endPeriod}</div>}
+                                    {post.contentType === "gather" && <div>{post.dateToMeet}</div>}
+                                    {post.contentType === "ask" && <div>{post.writeTime.split(" ")[0]}</div>}
+                                    <div className='lookBox'>{
+                                        post.viewUsers.length
+                                    }&nbsp;<BsEye style={{ width: '16px', height: '16px', marginTop: '2px' }} /></div>
+                                </div>
+                            </StContentBox>
+                        </StCardItem>
+                    </Fragment>
+                ))}
             <PageState
                 display={result.isFetching ? 'flex' : 'none'}
                 state='notFound'

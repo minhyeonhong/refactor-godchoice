@@ -36,7 +36,7 @@ const Event = ({ postId }) => {
         setmodPost(post);
     }
 
-    const { comments, commentsIsLoading } = useComment(postId);
+    const { comments, commentUids, reCommentUids, commentsIsLoading } = useComment(postId);
 
     useEffect(() => {
         const isView = post.viewUsers.indexOf(localStorage.getItem("uid"));
@@ -410,7 +410,11 @@ const Event = ({ postId }) => {
 
                 </>
             }
-            <Comment postId={postId} comments={comments} style={{ marginTop: "20px" }} />
+            <Comment postId={postId}
+                comments={comments}
+                commentUids={commentUids}
+                reCommentUids={reCommentUids}
+                style={{ marginTop: "20px" }} />
         </StWrap >
     );
 };

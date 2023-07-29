@@ -1,11 +1,12 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../elements/Button";
 import { BookmarkFill, Views } from "../../assets";
-import { myPageApis } from "../../api/api-functions/myPageApis";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInView } from "react-intersection-observer";
+import PageState from "../common/PageState";
+import { getPosts } from "../../firestore/module/post";
 
 
 const MyPost = () => {
@@ -13,25 +14,35 @@ const MyPost = () => {
 
   const [categoryTab, setCategoryTab] = useState("event");
 
-  //내가 작성한 글 불러오기
-  const getMyPostList = async () => {
-    const res = await myPageApis.getMyPostAX();
-    return res;
-  }
-  const result = useQuery(
-    ['getMyPostList'],
-    getMyPostList,
-  )
-  // 내가 작성한 글 server state
-  const myPostList = result.data?.data.data;
-  const { eventPost, gatherPost, askPost } = myPostList;
+  const [ref, inView] = useInView();
+
+  const result = useInfiniteQuery({
+    queryKey: ['postList'],
+    queryFn: ({ pageParam }) => getPosts("", pageParam),
+    getNextPageParam: ({ isLastPage, lastSnapshot }) => {
+      if (!isLastPage) return lastSnapshot;
+    },
+    refetchOnWindowFocus: false,
+  })
+
+  const posts = result.data?.pages.flat(Infinity).map(posts => posts.datas).flat(Infinity);
+  const postsLength = posts.filter(post => (
+    post.contentType === categoryTab
+  )).filter(post => (
+    localStorage.getItem('uid') === post.writer
+  )).length;
+
+  useEffect(() => {
+    // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니고 다음페이지가 있다면
+    if (inView && !result.isFetching && result.hasNextPage) {
+      result.fetchNextPage();
+    }
+  }, [inView, result.isFetching])
 
   const onClickCategory = (tab) => {
     setCategoryTab(tab);
   };
-  if (result.isLoading) {
-    return null;
-  }
+
   return (
     <>
       <CateWrap>
@@ -74,90 +85,53 @@ const MyPost = () => {
 
             <>
 
-              {categoryTab === "event" ? (eventPost !== undefined && eventPost.map((v) => (
-                <ListBox
-                  key={v.postId}
-                  onClick={() =>
-                    navigate(`/eventposts/${v.postId}`)
-                  }
-                >
-                  <ItemImg bgImg={v.imgUrl}>
-                    {v.bookMarkStatus &&
-                      <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
-                    }
-                    {/* <PostScrap bookMarkStatus={v.bookMarkStatus} /> */}
-                  </ItemImg>
-                  <ItemContainer>
-                    <ItemTop>
-                      <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 10 ? v.title.substring(0, 14) + '...' : v.title}</p>
-                      <p>{v.category}</p>
-                      <p>{v.content}</p>
-                    </ItemTop>
-                    <ItemBottom>
-                      <p>~ {v.endPeriod}</p>
-                      <p> <Views style={{ height: "19px" }} /> {v.viewCount}</p>
-                    </ItemBottom>
-                  </ItemContainer>
-                </ListBox>
-              )
-              )) : categoryTab === "gather" ? (gatherPost &&
-                gatherPost.map(
-                  (v) => (
+              <PageState display={postsLength === 0 ? 'flex' : 'none'} state='notFound' imgWidth='25%' height='60vh'
+                text='리스트가 존재하지 않습니다.' />
+              {posts
+                .filter(post => (
+                  post.contentType === categoryTab
+                ))
+                .filter(post => (
+                  localStorage.getItem('uid') === post.writer
+                ))
+                .map(post => (
+                  <Fragment key={post.postID}>
                     <ListBox
-                      key={v.postId}
                       onClick={() =>
-                        navigate(`/gatherposts/${v.postId}`)
+                        navigate(`/${post.contentType}/${post.postID}`)
                       }
                     >
-                      <ItemImg bgImg={v.imgUrl}>
-                        {v.bookMarkStatus &&
+                      <ItemImg bgImg={post.photoURIs[0] || `${process.env.PUBLIC_URL}/No_Image_Available.jpg`}>
+                        {post.scrapUsers.includes(localStorage.getItem('uid')) &&
                           <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
                         }
-                        {/* <PostScrap bookMarkStatus={v.bookMarkStatus} /> */}
                       </ItemImg>
                       <ItemContainer>
                         <ItemTop>
-                          <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 10 ? v.title.substring(0, 14) + '...' : v.title}</p>
-                          <p>{v.category}</p>
-                          <p>{v.content}</p>
+                          <p style={{ fontWeight: 600, fontSize: "20px" }}>{post.title.length > 10 ? post.title.substring(0, 14) + '...' : post.title}</p>
+                          <p>{post.category}</p>
+                          <p>{post.content}</p>
                         </ItemTop>
                         <ItemBottom>
-                          <p> {v.date}</p>
-                          <p> <Views style={{ height: "19px" }} /> {v.viewCount}</p>
+                          {post.contentType === "event" && <p>{post.endPeriod}</p>}
+                          {post.contentType === "gather" && <p>{post.dateToMeet}</p>}
+                          {post.contentType === "ask" && <p>{post.writeTime.split(" ")[0]}</p>}
+                          <p> <Views style={{ height: "19px" }} /> {post.viewUsers.length}</p>
                         </ItemBottom>
                       </ItemContainer>
                     </ListBox>
-                  )
-
-                )
-              )
-                : (askPost && askPost.map((v) => (
-                  <ListBox
-                    key={v.postId}
-                    onClick={() =>
-                      navigate(`/askposts/${v.postId}`)
-                    }
-                  >
-                    <ItemImg bgImg={v.imgUrl}>
-                      {v.bookMarkStatus &&
-                        <BookmarkFill style={{ margin: '4px 0 0 4px' }} />
-                      }
-                      {/* <PostScrap bookMarkStatus={v.bookMarkStatus} /> */}
-                    </ItemImg>
-                    <ItemContainer>
-                      <ItemTop style={{ marginBottom: "20px" }} >
-                        <p style={{ fontWeight: 600, fontSize: "20px" }}>{v.title.length > 10 ? v.title.substring(0, 14) + '...' : v.title}</p>
-                        <p>{v.category}</p>
-                        <p>{v.content}</p>
-                      </ItemTop>
-                      <ItemBottom>
-                        <p>{v.endPeriod}</p>
-                        <p> <Views style={{ height: "19px" }} /> {v.viewCount}</p>
-                      </ItemBottom>
-                    </ItemContainer>
-                  </ListBox>
-                )
+                  </Fragment>
                 ))
+              }
+              <PageState
+                display={result.isFetching ? 'flex' : 'none'}
+                state='notFound'
+                imgWidth='25%'
+                height=''
+                flexDirection='row'
+                text='검색중...' />
+              {
+                result.hasNextPage && <div ref={ref} />
               }
             </>
           </CategoryInfoList>
