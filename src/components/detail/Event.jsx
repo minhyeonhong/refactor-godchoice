@@ -251,7 +251,7 @@ const Event = ({ postId }) => {
 
                         {localStorage.getItem('uid') === post.writer &&
                             (<div>
-                                <STEditButton style={{ background: "#8f94b6", marginLeft: "5px" }} onClick={() => { onDeletePost(postId); }}>삭제</STEditButton>
+                                <STEditButton style={{ background: "#8f94b6", marginLeft: "5px" }} onClick={() => { onDeletePost(postId, post.photoURIs); }}>삭제</STEditButton>
                                 <STEditButton onClick={setUpdateMod}>수정</STEditButton>
                             </div>)}
 

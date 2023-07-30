@@ -458,7 +458,7 @@ const Gather = ({ postId }) => {
 
                                 {localStorage.getItem('uid') === post.writer &&
                                     (<div style={{ float: "right", marginTop: "10px" }}>
-                                        <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={() => { onDeletePost(postId); }}>삭제</STEditButton>
+                                        <STEditButton style={{ background: "#515466", marginLeft: "5px" }} onClick={() => { onDeletePost(postId, post.photoURIs); }}>삭제</STEditButton>
                                         <STEditButton onClick={toggleEdit}>수정</STEditButton>
                                     </div>)}
 

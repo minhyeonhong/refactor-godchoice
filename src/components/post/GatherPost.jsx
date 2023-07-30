@@ -14,10 +14,8 @@ import noImg from '../../assets/images/common/noImg.png'
 
 import useImgUpload from '../../hooks/useImgUpload';
 import useInput from '../../hooks/useInput';
-import { insertPost } from '../../firestore/module/post';
-import { fsUploadImage } from '../../firestore/module/image';
+import { onInsertPost } from '../../firestore/module/post';
 import { writeTime } from '../common/Date';
-import { createComment } from '../../firestore/module/comment';
 
 
 const GatherPost = () => {
@@ -113,43 +111,7 @@ const GatherPost = () => {
             scrapUsers: [],
         }
 
-        if (files.length > 0) {
-            files.map(async (file, i) => {
-                const getImageURI = await fsUploadImage("images/post", file, `${localStorage.getItem('uid')}_${file.name}_${writeTime}`);
-                obj.photoURIs.push(getImageURI);
-                if (files.length === (i + 1)) {
-                    insertPost(obj)
-                        .then(response => {
-                            const postID = response._key.path.segments[1];
-                            createComment(postID)
-                                .then(() => {
-                                    window.location.replace(`/gather/${postID}`);
-                                })
-                                .catch(error => {
-                                    console.log("createComment error", error)
-                                })
-                        })
-                        .catch(error => {
-                            console.log("fireStore insert error", error);
-                        })
-                }
-            })
-        } else {
-            insertPost(obj)
-                .then(response => {
-                    const postID = response._key.path.segments[1];
-                    createComment(postID)
-                        .then(() => {
-                            window.location.replace(`/gather/${postID}`);
-                        })
-                        .catch(error => {
-                            console.log("createComment error", error)
-                        })
-                })
-                .catch(error => {
-                    console.log("fireStore insert error", error);
-                })
-        }
+        onInsertPost(files, obj);
     }
 
 
