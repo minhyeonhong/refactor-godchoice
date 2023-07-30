@@ -11,10 +11,8 @@ import Carousel from 'react-bootstrap/Carousel';
 
 import useImgUpload from '../../hooks/useImgUpload';
 import useInput from '../../hooks/useInput';
-import { fsUploadImage } from '../../firestore/module/image';
-import { insertPost } from '../../firestore/module/post';
 import { writeTime } from '../common/Date';
-import { createComment } from '../../firestore/module/comment';
+import { onInsertPost } from '../../firestore/module/post';
 
 const QuestionPost = () => {
 
@@ -73,43 +71,7 @@ const QuestionPost = () => {
             scrapUsers: [],
         }
 
-        if (files.length > 0) {
-            files.map(async (file, i) => {
-                const getImageURI = await fsUploadImage("images/post", file, `${localStorage.getItem('uid')}_${file.name}_${writeTime}`);
-                obj.photoURIs.push(getImageURI);
-                if (files.length === (i + 1)) {
-                    insertPost(obj)
-                        .then(response => {
-                            const postID = response._key.path.segments[1];
-                            createComment(postID)
-                                .then(() => {
-                                    window.location.replace(`/ask/${postID}`);
-                                })
-                                .catch(error => {
-                                    console.log("createComment error", error)
-                                })
-                        })
-                        .catch(error => {
-                            console.log("fireStore insert error", error);
-                        })
-                }
-            })
-        } else {
-            insertPost(obj)
-                .then(response => {
-                    const postID = response._key.path.segments[1];
-                    createComment(postID)
-                        .then(() => {
-                            window.location.replace(`/ask/${postID}`);
-                        })
-                        .catch(error => {
-                            console.log("createComment error", error)
-                        })
-                })
-                .catch(error => {
-                    console.log("fireStore insert error", error);
-                })
-        }
+        onInsertPost(files, obj);
     }
 
     //주소 앞에 두글자 따기

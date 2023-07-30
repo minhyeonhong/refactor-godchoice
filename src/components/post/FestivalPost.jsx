@@ -18,9 +18,7 @@ import useImgUpload from '../../hooks/useImgUpload';
 import useInput from '../../hooks/useInput';
 import { useNavigate } from 'react-router-dom';
 import { today, writeTime } from '../common/Date';
-import { insertPost } from '../../firestore/module/post';
-import { fsUploadImage } from '../../firestore/module/image';
-import { createComment } from '../../firestore/module/comment';
+import { onInsertPost } from '../../firestore/module/post';
 
 const FestivalPost = () => {
     const navigate = useNavigate();
@@ -99,46 +97,7 @@ const FestivalPost = () => {
             scrapUsers: [],
         }
 
-
-        if (files.length > 0) {
-            files.map(async (file, i) => {
-                const getImageURI = await fsUploadImage("images/post", file, `${localStorage.getItem('uid')}_${file.name}_${writeTime}`);
-                obj.photoURIs.push(getImageURI);
-                if (files.length === (i + 1)) {
-                    insertPost(obj)
-                        .then(response => {
-                            const postID = response._key.path.segments[1];
-                            createComment(postID)
-                                .then(() => {
-                                    window.location.replace(`/event/${postID}`);
-                                })
-                                .catch(error => {
-                                    console.log("createComment error", error)
-                                })
-                        })
-                        .catch(error => {
-                            console.log("fireStore insert error", error);
-                        })
-                }
-            })
-        } else {
-            insertPost(obj)
-                .then(response => {
-                    const postID = response._key.path.segments[1];
-                    createComment(postID)
-                        .then(() => {
-                            window.location.replace(`/event/${postID}`);
-                        })
-                        .catch(error => {
-                            console.log("createComment error", error)
-                        })
-                })
-                .catch(error => {
-                    console.log("fireStore insert error", error);
-                })
-        }
-
-
+        onInsertPost(files, obj);
     }
 
     return (
