@@ -38,10 +38,48 @@
 ## ⭐️ 리펙토링
 
 <details>
-<summary> 카카오톡 소셜 로그인 </summary>
+<summary>카카오톡 소셜 로그인</summary> 
 <div markdown="1">
 Kakao developers의 카카오 로그인 API를 활용하여 인가코드를 파라미터값으로 한 요청을 Back-End서버로 보내고 유저 정보와 토큰을 응답받아 로컬스토리지에 저장하여 구현했었습니다.   
 
 Back-End서버가 닫혀 인가코드를 받고 인증까지 끝내고 유저정보를 받아 Firebase에 유저정보를 담고 Firebase에 담은 유저의 키값을 로컬스토리지에 담아 구현했습니다.
+
+<a href="https://mhhmhh.tistory.com/120" target="_blank">자세한 내용</a>
+</div>
+</details>
+
+<details>
+<summary> firebase 사용 </summary>
+<div markdown="1">
+Back-End서버가 닫혔기 때문에 유저정보와 작성한 글을 담을 데이터 베이스서버가 필요했습니다.
+
+DB서버만 있으면 서비스를 구축 가능하다고 판단되어 NoSql인 firebase를 선택하게 되었습니다.     
+
+<a href="https://mhhmhh.tistory.com/122" target="_blank">자세한 내용</a>
+
+또한 firebase에 Storage를 이용하여 이미지를 저장했습니다.   
+
+<a href="https://mhhmhh.tistory.com/126" target="_blank">자세한 내용</a>
+
+</div>
+</details>
+
+<details>
+<summary>무한 스크롤 firebase 적용</summary> 
+<div markdown="1">
+기존 react-intersection-observer와 react-query의 useInfiniteQuery를 이용하여 무한스크롤을 구현 했었습니다.
+
+Back-End서버의 api로 받아 오던 데이터를 firebase로 대체하여 구현했습니다.
+
+<a href="https://mhhmhh.tistory.com/127" target="_blank">자세한 내용</a>
+</div>
+</details>
+
+<details>
+<summary>댓글 기능 firebase 적용</summary> 
+<div markdown="1">
+firebase에 comments컬렉션을 따로 만들어 글작성시 생성되도록 구현했습니다.   
+
+<a href="https://mhhmhh.tistory.com/128" target="_blank">자세한 내용</a>
 </div>
 </details>
