@@ -50,7 +50,7 @@ const List = ({ searchState }) => {
 
     return (
         <StCardWrap>
-            <PageState display={postsLength === 0 ? 'flex' : 'none'} state='notFound' imgWidth='25%' height='60vh'
+            <PageState display={posts.length === 0 && postsLength === 0 ? 'flex' : 'none'} state='notFound' imgWidth='25%' height='60vh'
                 text='리스트가 존재하지 않습니다.' />
             {(searchState.sort === "최신순" ?
                 posts.sort((a, b) => (new Date(b.writeTime) - new Date(a.writeTime)))
