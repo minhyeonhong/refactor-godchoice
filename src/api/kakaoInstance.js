@@ -1,5 +1,4 @@
 import axios from "axios";
-import { getCookie } from "../cookie/cookie";
 
 export const kakaoInstance = axios.create({
     baseURL: "",

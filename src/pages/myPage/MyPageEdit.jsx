@@ -5,12 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { Camera, Delete } from "../../assets";
 import Layout from "../../components/layout/Layout";
 import kakao from "../../assets/logo_kakao.png";
-import naver from "../../assets/logo_naver.png";
-import google from "../../assets/logo_google.png";
 
 import useImgUpload from "../../hooks/useImgUpload";
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { myPageApis } from '../../api/api-functions/myPageApis';
 import PageState from "../../components/common/PageState";
 import useGetMyInfo from "../../hooks/useGetMyInfo";
 import { fsDeleteImage, fsUploadImage } from "../../firestore/module/image";

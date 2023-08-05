@@ -1,100 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Bell, MyPage } from '../../assets';
+import { MyPage } from '../../assets';
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/common/home_logo_fill.png"
 
 import { RiLoginBoxLine } from 'react-icons/ri';
-import { EventSourcePolyfill } from 'event-source-polyfill';
 
-import { notificationApis } from '../../api/api-functions/notificationApis';
-import Alram from '../home/Alram';
-import AlramAlert from '../home/AlramAlert';
-import { useQuery } from '@tanstack/react-query';
-import { alramState } from '../../recoil/atoms';
-import { useRecoilState } from 'recoil';
 const Header = () => {
 
     const navigate = useNavigate();
-    const [alram, setAlram] = useRecoilState(alramState);
-
-    //로그인 여부
-    const isLogin = localStorage.getItem('token') !== null;
-
-    //알림 불러오기
-    const getNotice = async () => {
-        const res = await notificationApis.getNotificationAX();
-        const resList = res.data.data;
-        const unReadNum = resList?.filter((notice) => { return !notice.readStatus }).length;
-        return { resList, unReadNum };
-    }
-    //알림 server state
-    // const result = useQuery(
-    //     ['getNotice'],
-    //     getNotice,
-    // )
-
-    //sse handle
-    const [newNotice, setNewNotice] = useState({})
-
-    //sse연결 여부
-    const isSSE = localStorage.getItem('sse') === "connect" ? true : false;
-
-    //SSE 
-    // useEffect(() => {
-    //     if (!isSSE && isLogin) {
-    //         const eventSource = new EventSourcePolyfill(`${process.env.REACT_APP_API_URL}/subscribe`, {
-    //             headers: {
-    //                 "Access_Token": localStorage.getItem("token"),
-    //                 'Content-Type': 'text/event-stream',
-    //             },
-    //             heartbeatTimeout: 3600000, //sse 연결 시간 (토큰 유지1시간)
-    //             withCredentials: true,
-    //         });
-    //         //sse 연결
-    //         eventSource.onopen = (event) => {
-    //             if (event.status === 200) {
-    //                 localStorage.setItem('sse', "connect");
-    //             }
-    //         };
-
-    //         //sse 받는 처리
-    //         eventSource.onmessage = (event) => {
-    //             //받은 데이터 Json타입으로 형변환 가능여부fn
-    //             const isJson = (str) => {
-    //                 try {
-    //                     const json = JSON.parse(str);
-    //                     return json && typeof json === 'object';
-    //                 } catch (e) {
-    //                     return false;
-    //                 }
-    //             };
-    //             if (isJson(event.data)) {
-    //                 //알림 리스트 refetch
-    //                 result.refetch();
-    //                 //실시간 알림 데이터
-    //                 const obj = JSON.parse(event.data);
-    //                 //setNewNotice(obj);
-    //                 setAlram(obj);
-    //             }
-    //         };
-
-    //         //sse 에러
-    //         eventSource.onerror = event => {
-    //             eventSource.close();
-    //             localStorage.setItem('sse', null);
-    //         };
-    //     }
-
-    // }, [isLogin]);
-
-    const [notice, setNotice] = useState(false);
-    const popUpNotice = () => {
-        setNotice(!notice)
-    }
-    // if (result.isLoading) {
-    //     return null;
-    // }
 
     return (
         <>
@@ -119,9 +33,6 @@ const Header = () => {
                     }
                 </StRightBox>
             </StHeaderWrap>
-            {/* 알림 리스트 모달 */}
-            {notice && <Alram />}
-            <AlramAlert newNotice={newNotice} setNewNotice={setNewNotice} />
         </>
     );
 };

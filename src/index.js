@@ -10,10 +10,6 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 
-import {
-  RecoilRoot,
-} from 'recoil';
-
 // PWA 추가
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 serviceWorkerRegistration.register();
@@ -29,11 +25,9 @@ const queryClient = new QueryClient({
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <RecoilRoot>
-    <QueryClientProvider client={queryClient}>
-      <App />
-    </QueryClientProvider>
-  </RecoilRoot>
+  <QueryClientProvider client={queryClient}>
+    <App />
+  </QueryClientProvider>
 );
 
 reportWebVitals();
