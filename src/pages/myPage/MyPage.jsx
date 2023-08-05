@@ -8,9 +8,6 @@ import { flexColumn } from '../../components/styles/Flex';
 import Button from '../../components/elements/Button';
 import { flexRow } from '../../components/styles/Flex';
 import { BookmarkFill, Comment, MyPost } from '../../assets';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { myPageApis } from '../../api/api-functions/myPageApis';
-import { postApis } from '../../api/api-functions/postApis';
 import PageState from '../../components/common/PageState';
 import useGetMyInfo from '../../hooks/useGetMyInfo';
 
@@ -23,19 +20,6 @@ const MyPage = () => {
     localStorage.setItem("nickname", userInfo.nickname);
     localStorage.setItem("profile_image_url", userInfo.profile_image_url);
   }, [userInfo])
-
-  //관리자 배너 삭제
-  const deleteBanner = useMutation({
-    mutationFn: (id) => {
-      return postApis.deleteAdminPostAX(id);
-    },
-    onSuccess: res => {
-      if (res.data.status === 200) {
-        alert("삭제 성공");
-        window.location.reload();
-      }
-    },
-  })
 
   // 로그아웃
   const handleLogout = () => {
